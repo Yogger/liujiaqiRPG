@@ -34,9 +34,9 @@ public class ClientMain {
 		try {
 			Channel channel = bootstrap.connect(host, port).sync().channel();
 			System.out.println("请选择指令");
-			System.out.println("1、登陆 2、注册");
-			System.out.println("格式：1 username psw");
-			System.out.println("格式：2 username psw psw");
+			System.out.println("login、登陆 regist、注册");
+			System.out.println("格式：login username psw");
+			System.out.println("格式：regist username psw psw");
 			while (true) {
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(System.in));

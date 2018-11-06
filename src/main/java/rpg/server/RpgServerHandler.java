@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -18,6 +19,7 @@ import rpg.service.AoiDispatch;
 import rpg.service.MoveDispatch;
 import rpg.session.IOsession;
 
+@Sharable
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	
@@ -58,14 +60,14 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	// 连接处于活跃状态
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		Channel channel = ctx.channel();
-		System.out.println("[" + channel.remoteAddress() + "] " + "online");
+//		Channel channel = ctx.channel();
+//		System.out.println("[" + channel.remoteAddress() + "] " + "online");
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		Channel channel = ctx.channel();
-		System.out.println("[" + channel.remoteAddress() + "] " + "offline");
+//		Channel channel = ctx.channel();
+//		System.out.println("[" + channel.remoteAddress() + "] " + "offline");
 	}
 
 	@Override
@@ -85,16 +87,16 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 			// 当前连接客户
 			if (ch == channel) {
 				// 获取session
-				SocketAddress address = arg0.channel().remoteAddress();
+				SocketAddress address = ch.remoteAddress();
 				boolean key = IOsession.mp.containsKey(address);
 				// 如果用户未登陆
 				if (!key) {
 					String[] type = arg1.split("\\s+");
 					switch (type[0]) {
-					case "1":
+					case "login":
 						dispatch.dispatch(ch, arg1, address);
 						break;
-					case "2":
+					case "regist":
 						registDispatch.dispatch(ch, arg1);
 						break;
 					default:
@@ -111,7 +113,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 						moveDispatch.dispatch(ch, msg, user);
 						break;
 					case "aoi":
-						aoiDispatch.aoi(user, ch);
+						aoiDispatch.aoi(user, ch,group);
 						break;
 					default:
 						ch.writeAndFlush("无效指令");
@@ -121,7 +123,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 			}
 			// 其他连接客户
 			else {
-				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
+//				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 			}
 		}
 	}

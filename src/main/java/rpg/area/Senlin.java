@@ -3,7 +3,7 @@ package rpg.area;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import rpg.pojo.Master;
+import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 
 /**
@@ -19,10 +19,10 @@ public class Senlin {
 	@Autowired
 	private Npc npc;
 	@Autowired
-	private Master master;
+	private Monster monster;
 
 	@Override
 	public String toString() {
-		return "senlin [name=" + name + ", npc=" + npc.toString() + ", master=" + master.toString() + "]";
+		return "senlin [name=" + name + ", npc=" + npc.toString() + ", monster=" + monster.toString() + "]";
 	}
 }
