@@ -1,6 +1,10 @@
 package rpg.area;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+
+import rpg.pojo.Monster;
+import rpg.pojo.Npc;
 
 /**
  * 地图类
@@ -8,6 +12,8 @@ import java.util.HashMap;
  * @return
  */
 public class Area {
+	public static LinkedList<Npc> npcList =new LinkedList<Npc>();
+	public static LinkedList<Scene> sceneList =new LinkedList<Scene>();
 	private static HashMap<String, Integer> mp1 = new HashMap<String, Integer>();
 	static int[][] mp2 = new int[30][30];
 	static {
