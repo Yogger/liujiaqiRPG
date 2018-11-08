@@ -17,6 +17,7 @@ import rpg.login.RegistDispatch;
 import rpg.pojo.User;
 import rpg.service.AoiDispatch;
 import rpg.service.MoveDispatch;
+import rpg.service.TalkDispatch;
 import rpg.session.IOsession;
 
 @Sharable
@@ -31,6 +32,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private AoiDispatch aoiDispatch;
 	@Autowired
 	private MoveDispatch moveDispatch;
+	@Autowired
+	private TalkDispatch talkDispatch;
 	
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -114,6 +117,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 						break;
 					case "aoi":
 						aoiDispatch.aoi(user, ch,group);
+						break;
+					case "talk":
+						talkDispatch.talk(user, ch, group, arg1);
 						break;
 					default:
 						ch.writeAndFlush("无效指令");

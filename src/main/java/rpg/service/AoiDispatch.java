@@ -44,9 +44,11 @@ public class AoiDispatch {
 		ch.writeAndFlush("本角色:" + user.getNickname() + "  ");
 		for (Channel channel : group) {
 			if (channel != ch) {
-				User user2 = IOsession.mp.get(channel.remoteAddress());
-				if (user2.getAreaid() == user.getAreaid())// 判断是否在一个场景
-					ch.writeAndFlush("其他角色:" + user2.getNickname());
+				if (IOsession.mp.get(channel.remoteAddress()) != null) {
+					User user2 = IOsession.mp.get(channel.remoteAddress());
+					if (user2.getAreaid() == user.getAreaid())// 判断是否在一个场景
+						ch.writeAndFlush("其他角色:" + user2.getNickname());
+				}
 			}
 		}
 	}
