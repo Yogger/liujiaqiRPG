@@ -34,6 +34,8 @@ public class Regist {
 			user.setId(id);
 			user.setNickname(username);
 			user.setAreaid(1);
+			user.setHp(1000);
+			user.setMp(100);
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 			user.setUpdatetime(df.format(new Date()));
 			userMapper.insert(user);

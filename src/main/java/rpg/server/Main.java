@@ -9,6 +9,8 @@ import rpg.area.Area;
 import rpg.area.Scene;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
+import rpg.pojo.Skill;
+import rpg.skill.SkillList;
 
 public class Main {
 	public static void main(String[] args) {
@@ -30,7 +32,7 @@ public class Main {
 		SLMmonster.setName("史莱姆");
 		SLMmonster.setAliveFlag(true);
 		SLMmonster.setHp(100);
-		SLMmonster.setAck(10);
+		SLMmonster.setAck(20);
 		Monster MDSmonster = new Monster();
 		MDSmonster.setName("美杜莎");
 		MDSmonster.setAliveFlag(true);
@@ -71,5 +73,22 @@ public class Main {
 		chenBao.setNpcList(list1);
 		chenBao.setMonsterList(list2);
 		Area.sceneList.add(chenBao);
+		
+		Skill skill = new Skill();
+		skill.setId(1);
+		skill.setName("毒雷引爆");
+		skill.setCd(3);
+		skill.setMp(10);
+		skill.setHurt(30);
+		skill.setEffect("中毒");
+		Skill sl = new Skill();
+		sl.setId(2);
+		sl.setName("神罗天罡");
+		sl.setCd(5);
+		sl.setMp(20);
+		sl.setHurt(60);
+		sl.setEffect("护盾");
+		SkillList.mp.put("1", skill);
+		SkillList.mp.put("3", sl);
 	}
 }

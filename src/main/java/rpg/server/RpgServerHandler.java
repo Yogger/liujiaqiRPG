@@ -15,6 +15,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import rpg.login.LoginDispatch;
 import rpg.login.RegistDispatch;
 import rpg.pojo.User;
+import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
 import rpg.service.MoveDispatch;
 import rpg.service.TalkDispatch;
@@ -23,7 +24,7 @@ import rpg.session.IOsession;
 @Sharable
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
-	
+
 	@Autowired
 	private LoginDispatch dispatch;
 	@Autowired
@@ -34,7 +35,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private MoveDispatch moveDispatch;
 	@Autowired
 	private TalkDispatch talkDispatch;
-	
+	@Autowired
+	private AckDispatch ackDispatch;
+
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
@@ -109,28 +112,39 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 				}
 				// 用户已登陆
 				else {
+					boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 					String[] msg = arg1.split("\\s+");
 					User user = IOsession.mp.get(address);
-					switch (msg[0]) {
-					case "move":
-						moveDispatch.dispatch(ch, msg, user);
-						break;
-					case "aoi":
-						aoiDispatch.aoi(user, ch,group);
-						break;
-					case "talk":
-						talkDispatch.talk(user, ch, group, arg1);
-						break;
-					default:
-						ch.writeAndFlush("无效指令");
-						break;
+					//战斗状态
+					if (ackstatus&&IOsession.ackStatus.get(ch.remoteAddress())) {
+						ackDispatch.ack(user, ch, group, arg1);
+					}
+					//普通状态
+					else {
+						switch (msg[0]) {
+						case "move":
+							moveDispatch.dispatch(ch, msg, user);
+							break;
+						case "aoi":
+							aoiDispatch.aoi(user, ch, group);
+							break;
+						case "talk":
+							talkDispatch.talk(user, ch, group, arg1);
+							break;
+						case "ack":
+							IOsession.ackStatus.put(address, true);
+							ackDispatch.ack(user, ch, group, arg1);
+							break;
+						default:
+							ch.writeAndFlush("无效指令");
+							break;
+						}
 					}
 				}
-			}
+				}
 			// 其他连接客户
 			else {
 //				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 			}
 		}
-	}
-}
+}}

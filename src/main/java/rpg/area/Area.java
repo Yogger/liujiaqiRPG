@@ -12,7 +12,7 @@ import rpg.pojo.Npc;
  * @return
  */
 public class Area {
-	public static LinkedList<Npc> npcList =new LinkedList<Npc>();
+	//public static LinkedList<Npc> npcList =new LinkedList<Npc>();
 	public static LinkedList<Scene> sceneList =new LinkedList<Scene>();
 	private static HashMap<String, Integer> mp1 = new HashMap<String, Integer>();
 	static int[][] mp2 = new int[30][30];

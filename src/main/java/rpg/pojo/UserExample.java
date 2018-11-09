@@ -363,6 +363,126 @@ public class UserExample {
             addCriterion("updatetime not between", value1, value2, "updatetime");
             return (Criteria) this;
         }
+
+        public Criteria andHpIsNull() {
+            addCriterion("hp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpIsNotNull() {
+            addCriterion("hp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpEqualTo(Integer value) {
+            addCriterion("hp =", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpNotEqualTo(Integer value) {
+            addCriterion("hp <>", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpGreaterThan(Integer value) {
+            addCriterion("hp >", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpGreaterThanOrEqualTo(Integer value) {
+            addCriterion("hp >=", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpLessThan(Integer value) {
+            addCriterion("hp <", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpLessThanOrEqualTo(Integer value) {
+            addCriterion("hp <=", value, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpIn(List<Integer> values) {
+            addCriterion("hp in", values, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpNotIn(List<Integer> values) {
+            addCriterion("hp not in", values, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpBetween(Integer value1, Integer value2) {
+            addCriterion("hp between", value1, value2, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andHpNotBetween(Integer value1, Integer value2) {
+            addCriterion("hp not between", value1, value2, "hp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpIsNull() {
+            addCriterion("mp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpIsNotNull() {
+            addCriterion("mp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpEqualTo(Integer value) {
+            addCriterion("mp =", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpNotEqualTo(Integer value) {
+            addCriterion("mp <>", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpGreaterThan(Integer value) {
+            addCriterion("mp >", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpGreaterThanOrEqualTo(Integer value) {
+            addCriterion("mp >=", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpLessThan(Integer value) {
+            addCriterion("mp <", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpLessThanOrEqualTo(Integer value) {
+            addCriterion("mp <=", value, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpIn(List<Integer> values) {
+            addCriterion("mp in", values, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpNotIn(List<Integer> values) {
+            addCriterion("mp not in", values, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpBetween(Integer value1, Integer value2) {
+            addCriterion("mp between", value1, value2, "mp");
+            return (Criteria) this;
+        }
+
+        public Criteria andMpNotBetween(Integer value1, Integer value2) {
+            addCriterion("mp not between", value1, value2, "mp");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
