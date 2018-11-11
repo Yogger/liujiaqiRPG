@@ -27,10 +27,29 @@ public class Main {
 		initMonster(monsterList);
 		initNpc(npcList);
 		initScene(monsterList, npcList);
+		initSkill();
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
+	}
+	
+	//初始化技能
+	private static void initSkill() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\skill.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Skill skill = new Skill();
+			skill.setId(Integer.valueOf(e.elementText("id")));
+			skill.setName(e.elementText("name"));
+			skill.setCd(Integer.valueOf(e.elementText("cd")));
+			skill.setMp(Integer.valueOf(e.elementText("mp")));
+			skill.setHurt(Integer.valueOf(e.elementText("hurt")));
+			skill.setEffect(e.elementText("effect"));
+			SkillList.mp.put(e.elementText("id"), skill);
+		}
 	}
 
 	// 初始化怪物
