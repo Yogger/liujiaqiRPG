@@ -7,6 +7,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
@@ -25,6 +26,7 @@ public class ServerMain {
 		bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
 		bootstrap.group(acceptor, worker);
 		bootstrap.channel(NioServerSocketChannel.class);
+		bootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048));
 		bootstrap.childOption(ChannelOption.TCP_NODELAY, true).childOption(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.childHandler(serverIniterHandler);
 		try {

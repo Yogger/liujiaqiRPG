@@ -1,11 +1,15 @@
 package rpg.login;
 
 import java.net.SocketAddress;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
+import rpg.area.Refresh;
 import rpg.pojo.User;
 import rpg.session.IOsession;
 
@@ -28,6 +32,7 @@ public class LoginDispatch {
 				ch.writeAndFlush("账户或密码错误，请重新登陆:" + "\n");
 			} else {
 				IOsession.mp.put(address, user);
+				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
 			}
 		} else {

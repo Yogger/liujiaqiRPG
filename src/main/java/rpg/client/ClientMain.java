@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
@@ -29,6 +31,8 @@ public class ClientMain {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(worker);
 		bootstrap.channel(NioSocketChannel.class);
+		bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048));
+		bootstrap.option(ChannelOption.TCP_NODELAY, true).option(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.handler(new ClientIniter());
 
 		try {
