@@ -15,9 +15,12 @@ import org.springframework.scheduling.SchedulingException;
 
 import rpg.area.Area;
 import rpg.area.Scene;
+import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
+import rpg.pojo.Yaopin;
+import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
 public class Main {
@@ -28,12 +31,45 @@ public class Main {
 		initNpc(npcList);
 		initScene(monsterList, npcList);
 		initSkill();
+		initYaopin();
+		initBuff();
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
 	}
 	
+	//初始化buff
+	private static void initBuff() throws Exception{
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\buff.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Buff buff = new Buff();
+			buff.setId(Integer.valueOf(e.elementText("id")));
+			buff.setName(e.elementText("name"));
+			buff.setMp(Integer.valueOf(e.elementText("mp")));
+			buff.setLastedTime(Long.valueOf(e.elementText("lastedTime")));
+			IOsession.buffMp.put(Integer.valueOf(e.elementText("id")), buff);
+		}
+	}
+
+	//初始化药品
+	private static void initYaopin() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\yaopin.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Yaopin yaopin = new Yaopin();
+			yaopin.setName(e.elementText("name"));
+			yaopin.setId(Integer.valueOf(e.elementText("id")));
+			yaopin.setBuff(Integer.valueOf(e.elementText("buff")));
+			IOsession.yaopinMp.put(Integer.valueOf(e.elementText("id")), yaopin);
+		}
+	}
+
 	//初始化技能
 	private static void initSkill() throws Exception {
 		SAXReader sr = new SAXReader();

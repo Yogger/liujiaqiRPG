@@ -17,8 +17,10 @@ import rpg.login.RegistDispatch;
 import rpg.pojo.User;
 import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
+import rpg.service.BagDispatch;
 import rpg.service.MoveDispatch;
 import rpg.service.TalkDispatch;
+import rpg.service.UseGoods;
 import rpg.session.IOsession;
 
 @Sharable
@@ -37,6 +39,10 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private TalkDispatch talkDispatch;
 	@Autowired
 	private AckDispatch ackDispatch;
+	@Autowired
+	private BagDispatch bagDispatch;
+	@Autowired
+	private UseGoods useGoods;
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -115,36 +121,47 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 					String[] msg = arg1.split("\\s+");
 					User user = IOsession.mp.get(address);
-					//战斗状态
-					if (ackstatus&&IOsession.ackStatus.get(ch.remoteAddress())) {
-						ackDispatch.ack(user, ch, group, arg1);
-					}
-					//普通状态
-					else {
-						switch (msg[0]) {
-						case "move":
-							moveDispatch.dispatch(ch, msg, user);
-							break;
-						case "aoi":
-							aoiDispatch.aoi(user, ch, group);
-							break;
-						case "talk":
-							talkDispatch.talk(user, ch, group, arg1);
-							break;
-						case "ack":
-							IOsession.ackStatus.put(address, true);
+					switch (msg[0]) {
+					case "showbag":
+						bagDispatch.showBag(user, ch, group);
+						break;
+					case "use":
+						useGoods.use(user, ch, group, arg1);
+						break;
+					default:
+						// 战斗状态
+						if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress())) {
 							ackDispatch.ack(user, ch, group, arg1);
-							break;
-						default:
-							ch.writeAndFlush("无效指令");
-							break;
 						}
+						// 普通状态
+						else {
+							switch (msg[0]) {
+							case "move":
+								moveDispatch.dispatch(ch, msg, user);
+								break;
+							case "aoi":
+								aoiDispatch.aoi(user, ch, group);
+								break;
+							case "talk":
+								talkDispatch.talk(user, ch, group, arg1);
+								break;
+							case "ack":
+								IOsession.ackStatus.put(address, true);
+								ackDispatch.ack(user, ch, group, arg1);
+								break;
+							default:
+								ch.writeAndFlush("无效指令");
+								break;
+							}
+						}
+						break;
 					}
 				}
-				}
+			}
 			// 其他连接客户
 			else {
 //				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 			}
 		}
-}}
+	}
+}
