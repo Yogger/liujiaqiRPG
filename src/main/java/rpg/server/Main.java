@@ -6,12 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.scheduling.SchedulingException;
 
 import rpg.area.Area;
 import rpg.area.Scene;
@@ -19,7 +17,9 @@ import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
+import rpg.pojo.UserAttribute;
 import rpg.pojo.Yaopin;
+import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
@@ -33,14 +33,30 @@ public class Main {
 		initSkill();
 		initYaopin();
 		initBuff();
+		initZb();
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
 	}
-	
-	//初始化buff
-	private static void initBuff() throws Exception{
+
+	// 装备资源初始化
+	private static void initZb() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\zb.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Zb zb = new Zb();
+			zb.setId(Integer.valueOf(e.elementText("id")));
+			zb.setName(e.elementText("name"));
+			zb.setAck(Integer.valueOf(e.elementText("ack")));
+			IOsession.zbMp.put(Integer.valueOf(e.elementText("id")), zb);
+		}
+	}
+
+	// 初始化buff
+	private static void initBuff() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\buff.xml"));
 		Element root = document.getRootElement();
@@ -55,7 +71,7 @@ public class Main {
 		}
 	}
 
-	//初始化药品
+	// 初始化药品
 	private static void initYaopin() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\yaopin.xml"));
@@ -70,7 +86,7 @@ public class Main {
 		}
 	}
 
-	//初始化技能
+	// 初始化技能
 	private static void initSkill() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\skill.xml"));

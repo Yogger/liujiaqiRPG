@@ -128,6 +128,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					case "use":
 						useGoods.use(user, ch, group, arg1);
 						break;
+					case "showzb":
+						bagDispatch.showZb(user, ch, group);
+						break;
+					case "wear":
+						
+						break;
 					default:
 						// 战斗状态
 						if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress())) {

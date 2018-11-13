@@ -8,7 +8,9 @@ import java.util.concurrent.Executors;
 import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
+import rpg.pojo.UserAttribute;
 import rpg.pojo.Yaopin;
+import rpg.pojo.Zb;
 
 /**
  * 登陆状态session
@@ -31,4 +33,8 @@ public class IOsession {
 	public static HashMap<Integer, Buff> buffMp = new HashMap<Integer, Buff>();
 	// buff开始时间
 	public static HashMap<User, HashMap<Integer, Long>> buffTimeMp = new HashMap<User, HashMap<Integer, Long>>();
+	// 装备关系
+	public static HashMap<Integer, Zb> zbMp = new HashMap<Integer, Zb>();
+	// 属性关系
+	public static HashMap<User, UserAttribute> attMp = new HashMap<User, UserAttribute>();
 }

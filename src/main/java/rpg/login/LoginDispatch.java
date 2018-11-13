@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import rpg.area.Refresh;
 import rpg.pojo.User;
+import rpg.pojo.UserAttribute;
 import rpg.session.IOsession;
 
 /**
@@ -32,6 +33,10 @@ public class LoginDispatch {
 				ch.writeAndFlush("账户或密码错误，请重新登陆:" + "\n");
 			} else {
 				IOsession.mp.put(address, user);
+				//初始化属性
+				UserAttribute attribute = new UserAttribute();
+				attribute.setAck(5);
+				IOsession.attMp.put(user, attribute);
 				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
 			}
