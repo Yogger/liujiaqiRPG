@@ -78,9 +78,9 @@ public class AckDispatch {
 									for (Userzb userzb : list1) {
 										if (userzb.getNjd() <= 0) {
 											Zb zb = IOsession.zbMp.get(userzb.getZbid());
-											if (zb != null) {
-												attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
-												userzb.setIsuse(0);
+											if(zb!=null&&attribute!=null) {
+											attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
+											userzb.setIsuse(0);
 											}
 										}
 									}
@@ -185,8 +185,10 @@ public class AckDispatch {
 									for (Userzb userzb : list1) {
 										if (userzb.getNjd() <= 0) {
 											Zb zb = IOsession.zbMp.get(userzb.getZbid());
+											if(zb!=null&&attribute!=null) {
 											attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
 											userzb.setIsuse(0);
+											}
 										}
 									}
 									int ack = attribute.getAck();
@@ -238,8 +240,10 @@ public class AckDispatch {
 								for (Userzb userzb : list1) {
 									if (userzb.getNjd() <= 0) {
 										Zb zb = IOsession.zbMp.get(userzb.getZbid());
+										if(zb!=null&&attribute!=null) {
 										attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
 										userzb.setIsuse(0);
+										}
 									}
 								}
 								int ack = attribute.getAck();
@@ -282,5 +286,4 @@ public class AckDispatch {
 		} else {
 			ch.writeAndFlush("指令错误");
 		}
-	}
-}
+	}}
