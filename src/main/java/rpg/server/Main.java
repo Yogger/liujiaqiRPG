@@ -8,11 +8,14 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import rpg.area.Area;
 import rpg.area.Scene;
+import rpg.data.dao.UserbagMapper;
+import rpg.data.dao.UserzbMapper;
 import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;

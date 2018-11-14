@@ -131,8 +131,14 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					case "showzb":
 						bagDispatch.showZb(user, ch, group);
 						break;
+					case "tkff":
+						bagDispatch.tkffZb(user, ch, group, arg1);
+						break;
 					case "wear":
-						
+						bagDispatch.wearzb(user, ch, group, arg1);
+						break;
+					case "fix":
+						bagDispatch.fix(user, ch, group, arg1);
 						break;
 					default:
 						// 战斗状态

@@ -2,6 +2,7 @@ package rpg.session;
 
 import java.net.SocketAddress;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -9,6 +10,8 @@ import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
+import rpg.pojo.Userbag;
+import rpg.pojo.Userzb;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 
@@ -37,4 +40,8 @@ public class IOsession {
 	public static HashMap<Integer, Zb> zbMp = new HashMap<Integer, Zb>();
 	// 属性关系
 	public static HashMap<User, UserAttribute> attMp = new HashMap<User, UserAttribute>();
+	// 用户背包
+	public static HashMap<User, List<Userbag>> userBagMp = new HashMap<User, List<Userbag>>();
+	// 用户装备
+	public static HashMap<User, List<Userzb>> userZbMp = new HashMap<User, List<Userzb>>();
 }

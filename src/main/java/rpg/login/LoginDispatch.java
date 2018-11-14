@@ -35,8 +35,9 @@ public class LoginDispatch {
 				IOsession.mp.put(address, user);
 				//初始化属性
 				UserAttribute attribute = new UserAttribute();
-				attribute.setAck(5);
+				attribute.setAck(105);
 				IOsession.attMp.put(user, attribute);
+				login.loadData(user);
 				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
 			}
