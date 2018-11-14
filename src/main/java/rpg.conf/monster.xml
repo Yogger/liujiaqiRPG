@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<monsterList>
+	<monster>
+		<name>史莱姆</name>
+		<id>1</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>50000</hp>
+		<ack>1</ack>
+	</monster>
+	<monster>
+		<name>美杜莎</name>
+		<id>2</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>200</hp>
+		<ack>15</ack>
+	</monster>
+</monsterList>

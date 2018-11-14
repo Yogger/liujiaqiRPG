@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<buffList>
+	<buff>
+		<id>1</id>
+		<name>回蓝buff</name>
+		<mp>5</mp>
+		<lastedTime>6000</lastedTime>
+	</buff>
+</buffList>
