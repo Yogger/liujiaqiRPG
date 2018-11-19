@@ -86,11 +86,13 @@ public class GroupDispatch {
 					if (msg[2].equals(user2.getNickname())) {
 						Channel channel = IOsession.userchMp.get(user2);
 						Group group2 = IOsession.userGroupMp.get(user2.getGroupId());
-						List<User> list = group2.getList();
-						user.setGroupId(user2.getGroupId());
-						list.add(user);
-						ch.writeAndFlush("你已进入" + user2.getNickname() + "队伍");
-						channel.writeAndFlush(user.getNickname() + "进入队伍");
+						if (group2 != null) {
+							List<User> list = group2.getList();
+							user.setGroupId(user2.getGroupId());
+							list.add(user);
+							ch.writeAndFlush("你已进入" + user2.getNickname() + "队伍");
+							channel.writeAndFlush(user.getNickname() + "进入队伍");
+						}
 					}
 				}
 			}

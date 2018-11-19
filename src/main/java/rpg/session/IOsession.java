@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.netty.channel.Channel;
+import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
@@ -50,4 +51,6 @@ public class IOsession {
 	public static HashMap<User, List<Userzb>> userZbMp = new HashMap<User, List<Userzb>>();
 	// 存储队伍信息
 	public static HashMap<String, Group> userGroupMp = new HashMap<String, Group>();
+	// 存储用户副本关系
+	public static HashMap<String, BossScene> userBossMp = new HashMap<String, BossScene>();
 }

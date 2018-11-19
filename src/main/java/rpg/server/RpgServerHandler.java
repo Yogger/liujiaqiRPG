@@ -18,6 +18,7 @@ import rpg.pojo.User;
 import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
+import rpg.service.CopyDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.MoveDispatch;
 import rpg.service.TalkDispatch;
@@ -46,6 +47,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private UseGoods useGoods;
 	@Autowired
 	private GroupDispatch groupDispatch;
+	@Autowired
+	private CopyDispatch copyDispatch;
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -127,6 +130,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					switch (msg[0]) {
 					case "group":
 						groupDispatch.group(user, ch, group, arg1);
+						break;
+					case "copy":
+						copyDispatch.copy(user, ch, group, arg1);
 						break;
 					case "showgroup":
 						groupDispatch.showgroup(user, ch, group, arg1);

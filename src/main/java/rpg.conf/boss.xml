@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bossList>
+	<boss>
+		<name>怨灵嗜魂者</name>
+		<id>10001</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>50000</hp>
+		<ack>20</ack>
+	</boss>
+	<boss>
+		<name>九辰天蛰</name>
+		<id>10002</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>80000</hp>
+		<ack>30</ack>
+	</boss>
+</bossList>
