@@ -18,6 +18,7 @@ import rpg.pojo.User;
 import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
+import rpg.service.GroupDispatch;
 import rpg.service.MoveDispatch;
 import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
@@ -43,6 +44,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private BagDispatch bagDispatch;
 	@Autowired
 	private UseGoods useGoods;
+	@Autowired
+	private GroupDispatch groupDispatch;
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -51,9 +54,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
-		for (Channel ch : group) {
-			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
-		}
+//		for (Channel ch : group) {
+//			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
+//		}
 		group.add(channel);
 //		int size = group.size();
 //		System.out.println(size);
@@ -64,7 +67,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
 		for (Channel ch : group) {
-			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
+			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
 		}
 		group.remove(channel);
 	}
@@ -122,6 +125,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					String[] msg = arg1.split("\\s+");
 					User user = IOsession.mp.get(address);
 					switch (msg[0]) {
+					case "group":
+						groupDispatch.group(user, ch, group, arg1);
+						break;
+					case "showgroup":
+						groupDispatch.showgroup(user, ch, group, arg1);
+						break;
 					case "showbag":
 						bagDispatch.showBag(user, ch, group);
 						break;

@@ -12,7 +12,8 @@ public class Refresh implements Runnable {
 
 	@Override
 	public synchronized void run() {
-		System.out.println("开始执行了：");
+//		System.out.println("开始执行了：");
+		if(IOsession.mp!=null) {
 		for (User user : IOsession.mp.values()) {
 			HashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
 			int addMp = 5;
@@ -35,8 +36,9 @@ public class Refresh implements Runnable {
 					user.setMp(100);
 				else
 					user.setMp(user.getMp() + addMp);
-				System.out.println(user.getMp());
+				System.out.println(user.getNickname()+"-当前蓝量："+user.getMp());
 			}
 		}
+	}
 	}
 }

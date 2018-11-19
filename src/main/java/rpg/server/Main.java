@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -13,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import rpg.area.Area;
+import rpg.area.Refresh;
 import rpg.area.Scene;
 import rpg.data.dao.UserbagMapper;
 import rpg.data.dao.UserzbMapper;
@@ -37,6 +40,7 @@ public class Main {
 		initYaopin();
 		initBuff();
 		initZb();
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");

@@ -1,63 +1,79 @@
 package rpg.pojo;
 
 public class User {
-    private Integer id;
+	private Integer id;
 
-    private String nickname;
+	private String nickname;
 
-    private Integer areaid;
+	private Integer areaid;
 
-    private String updatetime;
+	private String updatetime;
 
-    private Integer hp;
+	private Integer hp;
 
-    private Integer mp;
+	private Integer mp;
 
-    public Integer getId() {
-        return id;
-    }
+	private String groupId;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	/**
+	 * @return the groupId
+	 */
+	public String getGroupId() {
+		return groupId;
+	}
 
-    public String getNickname() {
-        return nickname;
-    }
+	/**
+	 * @param groupId2 the groupId to set
+	 */
+	public void setGroupId(String groupId2) {
+		this.groupId = groupId2;
+	}
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname == null ? null : nickname.trim();
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public Integer getAreaid() {
-        return areaid;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setAreaid(Integer areaid) {
-        this.areaid = areaid;
-    }
+	public String getNickname() {
+		return nickname;
+	}
 
-    public String getUpdatetime() {
-        return updatetime;
-    }
+	public void setNickname(String nickname) {
+		this.nickname = nickname == null ? null : nickname.trim();
+	}
 
-    public void setUpdatetime(String updatetime) {
-        this.updatetime = updatetime == null ? null : updatetime.trim();
-    }
+	public Integer getAreaid() {
+		return areaid;
+	}
 
-    public Integer getHp() {
-        return hp;
-    }
+	public void setAreaid(Integer areaid) {
+		this.areaid = areaid;
+	}
 
-    public void setHp(Integer hp) {
-        this.hp = hp;
-    }
+	public String getUpdatetime() {
+		return updatetime;
+	}
 
-    public Integer getMp() {
-        return mp;
-    }
+	public void setUpdatetime(String updatetime) {
+		this.updatetime = updatetime == null ? null : updatetime.trim();
+	}
 
-    public void setMp(Integer mp) {
-        this.mp = mp;
-    }
+	public Integer getHp() {
+		return hp;
+	}
+
+	public void setHp(Integer hp) {
+		this.hp = hp;
+	}
+
+	public Integer getMp() {
+		return mp;
+	}
+
+	public void setMp(Integer mp) {
+		this.mp = mp;
+	}
 }

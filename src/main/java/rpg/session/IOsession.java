@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.netty.channel.Channel;
 import rpg.pojo.Buff;
+import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
@@ -24,6 +26,8 @@ import rpg.pojo.Zb;
 public class IOsession {
 	// 用户信息session
 	public static HashMap<SocketAddress, User> mp = new HashMap<SocketAddress, User>();
+	// 用户address关系
+	public static HashMap<User, Channel> userchMp = new HashMap<User, Channel>();
 	// 战斗状态
 	public static HashMap<SocketAddress, Boolean> ackStatus = new HashMap<SocketAddress, Boolean>();
 	// 攻击的怪物
@@ -44,4 +48,6 @@ public class IOsession {
 	public static HashMap<User, List<Userbag>> userBagMp = new HashMap<User, List<Userbag>>();
 	// 用户装备
 	public static HashMap<User, List<Userzb>> userZbMp = new HashMap<User, List<Userzb>>();
+	// 存储队伍信息
+	public static HashMap<String, Group> userGroupMp = new HashMap<String, Group>();
 }
