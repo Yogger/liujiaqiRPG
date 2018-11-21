@@ -27,6 +27,7 @@ import rpg.pojo.Userzb;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.util.RpgUtil;
 
 /**
  * 副本战斗逻辑
@@ -111,13 +112,16 @@ public class AckBossDispatch {
 									if (monsterHp <= 0) {
 										ch.writeAndFlush("boss已被消灭，退出副本");
 										Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+										RpgUtil.ackEnd(user, ch, monster);
 										if (group2 != null) {
 											List<User> list3 = group2.getList();
 											for (User user3 : list3) {
 												Channel channel1 = IOsession.userchMp.get(user3);
-												if (channel1 != ch)
+												if (channel1 != ch) {
 													channel1.writeAndFlush(user.getNickname() + "消灭了"
 															+ monster.getName() + "-你已通关，退出副本");
+													RpgUtil.ackEnd(user3, channel1, monster);
+												}
 												IOsession.ackStatus.put(channel1.remoteAddress(), 0);
 											}
 										}
@@ -171,14 +175,17 @@ public class AckBossDispatch {
 								monster.setHp(monsterHp);
 								if (monsterHp <= 0) {
 									ch.writeAndFlush("boss已被消灭，退出副本");
+									RpgUtil.ackEnd(user, ch, monster);
 									Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 									if (group2 != null) {
 										List<User> list3 = group2.getList();
 										for (User user3 : list3) {
 											Channel channel1 = IOsession.userchMp.get(user3);
-											if (channel1 != ch)
+											if (channel1 != ch) {
 												channel1.writeAndFlush(
 														user.getNickname() + "消灭了" + monster.getName() + "-你已通关，退出副本");
+												RpgUtil.ackEnd(user3, channel1, monster);
+											}
 											IOsession.ackStatus.put(channel1.remoteAddress(), 0);
 										}
 									}

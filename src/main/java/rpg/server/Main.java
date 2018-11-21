@@ -2,6 +2,7 @@ package rpg.server;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -10,26 +11,23 @@ import java.util.concurrent.TimeUnit;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import rpg.area.Area;
 import rpg.area.Refresh;
 import rpg.area.Scene;
-import rpg.data.dao.UserbagMapper;
-import rpg.data.dao.UserzbMapper;
 import rpg.pojo.Buff;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
-import rpg.pojo.UserAttribute;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
 public class Main {
+
 	public static void main(String[] args) throws Exception {
 		ArrayList<Npc> npcList = new ArrayList<Npc>();
 		ArrayList<Monster> monsterList = new ArrayList<Monster>();
@@ -40,11 +38,37 @@ public class Main {
 		initYaopin();
 		initBuff();
 		initZb();
+		initStore();
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
+	}
+
+	// 初始化商店
+	private static void initStore() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\store.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			IOsession.store.setName(e.elementText("name"));
+			HashMap<Integer,Yaopin> yaopinMap = new HashMap<>();
+			HashMap<Integer,Zb> zbMap = new HashMap<>();
+			String[] yaopinId = e.elementText("yaopin").split(",");
+			for (String yaopin : yaopinId) {
+				Yaopin yaopin2 = IOsession.yaopinMp.get(Integer.valueOf(yaopin));
+				yaopinMap.put(yaopin2.getId(), yaopin2);
+			}
+			String[] zbId = e.elementText("zb").split(",");
+			for (String zb : zbId) {
+				Zb zb2 = IOsession.zbMp.get(Integer.valueOf(zb));
+				zbMap.put(zb2.getId(), zb2);
+			}
+			IOsession.store.setYaopinMap(yaopinMap);
+			IOsession.store.setZbMap(zbMap);
+		}
 	}
 
 	// 装备资源初始化
@@ -58,6 +82,8 @@ public class Main {
 			zb.setId(Integer.valueOf(e.elementText("id")));
 			zb.setName(e.elementText("name"));
 			zb.setAck(Integer.valueOf(e.elementText("ack")));
+			zb.setPrice(Integer.valueOf(e.elementText("price")));
+			zb.setNjd(Integer.valueOf(e.elementText("njd")));
 			IOsession.zbMp.put(Integer.valueOf(e.elementText("id")), zb);
 		}
 	}
@@ -89,6 +115,7 @@ public class Main {
 			yaopin.setName(e.elementText("name"));
 			yaopin.setId(Integer.valueOf(e.elementText("id")));
 			yaopin.setBuff(Integer.valueOf(e.elementText("buff")));
+			yaopin.setPrice(Integer.valueOf(e.elementText("price")));
 			IOsession.yaopinMp.put(Integer.valueOf(e.elementText("id")), yaopin);
 		}
 	}

@@ -5,5 +5,14 @@
 		<id>101</id>
 		<name>屠龙刀</name>
 		<ack>100</ack>
+		<price>100</price>
+		<njd>100</njd>
+	</zb>
+	<zb>
+		<id>102</id>
+		<name>倚天剑</name>
+		<ack>200</ack>
+		<price>200</price>
+		<njd>100</njd>
 	</zb>
 </zbList>

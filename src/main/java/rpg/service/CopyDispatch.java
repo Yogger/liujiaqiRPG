@@ -45,6 +45,14 @@ public class CopyDispatch {
 			monster.setHp(Integer.valueOf(e.elementText("hp")));
 			monster.setAck(Integer.valueOf(e.elementText("ack")));
 			monster.setCountAcker(0);
+			monster.setMoney(Integer.valueOf(e.elementText("money")));
+			String[] split = e.elementText("award").split(",");
+			ArrayList<Integer> awardList = new ArrayList<>();
+			for (String awardId : split) {
+				Integer id = Integer.valueOf(awardId);
+				awardList.add(id);
+			}
+			monster.setAwardList(awardList);
 			monsterList.add(monster);
 		}
 		scene.setMonsterList(monsterList);

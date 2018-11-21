@@ -22,6 +22,7 @@ import rpg.service.BagDispatch;
 import rpg.service.CopyDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.MoveDispatch;
+import rpg.service.StoreDispatch;
 import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
 import rpg.session.IOsession;
@@ -30,6 +31,8 @@ import rpg.session.IOsession;
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 
+	@Autowired
+	private StoreDispatch storeDispatch;
 	@Autowired
 	private LoginDispatch dispatch;
 	@Autowired
@@ -131,6 +134,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					String[] msg = arg1.split("\\s+");
 					User user = IOsession.mp.get(address);
 					switch (msg[0]) {
+					case "store":
+						storeDispatch.store(user, ch, group, arg1);
+						break;
 					case "group":
 						groupDispatch.group(user, ch, group, arg1);
 						break;

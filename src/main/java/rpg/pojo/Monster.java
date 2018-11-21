@@ -2,6 +2,8 @@ package rpg.pojo;
 
 import java.util.List;
 
+import javax.lang.model.type.PrimitiveType;
+
 import org.springframework.stereotype.Component;
 /**
  * 怪物
@@ -16,6 +18,24 @@ public class Monster {
 	private int ack;
 	private int countAcker;
 	private List<User> userList;
+	private List<Integer> awardList;
+	private int money;
+
+	public int getMoney() {
+		return money;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
+	}
+
+	public List<Integer> getAwardList() {
+		return awardList;
+	}
+
+	public void setAwardList(List<Integer> awardList) {
+		this.awardList = awardList;
+	}
 
 	public List<User> getUserList() {
 		return userList;

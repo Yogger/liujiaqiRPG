@@ -11,6 +11,7 @@ import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
+import rpg.pojo.Store;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.pojo.Userbag;
@@ -53,4 +54,6 @@ public class IOsession {
 	public static HashMap<String, Group> userGroupMp = new HashMap<String, Group>();
 	// 存储用户副本关系
 	public static HashMap<String, BossScene> userBossMp = new HashMap<String, BossScene>();
+	// 商店
+	public static final Store store = new Store();
 }

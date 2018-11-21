@@ -7,6 +7,8 @@
 		<aliveFlag>true</aliveFlag>
 		<hp>50000</hp>
 		<ack>50</ack>
+		<award>101,102,1</award>
+		<money>1000</money>
 	</boss>
 	<boss>
 		<name>九辰天蛰</name>
@@ -14,5 +16,7 @@
 		<aliveFlag>true</aliveFlag>
 		<hp>80000</hp>
 		<ack>30</ack>
+		<award>101,102,1</award>
+		<money>2000</money>
 	</boss>
 </bossList>
