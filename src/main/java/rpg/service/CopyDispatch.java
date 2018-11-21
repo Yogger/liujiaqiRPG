@@ -32,6 +32,7 @@ public class CopyDispatch {
 		scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
 		scene.setId(0);
+		scene.setLastedTime(60000);
 		ArrayList<Monster> monsterList = new ArrayList<>();
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\boss.xml"));
@@ -43,19 +44,24 @@ public class CopyDispatch {
 			monster.setAliveFlag(true);
 			monster.setHp(Integer.valueOf(e.elementText("hp")));
 			monster.setAck(Integer.valueOf(e.elementText("ack")));
+			monster.setCountAcker(0);
 			monsterList.add(monster);
 		}
 		scene.setMonsterList(monsterList);
 		IOsession.userBossMp.put(user.getGroupId(), scene);
+		IOsession.ackStatus.put(ch.remoteAddress(), 2);
 		ch.writeAndFlush("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:" + monsterList.get(0).getHp()
 				+ "-攻击力:" + monsterList.get(0).getAck());
 		Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 		if (group2 != null) {
 			List<User> list = group2.getList();
 			for (User user2 : list) {
-				Channel channel = IOsession.userchMp.get(user2);
-				channel.writeAndFlush("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:"
-						+ monsterList.get(0).getHp() + "-攻击力:" + monsterList.get(0).getAck());
+				if (user2 != group2.getUser()) {
+					Channel channel = IOsession.userchMp.get(user2);
+					IOsession.ackStatus.put(channel.remoteAddress(), 2);
+					channel.writeAndFlush("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:"
+							+ monsterList.get(0).getHp() + "-攻击力:" + monsterList.get(0).getAck());
+				}
 			}
 		}
 	}

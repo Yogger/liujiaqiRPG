@@ -15,6 +15,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import rpg.login.LoginDispatch;
 import rpg.login.RegistDispatch;
 import rpg.pojo.User;
+import rpg.service.AckBossDispatch;
 import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
@@ -49,6 +50,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private GroupDispatch groupDispatch;
 	@Autowired
 	private CopyDispatch copyDispatch;
+	@Autowired
+	private AckBossDispatch ackBossDispatch;
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -156,9 +159,13 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 						bagDispatch.fix(user, ch, group, arg1);
 						break;
 					default:
-						// 战斗状态
-						if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress())) {
+						// 普通战斗状态
+						if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
 							ackDispatch.ack(user, ch, group, arg1);
+						}
+						// 副本战斗状态
+						else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
+							ackBossDispatch.ack(user, ch, group, arg1);
 						}
 						// 普通状态
 						else {
@@ -173,7 +180,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 								talkDispatch.talk(user, ch, group, arg1);
 								break;
 							case "ack":
-								IOsession.ackStatus.put(address, true);
+								IOsession.ackStatus.put(address, 1);
 								ackDispatch.ack(user, ch, group, arg1);
 								break;
 							default:

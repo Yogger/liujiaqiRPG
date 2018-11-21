@@ -1,5 +1,7 @@
 package rpg.pojo;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 /**
  * 怪物
@@ -12,6 +14,24 @@ public class Monster {
 	private boolean aliveFlag;
 	private int hp;
 	private int ack;
+	private int countAcker;
+	private List<User> userList;
+
+	public List<User> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<User> userList) {
+		this.userList = userList;
+	}
+
+	public int getCountAcker() {
+		return countAcker;
+	}
+
+	public void setCountAcker(int countAcker) {
+		this.countAcker = countAcker;
+	}
 
 	public String getName() {
 		return name;

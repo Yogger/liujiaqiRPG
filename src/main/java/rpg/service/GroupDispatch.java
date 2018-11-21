@@ -38,6 +38,7 @@ public class GroupDispatch {
 						group2.setId(groupId);
 						group2.setUser(user);
 						ArrayList<User> list = new ArrayList<>();
+						list.add(user);
 						group2.setList(list);
 						IOsession.userGroupMp.put(groupId, group2);
 					}
@@ -54,6 +55,7 @@ public class GroupDispatch {
 			ch.writeAndFlush("队长" + group2.getUser().getNickname());
 			ch.writeAndFlush("队员：");
 			for (User user2 : list) {
+				if(group2.getUser()!=user2)
 				ch.writeAndFlush(user2.getNickname() + " ");
 			}
 		} else {

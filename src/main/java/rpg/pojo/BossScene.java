@@ -7,7 +7,33 @@ public class BossScene {
 	private String name;
 	private String groupId;
 	private ArrayList<Monster> monsterList;
+	private long startTime;
+	private long lastedTime;
 	
+	/**
+	 * @return the startTime
+	 */
+	public long getStartTime() {
+		return startTime;
+	}
+	/**
+	 * @param startTime the startTime to set
+	 */
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+	/**
+	 * @return the lastedTime
+	 */
+	public long getLastedTime() {
+		return lastedTime;
+	}
+	/**
+	 * @param lastedTime the lastedTime to set
+	 */
+	public void setLastedTime(long lastedTime) {
+		this.lastedTime = lastedTime;
+	}
 	/**
 	 * @return the id
 	 */

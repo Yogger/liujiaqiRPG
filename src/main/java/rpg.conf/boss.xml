@@ -6,7 +6,7 @@
 		<id>10001</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>50000</hp>
-		<ack>20</ack>
+		<ack>50</ack>
 	</boss>
 	<boss>
 		<name>九辰天蛰</name>

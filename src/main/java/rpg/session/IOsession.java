@@ -30,7 +30,7 @@ public class IOsession {
 	// 用户address关系
 	public static HashMap<User, Channel> userchMp = new HashMap<User, Channel>();
 	// 战斗状态
-	public static HashMap<SocketAddress, Boolean> ackStatus = new HashMap<SocketAddress, Boolean>();
+	public static HashMap<SocketAddress, Integer> ackStatus = new HashMap<SocketAddress, Integer>();
 	// 攻击的怪物
 	public static HashMap<SocketAddress, Monster> monsterMp = new HashMap<SocketAddress, Monster>();
 	// 怪物线程池

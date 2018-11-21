@@ -51,10 +51,13 @@ public class AckDispatch {
 		LinkedList<Monster> monsterList = Area.sceneList.get(id-1).getMonsterList();
 		// 第一次攻击
 		if (msg.length == 3) {
+			boolean find =false;
 			for (Monster monster : monsterList) {
 				// 找到场景内怪物
 				if (msg[1].equals(monster.getName())) {
+					find =true;
 					if (monster.getHp() > 0) {
+						monster.setCountAcker(monster.getCountAcker()+1);
 						IOsession.monsterMp.put(ch.remoteAddress(), monster);
 						// 找到配置的技能
 						for (Userskill userskill : list) {
@@ -95,13 +98,14 @@ public class AckDispatch {
 										userzb.setNjd(userzb.getNjd() - 5);
 									}
 									// 怪物攻击线程
+									if(monster.getCountAcker()==1) {
 									IOsession.monsterThreadPool.execute(new Runnable() {
 										@Override
 										public void run() {
 											while (true) {
 												boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 												if (ackstatus) {
-													if (IOsession.ackStatus.get(ch.remoteAddress())) {
+													if (IOsession.ackStatus.get(ch.remoteAddress())==1) {
 														int hp = user.getHp() - monster.getAck();
 														// 怪物存活
 														if (monster.getHp() > 0) {
@@ -112,13 +116,13 @@ public class AckDispatch {
 															} else {
 																ch.writeAndFlush("你已被打死");
 																user.setHp(100);
-																IOsession.ackStatus.put(ch.remoteAddress(), false);
+																IOsession.ackStatus.put(ch.remoteAddress(), 0);
 																break;
 															}
 														}
 														// 怪物死亡
 														else {
-															IOsession.ackStatus.put(ch.remoteAddress(), false);
+															IOsession.ackStatus.put(ch.remoteAddress(), 0);
 															break;
 														}
 													}
@@ -136,6 +140,7 @@ public class AckDispatch {
 									});
 									break;
 								}
+								}
 								// 蓝量不足
 								else {
 									ch.writeAndFlush("蓝量不足，请充值");
@@ -144,9 +149,15 @@ public class AckDispatch {
 
 						}
 					} else {
+						IOsession.ackStatus.put(ch.remoteAddress(), 0);
 						ch.writeAndFlush("怪物不存在");
+						break;
 					}
 				}
+			}
+			if(!find) {
+				IOsession.ackStatus.put(ch.remoteAddress(), 0);
+				ch.writeAndFlush("怪物不存在");
 			}
 		}
 		// 二次及以上攻击
@@ -154,9 +165,14 @@ public class AckDispatch {
 			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 			// 找到配置的技能
 			if (msg[0].equals("esc")) {
-				IOsession.ackStatus.put(ch.remoteAddress(), false);
+				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				ch.writeAndFlush("成功退出战斗");
-			} else {
+			}
+			else if (msg[0].equals("ack")) {
+				IOsession.ackStatus.put(ch.remoteAddress(), 0);
+				ch.writeAndFlush("指令错误");
+			}
+			else {
 				for (Userskill userskill : list) {
 					String skillId = String.valueOf(userskill.getSkill());
 					if (skillId.equals(msg[0])) {
@@ -204,7 +220,7 @@ public class AckDispatch {
 											}
 										}
 										monster.setAliveFlag(false);
-										IOsession.ackStatus.put(ch.remoteAddress(), false);
+										IOsession.ackStatus.put(ch.remoteAddress(), 0);
 										// 损耗装备耐久度
 										for (Userzb userzb : list1) {
 											userzb.setNjd(userzb.getNjd() - 5);
@@ -259,7 +275,7 @@ public class AckDispatch {
 										}
 									}
 									monster.setAliveFlag(false);
-									IOsession.ackStatus.put(ch.remoteAddress(), false);
+									IOsession.ackStatus.put(ch.remoteAddress(), 0);
 									// 损耗装备耐久度
 									for (Userzb userzb : list1) {
 										userzb.setNjd(userzb.getNjd() - 5);
