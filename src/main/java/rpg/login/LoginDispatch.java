@@ -9,6 +9,7 @@ import io.netty.channel.Channel;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.session.IOsession;
+import rpg.util.SendMsg;
 
 /**
  * 登陆处理器
@@ -36,7 +37,9 @@ public class LoginDispatch {
 				IOsession.attMp.put(user, attribute);
 				login.loadData(user);
 //				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 3000, TimeUnit.MILLISECONDS);
-				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
+//				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
+				String s="登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n";
+				SendMsg.send(s, ch);
 			}
 		} else {
 			ch.writeAndFlush("指令错误" + "\n");

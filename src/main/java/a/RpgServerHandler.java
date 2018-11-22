@@ -1,4 +1,4 @@
-package rpg.server;
+package a;
 
 import java.net.SocketAddress;
 import java.util.Map;
@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import b.ClientMain;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,7 +17,6 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import rpg.client.ClientMain;
 import rpg.login.LoginDispatch;
 import rpg.login.RegistDispatch;
 import rpg.pojo.User;

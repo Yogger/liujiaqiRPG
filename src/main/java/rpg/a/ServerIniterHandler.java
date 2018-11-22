@@ -22,11 +22,12 @@ public class ServerIniterHandler extends  ChannelInitializer<SocketChannel> {
 	protected void initChannel(SocketChannel arg0) throws Exception {
 		ChannelPipeline pipeline = arg0.pipeline();
 //		pipeline.addLast("fdecoder",new LineBasedFrameDecoder(1024));
-		pipeline.addLast("docode",new StringDecoder(Charset.forName("GBK")));
+//		pipeline.addLast(new StringDecoder(Charset.forName("utf-8")));
 //		pipeline.addLast("encode",new StringEncoder(Charset.forName("GBK")));
-		pipeline.addLast("lineBasedFrameDecoder",new LineBasedFrameDecoder(2048));
-		pipeline.addLast("idleStateHandler", new IdleStateHandler(5, 0, 0));
-		pipeline.addLast("chat",rpgServerHandler);
+		pipeline.addLast(new LineBasedFrameDecoder(1024));
+		pipeline.addLast(new StringDecoder());
+//		pipeline.addLast("idleStateHandler", new IdleStateHandler(5, 0, 0));
+		pipeline.addLast(rpgServerHandler);
 		
 	}
 

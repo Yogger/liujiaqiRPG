@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import b.ClientMain;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -16,7 +17,6 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import rpg.client.ClientMain;
 import rpg.login.LoginDispatch;
 import rpg.login.RegistDispatch;
 import rpg.pojo.User;
@@ -31,6 +31,7 @@ import rpg.service.StoreDispatch;
 import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
 import rpg.session.IOsession;
+import rpg.util.SendMsg;
 
 @Sharable
 @Component("rpgServerHandler")
@@ -75,6 +76,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 //		for (Channel ch : group) {
 //			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
 //		}
+		SendMsg.send("连上", channel);
 		group.add(channel);
 //		int size = group.size();
 //		System.out.println(size);
@@ -111,8 +113,9 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 	}
 
 	// 服务端处理客户端请求消息
-	protected void messageReceived(ChannelHandlerContext arg0, Object arg) throws Exception {
+	public void channelRead(ChannelHandlerContext arg0, Object arg) throws Exception {
 		String arg1=(String) arg;
+		System.out.println(arg1);
 		if(!arg1.equals("心跳")) {
 		Channel channel = arg0.channel();
 		// 遍历所有连接

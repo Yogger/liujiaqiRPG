@@ -18,11 +18,13 @@ public class ClientIniter extends ChannelInitializer<SocketChannel> {
 		ChannelPipeline pipeline = arg0.pipeline();
 //		pipeline.addLast("lineD",new LineBasedFrameDecoder(1024));
 		
-		pipeline.addLast("stringD", new StringDecoder(Charset.forName("GBK")));
+//		pipeline.addLast(new StringDecoder(Charset.forName("utf-8")));
+	
 //		pipeline.addLast("stringC", new StringEncoder(Charset.forName("GBK")));
-		pipeline.addLast("lineBasedFrameDecoder",new LineBasedFrameDecoder(2048));
-		pipeline.addLast("http", new HttpClientCodec());
-		pipeline.addLast("chat", new RpgClientHandler());
+		pipeline.addLast(new LineBasedFrameDecoder(1024));
+//		pipeline.addLast("http", new HttpClientCodec());
+		pipeline.addLast(new StringDecoder());
+		pipeline.addLast(new RpgClientHandler());
 	}
 
 }

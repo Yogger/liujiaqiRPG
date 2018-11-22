@@ -1,4 +1,4 @@
-package rpg.client;
+package b;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

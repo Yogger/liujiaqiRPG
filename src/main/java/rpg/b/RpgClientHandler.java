@@ -9,12 +9,14 @@ public class RpgClientHandler extends ChannelHandlerAdapter {
 
 	private static final Object String = null;
 
-	protected void messageReceived(ChannelHandlerContext ctx, Object msg1) throws Exception {
+	int cout=0;
+	public void channelRead(ChannelHandlerContext ctx, Object msg1) throws Exception {
 		String msg=(String)msg1;
 		if(msg.equals("心跳")) {
 			ctx.writeAndFlush("心跳");
 		}else {
 		System.out.println(msg);
+		System.out.println(cout++);
 		}
 	}
 	

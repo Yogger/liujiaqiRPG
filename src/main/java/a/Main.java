@@ -1,4 +1,4 @@
-package rpg.server;
+package a;
 
 import java.io.File;
 import java.util.ArrayList;
