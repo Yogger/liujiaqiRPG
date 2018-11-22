@@ -1,6 +1,8 @@
 package rpg.server;
 
 import java.net.SocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,7 +13,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import rpg.client.ClientMain;
 import rpg.login.LoginDispatch;
 import rpg.login.RegistDispatch;
 import rpg.pojo.User;
@@ -30,7 +35,7 @@ import rpg.session.IOsession;
 @Sharable
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
-
+	
 	@Autowired
 	private StoreDispatch storeDispatch;
 	@Autowired
@@ -55,6 +60,10 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private CopyDispatch copyDispatch;
 	@Autowired
 	private AckBossDispatch ackBossDispatch;
+	
+	//客户端超时次数
+	private Map<ChannelHandlerContext,Integer> clientOvertimeMap = new ConcurrentHashMap<>();
+	private final int MAX_OVERTIME  = 3;  //超时次数超过该值则注销连接
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -105,6 +114,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 
 	protected void messageReceived(ChannelHandlerContext arg0, String arg1) throws Exception {
+		if(!arg1.equals("心跳")) {
 		Channel channel = arg0.channel();
 		// 遍历所有连接
 		for (Channel ch : group) {
@@ -203,5 +213,39 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 //				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 			}
 		}
+		}
+		if (ClientMain.reconnectTimes > 0) {
+			ClientMain.reconnectTimes = 0;
+			System.err.println("断线重连成功");
+		}
+		System.out.println("服务端收到心跳");
+		clientOvertimeMap.remove(arg0);//只要接受到数据包，则清空超时次数
 	}
+	
+
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
+		    throws Exception {
+	    //心跳包检测读超时
+	    if (evt instanceof IdleStateEvent) {
+		    IdleStateEvent e = (IdleStateEvent) evt;
+		    if (e.state() == IdleState.READER_IDLE) {
+			    System.err.println("客户端读超时");
+			    int overtimeTimes = clientOvertimeMap.getOrDefault(ctx, 0);
+			    if(overtimeTimes < MAX_OVERTIME){
+				    ctx.writeAndFlush("心跳");
+				    addUserOvertime(ctx);
+			    }else{
+				    ServerManager.ungisterUserContext(ctx);
+			    }
+		    } 
+	    }
+    }
+    
+    private void addUserOvertime(ChannelHandlerContext ctx){
+	    int oldTimes = 0;
+	    if(clientOvertimeMap.containsKey(ctx)){
+		    oldTimes = clientOvertimeMap.get(ctx);
+	    }
+	    clientOvertimeMap.put(ctx, (int)(oldTimes+1));
+    }
 }

@@ -3,9 +3,13 @@ package rpg.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+
+import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
@@ -16,6 +20,9 @@ public class ClientMain {
 	private String host;
 	private int port;
 	private boolean stop = false;
+	
+	/** 当前重接次数*/
+	public static int reconnectTimes = 0;
 
 	public ClientMain(String host, int port) {
 		this.host = host;
@@ -56,7 +63,38 @@ public class ClientMain {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		finally {
+			//设置最大重连次数，防止服务端正常关闭导致的空循环
+			if (reconnectTimes < 5) {
+				reConnectServer();
+			}
+		}
 	}
+
+	/**
+	 * 断线重连
+	 */
+	public void reConnectServer(){
+		try {
+			Thread.sleep(5000);
+			System.err.println("客户端进行断线重连");
+			run();
+			reconnectTimes++;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 重置重连次数
+	 */
+	public static void resetReconnectTimes() {
+		if (reconnectTimes > 0) {
+			reconnectTimes = 0;
+			System.err.println("断线重连成功");
+		}
+	}
+
 
 	public boolean isStop() {
 		return stop;

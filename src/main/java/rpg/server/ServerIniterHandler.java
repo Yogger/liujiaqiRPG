@@ -11,6 +11,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 
 @Component("serverIniterHandler")
@@ -25,6 +26,7 @@ public class ServerIniterHandler extends  ChannelInitializer<SocketChannel> {
 //		pipeline.addLast("fdecoder",new LineBasedFrameDecoder(1024));
 		pipeline.addLast("docode",new StringDecoder(Charset.forName("GBK")));
 		pipeline.addLast("encode",new StringEncoder(Charset.forName("GBK")));
+		pipeline.addLast("idleStateHandler", new IdleStateHandler(5, 0, 0));
 		pipeline.addLast("chat",rpgServerHandler);
 		
 	}
