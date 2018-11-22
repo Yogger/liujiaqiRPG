@@ -2,6 +2,8 @@ package rpg.service;
 
 import org.springframework.stereotype.Component;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import rpg.area.Area;
@@ -39,6 +41,12 @@ public class AoiDispatch {
 	}
 
 	public void select(User user, Channel ch, ChannelGroup group, int id) {
+		for(int i=0;i<100;i++) {
+			byte[] string = ("asjdasdjasjsjadk"+System.getProperty("line.separator")).getBytes();
+			ByteBuf message = Unpooled.buffer(string.length);
+			message.writeBytes(string);
+			ch.writeAndFlush(message);
+		}
 		String string = Area.sceneList.get(id - 1).toString();
 		ch.writeAndFlush(string);
 		ch.writeAndFlush("本角色:" + user.getNickname() + "  ");

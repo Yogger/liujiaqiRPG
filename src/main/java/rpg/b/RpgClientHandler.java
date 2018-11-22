@@ -1,13 +1,16 @@
-package rpg.client;
+package rpg.b;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class RpgClientHandler extends SimpleChannelInboundHandler<String> {
+public class RpgClientHandler extends ChannelHandlerAdapter {
 
-	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
+	private static final Object String = null;
+
+	protected void messageReceived(ChannelHandlerContext ctx, Object msg1) throws Exception {
+		String msg=(String)msg1;
 		if(msg.equals("心跳")) {
 			ctx.writeAndFlush("心跳");
 		}else {

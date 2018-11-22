@@ -1,4 +1,4 @@
-package rpg.server;
+package rpg.a;
 
 import java.net.SocketAddress;
 import java.util.Map;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleState;
@@ -34,8 +34,8 @@ import rpg.session.IOsession;
 
 @Sharable
 @Component("rpgServerHandler")
-public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
-	//akskdk
+public class RpgServerHandler extends ChannelHandlerAdapter {
+	//askdaskll
 	@Autowired
 	private StoreDispatch storeDispatch;
 	@Autowired
@@ -111,9 +111,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	}
 
 	// 服务端处理客户端请求消息
-	@Override
-
-	protected void messageReceived(ChannelHandlerContext arg0, String arg1) throws Exception {
+	protected void messageReceived(ChannelHandlerContext arg0, Object arg) throws Exception {
+		String arg1=(String) arg;
 		if(!arg1.equals("心跳")) {
 		Channel channel = arg0.channel();
 		// 遍历所有连接

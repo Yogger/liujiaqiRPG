@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -42,7 +43,7 @@ public class Client {
                         .option(ChannelOption.SO_KEEPALIVE, true)
                         // 有数据立即发送
                         .option(ChannelOption.TCP_NODELAY, true)
-//                        .option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048))
+                        .option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048))
                         // 绑定处理group
                         .group(eventLoopGroup).remoteAddress(host, port)
                         .handler(new ChannelInitializer<SocketChannel>() {

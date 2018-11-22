@@ -1,4 +1,4 @@
-package rpg.client;
+package rpg.b;
 
 import java.nio.charset.Charset;
 
