@@ -1,6 +1,7 @@
 package rpg.session;
 
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors;
 import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
+import rpg.pojo.EmailRpg;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.Store;
@@ -20,7 +22,7 @@ import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 
 /**
- * 登陆状态session
+ * 系统资源
  * 
  * @author ljq
  *
@@ -56,4 +58,6 @@ public class IOsession {
 	public static HashMap<String, BossScene> userBossMp = new HashMap<String, BossScene>();
 	// 商店
 	public static final Store store = new Store();
+	//用户邮件
+	public static HashMap<String, ArrayList<EmailRpg>> alluserEmail = new HashMap<String, ArrayList<EmailRpg>>();
 }

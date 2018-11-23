@@ -24,6 +24,7 @@ import rpg.service.AckBossDispatch;
 import rpg.service.AckDispatch;
 import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
+import rpg.service.ChatDispatch;
 import rpg.service.CopyDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.MoveDispatch;
@@ -60,6 +61,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private CopyDispatch copyDispatch;
 	@Autowired
 	private AckBossDispatch ackBossDispatch;
+	@Autowired
+	private ChatDispatch chatDispatch;
 	
 	//客户端超时次数
 	private Map<ChannelHandlerContext,Integer> clientOvertimeMap = new ConcurrentHashMap<>();
@@ -143,7 +146,20 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 					String[] msg = arg1.split("\\s+");
 					User user = IOsession.mp.get(address);
+					if(msg.length>0) {
 					switch (msg[0]) {
+					case "email":
+						chatDispatch.Email(user, ch, group, arg1);
+						break;
+					case "showemail":
+						chatDispatch.showEmail(user, ch, group, arg1);
+						break;
+					case "chatall":
+						chatDispatch.chatAll(user, ch, group, arg1);
+						break;
+					case "chat":
+						chatDispatch.chat(user, ch, group, arg1);
+						break;
 					case "store":
 						storeDispatch.store(user, ch, group, arg1);
 						break;
@@ -207,6 +223,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 						break;
 					}
 				}
+				}
 			}
 			// 其他连接客户
 			else {
@@ -214,11 +231,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 			}
 		}
 		}
-		if (ClientMain.reconnectTimes > 0) {
-			ClientMain.reconnectTimes = 0;
-			System.err.println("断线重连成功");
-		}
-		System.out.println("服务端收到心跳");
+		resetReconnectTimes();
+//		System.out.println("服务端收到心跳");
 		clientOvertimeMap.remove(arg0);//只要接受到数据包，则清空超时次数
 	}
 	
@@ -248,4 +262,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	    }
 	    clientOvertimeMap.put(ctx, (int)(oldTimes+1));
     }
+    
+	public void resetReconnectTimes() {
+		if (ClientMain.reconnectTimes > 0) {
+			ClientMain.reconnectTimes = 0;
+//			System.err.println("断线重连成功");
+		}
+	}
+
 }

@@ -2,6 +2,7 @@ package rpg.util;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import io.netty.channel.Channel;
 import rpg.pojo.Monster;
@@ -27,6 +28,7 @@ public class RpgUtil {
 	public static void putZb(User user, Zb zb) {
 		List<Userbag> list = IOsession.userBagMp.get(user);
 		Userbag userbag = new Userbag();
+		userbag.setId(UUID.randomUUID().toString());
 		userbag.setUsername(user.getNickname());
 		userbag.setGid(zb.getId());
 		userbag.setNumber(1);
@@ -53,6 +55,7 @@ public class RpgUtil {
 		}
 		if (!flag) {
 			Userbag userbag = new Userbag();
+			userbag.setId(UUID.randomUUID().toString());
 			userbag.setUsername(user.getNickname());
 			userbag.setGid(yaopin.getId());
 			userbag.setNumber(1);
@@ -63,7 +66,7 @@ public class RpgUtil {
 	}
 
 	/**
-	 * 
+	 * 战斗结算奖励
 	 * @param user
 	 * @param ch
 	 */

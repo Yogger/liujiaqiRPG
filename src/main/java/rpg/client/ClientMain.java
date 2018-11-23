@@ -56,7 +56,7 @@ public class ClientMain {
 					if ("quit".equals(input)) {
 						System.exit(1);
 					}
-					channel.writeAndFlush(input);
+					channel.writeAndFlush(input+"\n");
 				}
 			}
 		} catch (InterruptedException e) {

@@ -18,9 +18,11 @@ import rpg.area.Area;
 import rpg.area.Refresh;
 import rpg.area.Scene;
 import rpg.pojo.Buff;
+import rpg.pojo.EmailRpg;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
+import rpg.pojo.User;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
@@ -39,11 +41,19 @@ public class Main {
 		initBuff();
 		initZb();
 		initStore();
+		initEmail();
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
+	}
+
+	private static void initEmail() {
+		ArrayList<EmailRpg> arrayList1 = new ArrayList<EmailRpg>();
+		ArrayList<EmailRpg> arrayList2 = new ArrayList<EmailRpg>();
+		IOsession.alluserEmail.put("q", arrayList1);
+		IOsession.alluserEmail.put("a", arrayList2);
 	}
 
 	// 初始化商店

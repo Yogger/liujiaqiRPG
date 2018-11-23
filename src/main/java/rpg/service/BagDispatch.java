@@ -1,6 +1,8 @@
 package rpg.service;
 
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,12 +41,13 @@ public class BagDispatch {
 			Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
 			Zb zb = IOsession.zbMp.get(userbag.getGid());
 			if (yaopin != null)
-				yaopinWord += yaopin.getName() + "---" + userbag.getNumber() + "\n";
+				yaopinWord += "格子id:" + userbag.getId() + "---" + yaopin.getName() + "---" + userbag.getNumber() + "\n";
 			else {
-				zbWord += zb.getName() + "-耐久度：" + userbag.getNjd() + "-攻击力" + zb.getAck() + "\n";
+				zbWord += "格子id:" + userbag.getId() + "---" + zb.getName() + "-耐久度：" + userbag.getNjd() + "-攻击力"
+						+ zb.getAck() + "\n";
 			}
 		}
-		ch.writeAndFlush("用户金币："+user.getMoney()+"\n"+yaopinWord + zbWord);
+		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + yaopinWord + zbWord);
 	}
 
 	// 展示装备
@@ -91,6 +94,8 @@ public class BagDispatch {
 						ch.writeAndFlush("脱下装备成功" + "-攻击下降：" + zb.getAck() + "现在攻击力" + attribute.getAck());
 						// 放入背包
 						Userbag userbag = new Userbag();
+						String userbagId = UUID.randomUUID().toString();
+						userbag.setId(userbagId);
 						userbag.setUsername(nickname);
 						userbag.setGid(zb.getId());
 						userbag.setNumber(1);
@@ -119,14 +124,17 @@ public class BagDispatch {
 		List<Userzb> list2 = IOsession.userZbMp.get(user);
 		if (msg.length == 2) {
 			for (Userbag userbag : list) {
-				Zb zb = IOsession.zbMp.get(userbag.getGid());
-				if (zb != null) {
-					if (zb.getName().equals(msg[1])) {
+					if (userbag.getId().equals(msg[1])) {
+						if(list2.size()!=0) {
+							ch.writeAndFlush("请先脱下装备");
+							break;
+						}else {
 						// 从背包移除装备
 //					UserbagExample example2 = new UserbagExample();
 //					Criteria createCriteria = example2.createCriteria();
 //					createCriteria.andGidEqualTo(userbag.getGid());
 //					userbagMapper.deleteByExample(example2);
+						Zb zb = IOsession.zbMp.get(userbag.getGid());
 						list.remove(userbag);
 						// 放入装备栏
 						Userzb userzb = new Userzb();
@@ -140,7 +148,7 @@ public class BagDispatch {
 						ch.writeAndFlush("穿戴装备成功" + "-攻击上升：" + zb.getAck() + "现在攻击力" + attribute.getAck());
 						break;
 					}
-				}
+					}
 			}
 		} else {
 			ch.writeAndFlush("没有此物品");
