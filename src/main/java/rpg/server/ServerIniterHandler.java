@@ -26,7 +26,7 @@ public class ServerIniterHandler extends  ChannelInitializer<SocketChannel> {
 //		pipeline.addLast("fdecoder",new LineBasedFrameDecoder(1024));
 		pipeline.addLast("docode",new StringDecoder(Charset.forName("GBK")));
 		pipeline.addLast("encode",new StringEncoder(Charset.forName("GBK")));
-		pipeline.addLast("idleStateHandler", new IdleStateHandler(60, 0, 0));
+		pipeline.addLast("idleStateHandler", new IdleStateHandler(180, 0, 0));
 		pipeline.addLast("chat",rpgServerHandler);
 		
 	}

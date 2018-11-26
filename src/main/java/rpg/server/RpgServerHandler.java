@@ -28,6 +28,7 @@ import rpg.service.ChatDispatch;
 import rpg.service.CopyDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.MoveDispatch;
+import rpg.service.PkDispatch;
 import rpg.service.StoreDispatch;
 import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
@@ -37,6 +38,8 @@ import rpg.session.IOsession;
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	
+	@Autowired
+	private PkDispatch pkDispatch;
 	@Autowired
 	private StoreDispatch storeDispatch;
 	@Autowired
@@ -148,6 +151,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					User user = IOsession.mp.get(address);
 					if(msg.length>0) {
 					switch (msg[0]) {
+					case "pk":
+						pkDispatch.pk(user, ch, group, arg1);
+						break;
 					case "email":
 						chatDispatch.Email(user, ch, group, arg1);
 						break;
@@ -266,7 +272,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	public void resetReconnectTimes() {
 		if (ClientMain.reconnectTimes > 0) {
 			ClientMain.reconnectTimes = 0;
-//			System.err.println("断线重连成功");
+			System.err.println("断线重连成功");
 		}
 	}
 

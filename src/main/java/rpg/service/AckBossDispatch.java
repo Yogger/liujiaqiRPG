@@ -92,7 +92,8 @@ public class AckBossDispatch {
 									SkillList.cdMp.put(user, curSkill);
 
 //							ch.writeAndFlush("使用了" + skill.getName());
-									user.setMp(user.getMp() - skill.getMp());
+//									user.setMp(user.getMp() - skill.getMp());
+									user.getAndSetMp(user, user.getMp() - skill.getMp());
 									// 判断装备是否还有耐久度
 									UserAttribute attribute = IOsession.attMp.get(user);
 									List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -156,7 +157,8 @@ public class AckBossDispatch {
 								curSkill.put(skillId, currentTimeMillis);
 								SkillList.cdMp.put(user, curSkill);
 //						ch.writeAndFlush("使用了" + skill.getName());
-								user.setMp(user.getMp() - skill.getMp());
+//								user.setMp(user.getMp() - skill.getMp());
+								user.getAndSetMp(user, user.getMp() - skill.getMp());
 								// 判断装备是否还有耐久度
 								UserAttribute attribute = IOsession.attMp.get(user);
 								List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -257,7 +259,8 @@ public class AckBossDispatch {
 							curSkill.put(skillId, currentTimeMillis);
 							SkillList.cdMp.put(user, curSkill);
 
-							user.setMp(user.getMp() - skill.getMp());
+//							user.setMp(user.getMp() - skill.getMp());
+							user.getAndSetMp(user, user.getMp() - skill.getMp());
 							ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp());
 							// 判断装备是否还有耐久度
 							UserAttribute attribute = IOsession.attMp.get(user);

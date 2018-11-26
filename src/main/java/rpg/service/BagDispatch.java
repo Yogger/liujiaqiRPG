@@ -47,7 +47,8 @@ public class BagDispatch {
 						+ zb.getAck() + "\n";
 			}
 		}
-		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + yaopinWord + zbWord);
+		UserAttribute attribute = IOsession.attMp.get(user);
+		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + "用户血量：" + user.getHp() + "\n"+"用户攻击力：" + attribute.getAck() + "\n"+yaopinWord + zbWord);
 	}
 
 	// 展示装备
@@ -88,10 +89,10 @@ public class BagDispatch {
 //				rpg.pojo.UserzbExample.Criteria createCriteria = example2.createCriteria();
 //				createCriteria.andZbidEqualTo(userzb.getZbid());
 						UserAttribute attribute = IOsession.attMp.get(user);
-						attribute.setAck(attribute.getAck() - zb.getAck());
+						attribute.setAck(attribute.getAck() - zb.getAck()*userzb.getIsuse());
 						list.remove(userzb);
 //				userzbMapper.deleteByExample(example2);
-						ch.writeAndFlush("脱下装备成功" + "-攻击下降：" + zb.getAck() + "现在攻击力" + attribute.getAck());
+						ch.writeAndFlush("脱下装备成功" + "-攻击下降：" + zb.getAck()*userzb.getIsuse() + "现在攻击力" + attribute.getAck());
 						// 放入背包
 						Userbag userbag = new Userbag();
 						String userbagId = UUID.randomUUID().toString();
@@ -141,11 +142,14 @@ public class BagDispatch {
 						userzb.setUsername(nickname);
 						userzb.setZbid(userbag.getGid());
 						userzb.setNjd(userbag.getNjd());
+						if(userbag.getNjd()<=0) {
+							userzb.setIsuse(0);
+						} else userzb.setIsuse(1);
 						UserAttribute attribute = IOsession.attMp.get(user);
-						attribute.setAck(attribute.getAck() + zb.getAck());
+						attribute.setAck(attribute.getAck() + zb.getAck()* userzb.getIsuse());
 						list2.add(userzb);
 //					userzbMapper.insert(userzb);
-						ch.writeAndFlush("穿戴装备成功" + "-攻击上升：" + zb.getAck() + "现在攻击力" + attribute.getAck());
+						ch.writeAndFlush("穿戴装备成功" + "-攻击上升：" + zb.getAck()* userzb.getIsuse() + "现在攻击力" + attribute.getAck());
 						break;
 					}
 					}
