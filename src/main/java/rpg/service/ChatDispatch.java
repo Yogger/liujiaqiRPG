@@ -104,11 +104,13 @@ public class ChatDispatch {
 			Yaopin yaopin = IOsession.yaopinMp.get(emailRpg.getFujian().getGid());
 			if (zb != null) {
 				RpgUtil.putZb(user, zb);
-				list.remove(Integer.valueOf(msg[1]));
+				int index=Integer.valueOf(msg[1]);
+				list.remove(index);
 				ch.writeAndFlush("提取邮件成功");
 			} else if (yaopin != null) {
 				RpgUtil.putYaopin(user, yaopin);
-				list.remove(Integer.valueOf(msg[1]));
+				int index=Integer.valueOf(msg[1]);
+				list.remove(index);
 				ch.writeAndFlush("提取邮件成功");
 			}
 		} else {
