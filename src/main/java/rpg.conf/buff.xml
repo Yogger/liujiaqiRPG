@@ -7,4 +7,16 @@
 		<mp>5</mp>
 		<lastedTime>6000</lastedTime>
 	</buff>
+	<buff>
+		<id>2</id>
+		<name>中毒buff</name>
+		<mp>10</mp>
+		<lastedTime>10000</lastedTime>
+	</buff>
+	<buff>
+		<id>3</id>
+		<name>护盾buff</name>
+		<mp>1</mp>
+		<lastedTime>10000</lastedTime>
+	</buff>
 </buffList>

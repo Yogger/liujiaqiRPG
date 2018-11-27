@@ -18,11 +18,11 @@ public class GroupDispatch {
 	public void group(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		// 接受组队请求 指令：group yes 用户
-		if (msg[1].equals("yes")) {
+		if (msg[1].equals("yes")&&msg.length>1) {
 			groupYes(user, ch, group, msgR);
 		}
 		// 拒绝组队请求 指令：group no 用户
-		else if (msg[1].equals("no")) {
+		else if (msg[1].equals("no")&&msg.length>1) {
 			groupNo(user, ch, group, msgR);
 		} else {
 			if (IOsession.mp != null) {

@@ -2,7 +2,6 @@ package rpg.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
-import rpg.area.Area;
 import rpg.data.dao.UserskillMapper;
 import rpg.data.dao.UserzbMapper;
 import rpg.pojo.BossScene;
@@ -28,6 +26,7 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 import rpg.util.RpgUtil;
+import rpg.util.UserService;
 
 /**
  * 副本战斗逻辑
@@ -42,6 +41,8 @@ public class AckBossDispatch {
 	private UserskillMapper userskillMapper;
 	@Autowired
 	private UserzbMapper userzbMapper;
+	@Autowired
+	private UserService userService;
 
 	public void ack(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
@@ -94,6 +95,10 @@ public class AckBossDispatch {
 //							ch.writeAndFlush("使用了" + skill.getName());
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
+									//更新人物buff
+									userService.updateUserBuff(user, skill);
+									//更新怪物buff
+									userService.updateMonsterBuff(user, skill, monster);
 									// 判断装备是否还有耐久度
 									UserAttribute attribute = IOsession.attMp.get(user);
 									List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -133,6 +138,7 @@ public class AckBossDispatch {
 											userzb.setNjd(userzb.getNjd() - 5);
 										}
 										bossScene = null;// 回收boss场景
+										IOsession.userBossMp.remove(user.getGroupId());
 									} else {
 										ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
 												+ user.getMp() + "\n" + "攻击了" + monster.getName() + "-造成" + hurt
@@ -159,6 +165,10 @@ public class AckBossDispatch {
 //						ch.writeAndFlush("使用了" + skill.getName());
 //								user.setMp(user.getMp() - skill.getMp());
 								user.getAndSetMp(user, user.getMp() - skill.getMp());
+								//更新人物buff
+								userService.updateUserBuff(user, skill);
+								//更新怪物buff
+								userService.updateMonsterBuff(user, skill, monster);
 								// 判断装备是否还有耐久度
 								UserAttribute attribute = IOsession.attMp.get(user);
 								List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -198,6 +208,7 @@ public class AckBossDispatch {
 										userzb.setNjd(userzb.getNjd() - 5);
 									}
 									bossScene = null;// 回收boss场景
+									IOsession.userBossMp.remove(user.getGroupId());
 								} else {
 									ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
 											+ user.getMp() + "\n" + "攻击了" + monster.getName() + "-造成" + hurt
@@ -261,6 +272,10 @@ public class AckBossDispatch {
 
 //							user.setMp(user.getMp() - skill.getMp());
 							user.getAndSetMp(user, user.getMp() - skill.getMp());
+							//更新人物buff
+							userService.updateUserBuff(user, skill);
+							//更新怪物buff
+							userService.updateMonsterBuff(user, skill, monster);
 							ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp());
 							// 判断装备是否还有耐久度
 							UserAttribute attribute = IOsession.attMp.get(user);
@@ -305,6 +320,7 @@ public class AckBossDispatch {
 												// 回收boss场景，怪物线程
 												BossScene bossScene1 = IOsession.userBossMp.get(user.getGroupId());
 												bossScene1 = null;
+												IOsession.userBossMp.remove(user.getGroupId());
 												break;
 											}
 											// 挑战时间未到
@@ -312,6 +328,13 @@ public class AckBossDispatch {
 												boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 												if (ackstatus) {
 													if (IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
+														HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp.get(user);
+														//检验怪物Buff
+														String word1 = userService.checkMonsterBuff(monster, ch);
+														//检测用户状态
+														if(buffTime1.get(3)!=null) {
+															ch.writeAndFlush(word1+"-你有最强护盾护体，免疫伤害，你的血量剩余："+user.getHp());
+														} else {
 														// 怪物存活
 														if (monster.getHp() > 0) {
 															List<User> userList = monster.getUserList();
@@ -329,7 +352,7 @@ public class AckBossDispatch {
 																if (hp > 0) {
 																	user3.setHp(hp);
 																	// 推送攻击消息
-																	ch1.writeAndFlush("你受到单体技能伤害：" + monster.getAck()
+																	ch1.writeAndFlush(word1+"-你受到单体技能伤害：" + monster.getAck()
 																			+ "-你的血量剩余：" + hp);
 																	if (group2 != null) {
 																		List<User> list = group2.getList();
@@ -338,7 +361,7 @@ public class AckBossDispatch {
 																					.get(user2);
 																			if (channel != ch1) {
 																				channel.writeAndFlush(
-																						user3.getNickname()
+																						word1+"-"+user3.getNickname()
 																								+ "受到单体技能伤害："
 																								+ monster.getAck()
 																								+ "-血量剩余：" + hp);
@@ -366,6 +389,7 @@ public class AckBossDispatch {
 																	BossScene bossScene1 = IOsession.userBossMp
 																			.get(user.getGroupId());
 																	bossScene1 = null;
+																	IOsession.userBossMp.remove(user.getGroupId());
 																	break;
 																}
 															}
@@ -381,8 +405,8 @@ public class AckBossDispatch {
 																		// 血量满足
 																		if (hp > 0) {
 																			user2.setHp(hp);
-																			channel.writeAndFlush(
-																					"你受到全体技能伤害：" + monster.getAck()
+																			channel.writeAndFlush(word1+
+																					"-你受到全体技能伤害：" + monster.getAck()
 																							+ "-你的血量剩余：" + hp);
 																		} else {
 																			Channel ch1 = IOsession.userchMp.get(user2);
@@ -408,6 +432,7 @@ public class AckBossDispatch {
 																			BossScene bossScene1 = IOsession.userBossMp
 																					.get(user.getGroupId());
 																			bossScene1 = null;
+																			IOsession.userBossMp.remove(user.getGroupId());
 																			break;
 																		}
 																	}
@@ -428,8 +453,10 @@ public class AckBossDispatch {
 															BossScene bossScene1 = IOsession.userBossMp
 																	.get(user.getGroupId());
 															bossScene1 = null;
+															IOsession.userBossMp.remove(user.getGroupId());
 															break;
 														}
+													}
 													} else {
 														break;
 													}

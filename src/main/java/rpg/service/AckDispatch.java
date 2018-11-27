@@ -23,6 +23,7 @@ import rpg.pojo.Userzb;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.util.UserService;
 
 /**
  * 战斗逻辑
@@ -37,6 +38,8 @@ public class AckDispatch {
 	private UserskillMapper userskillMapper;
 	@Autowired
 	private UserzbMapper userzbMapper;
+	@Autowired
+	private UserService userService;
 
 	public void ack(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
@@ -71,9 +74,13 @@ public class AckDispatch {
 									HashMap<String, Long> curSkill = new HashMap<String, Long>();
 									curSkill.put(skillId, currentTimeMillis);
 									SkillList.cdMp.put(user, curSkill);
-
+									
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
+									//更新人物buff
+									userService.updateUserBuff(user, skill);
+									//更新怪物buff
+									userService.updateMonsterBuff(user, skill, monster);
 									ch.writeAndFlush(
 											"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp());
 									// 判断装备是否还有耐久度
@@ -107,13 +114,20 @@ public class AckDispatch {
 												boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 												if (ackstatus) {
 													if (IOsession.ackStatus.get(ch.remoteAddress())==1) {
+														HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp.get(user);
+														//检验怪物Buff
+														String word1 = userService.checkMonsterBuff(monster, ch);
+														//检测用户状态
+														if(buffTime1.get(3)!=null) {
+															ch.writeAndFlush(word1+"-你有最强护盾护体，免疫伤害，你的血量剩余："+user.getHp());
+														} else {
 														int hp = user.getHp() - monster.getAck();
 														// 怪物存活
 														if (monster.getHp() > 0) {
 															if (hp > 0) {
 																user.setHp(hp);
-																ch.writeAndFlush(
-																		"你受到伤害：" + monster.getAck() + "-你的血量剩余：" + hp);
+																ch.writeAndFlush(word1+
+																		"-你受到伤害：" + monster.getAck() + "-你的血量剩余：" + hp);
 															} else {
 																ch.writeAndFlush("你已被打死");
 																user.setHp(100);
@@ -126,6 +140,7 @@ public class AckDispatch {
 															IOsession.ackStatus.put(ch.remoteAddress(), 0);
 															break;
 														}
+													}
 													}
 													 else {
 															break;
@@ -197,6 +212,10 @@ public class AckDispatch {
 //							ch.writeAndFlush("使用了" + skill.getName());
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
+									//更新人物buff
+									userService.updateUserBuff(user, skill);
+									//更新怪物buff
+									userService.updateMonsterBuff(user, skill, monster);
 									// 判断装备是否还有耐久度
 									UserAttribute attribute = IOsession.attMp.get(user);
 									List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -253,6 +272,10 @@ public class AckDispatch {
 //						ch.writeAndFlush("使用了" + skill.getName());
 //								user.setMp(user.getMp() - skill.getMp());
 								user.getAndSetMp(user, user.getMp() - skill.getMp());
+								//更新人物buff
+								userService.updateUserBuff(user, skill);
+								//更新怪物buff
+								userService.updateMonsterBuff(user, skill, monster);
 								// 判断装备是否还有耐久度
 								UserAttribute attribute = IOsession.attMp.get(user);
 								List<Userzb> list1 = IOsession.userZbMp.get(user);

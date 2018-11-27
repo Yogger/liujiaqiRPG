@@ -27,7 +27,23 @@ public class Refresh implements Runnable {
 						Long lastTime = entry.getValue();
 						long currentTimeMillis = System.currentTimeMillis();
 						if (currentTimeMillis - lastTime < buff.getLastedTime()) {
-							addMp += buff.getMp();
+							switch (buffId) {
+							case 1:
+								addMp += buff.getMp();
+								break;
+							default:
+								break;
+							}
+//							addMp += buff.getMp();
+						} else {
+							switch (buffId) {
+							case 3:
+								Long long1 = buffTime.get(3);long1=null;
+								buffTime.remove(3);
+								break;
+							default:
+								break;
+							}
 						}
 					}
 				}

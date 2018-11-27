@@ -68,7 +68,7 @@ public class PkDispatch {
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
 																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush("");
+													channel.writeAndFlush("你受到了"+user.getNickname()+"的技能"+skill.getName()+"-造成" + hurt + "点伤害-你的血量" + user2.getHp());
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
@@ -109,7 +109,7 @@ public class PkDispatch {
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
 																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush("");
+													channel.writeAndFlush("你受到了"+user.getNickname()+"的技能"+skill.getName()+"-造成" + hurt + "点伤害-你的血量" + user2.getHp());
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);

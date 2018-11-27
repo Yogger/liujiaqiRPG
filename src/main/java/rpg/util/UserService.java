@@ -1,23 +1,24 @@
 package rpg.util;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.netty.channel.Channel;
 import rpg.data.dao.UserskillMapper;
+import rpg.pojo.Buff;
+import rpg.pojo.Monster;
 import rpg.pojo.Skill;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.pojo.Userskill;
 import rpg.pojo.UserskillExample;
+import rpg.pojo.UserskillExample.Criteria;
 import rpg.pojo.Userzb;
 import rpg.pojo.Zb;
-import rpg.pojo.UserskillExample.Criteria;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
@@ -99,5 +100,80 @@ public class UserService {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 更新人物buff
+	 * @param user
+	 * @param skill
+	 */
+	public void updateUserBuff(User user, Skill skill) {
+		// 找到所产生的Buff
+		Buff buff = IOsession.buffMp.get(Integer.valueOf(skill.getEffect()));
+		// 存储上次使用buff时间
+		long currentTimeMillis = System.currentTimeMillis();
+		if (IOsession.buffTimeMp.get(user) == null) {
+			HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+			buffMap.put(buff.getId(), currentTimeMillis);
+			IOsession.buffTimeMp.put(user, buffMap);
+		} else {
+			HashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
+			buffMap.put(buff.getId(), currentTimeMillis);
+		}
+	}
+	
+	/**
+	 * 更新怪物buff
+	 * 
+	 * @param user
+	 * @param skill
+	 * @param monster
+	 */
+	public void updateMonsterBuff(User user, Skill skill, Monster monster) {
+		// 找到所产生的Buff
+		Buff buff = IOsession.buffMp.get(Integer.valueOf(skill.getEffect()));
+		// 存储上次使用buff时间
+		long currentTimeMillis = System.currentTimeMillis();
+		if (IOsession.monsterBuffTimeMp.get(monster) == null) {
+			HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+			buffMap.put(buff.getId(), currentTimeMillis);
+			IOsession.monsterBuffTimeMp.put(monster, buffMap);
+		} else {
+			HashMap<Integer, Long> buffMap = IOsession.monsterBuffTimeMp.get(monster);
+			buffMap.put(buff.getId(), currentTimeMillis);
+		}
+	}
+
+	/**
+	 * 检查怪物Buff
+	 * @param monster
+	 * @param ch
+	 */
+	public String checkMonsterBuff(Monster monster, Channel ch) {
+		HashMap<Integer, Long> buffTime = IOsession.monsterBuffTimeMp.get(monster);
+		String msg = "";
+		if (buffTime != null) {
+			for (Entry<Integer, Long> entry : buffTime.entrySet()) {
+				// 通过buffID找到具体的buff
+				Integer buffId = entry.getKey();
+				Buff buff = IOsession.buffMp.get(buffId);
+				// 获取使用Buff的时间
+				Long lastTime = entry.getValue();
+				long currentTimeMillis = System.currentTimeMillis();
+				if (currentTimeMillis - lastTime < buff.getLastedTime()) {
+					switch (buff.getId()) {
+					case 2:
+						monster.setHp(monster.getHp() - buff.getMp());
+						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
+								+ monster.getHp();
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			return msg;
+		}
+		return msg;
 	}
 }

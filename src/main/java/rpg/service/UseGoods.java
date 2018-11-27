@@ -45,9 +45,14 @@ public class UseGoods {
 					Buff buff = IOsession.buffMp.get(yaopin.getBuff());
 					// 存储上次使用buff时间
 					long currentTimeMillis = System.currentTimeMillis();
+					if(IOsession.buffTimeMp.get(user)==null) {
 					HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
 					buffMap.put(buff.getId(), currentTimeMillis);
 					IOsession.buffTimeMp.put(user, buffMap);
+					} else {
+						HashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
+						buffMap.put(buff.getId(), currentTimeMillis);
+					}
 					userbag.setNumber(userbag.getNumber() - 1);
 					ch.writeAndFlush(yaopin.getName() + "使用成功，剩余" + userbag.getNumber());
 				}

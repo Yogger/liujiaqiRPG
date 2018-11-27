@@ -48,7 +48,8 @@ public class BagDispatch {
 			}
 		}
 		UserAttribute attribute = IOsession.attMp.get(user);
-		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + "用户血量：" + user.getHp() + "\n"+"用户攻击力：" + attribute.getAck() + "\n"+yaopinWord + zbWord);
+		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + "用户血量：" + user.getHp() + "\n" + "用户攻击力："
+				+ attribute.getAck() + "\n" + yaopinWord + zbWord);
 	}
 
 	// 展示装备
@@ -59,10 +60,13 @@ public class BagDispatch {
 //		criteria.andUsernameEqualTo(nickname);
 //		List<Userzb> list = userzbMapper.selectByExample(example);
 		List<Userzb> list = IOsession.userZbMp.get(user);
+		String msg = "";
 		for (Userzb userzb : list) {
 			Zb zb = IOsession.zbMp.get(userzb.getZbid());
-			ch.writeAndFlush(zb.getName() + "-耐久度：" + userzb.getNjd() + "-攻击力" + zb.getAck());
+			int njd = userzb.getNjd() > 0 ? userzb.getNjd() : 0;
+			msg += zb.getName() + "-耐久度：" + njd + "-攻击力" + zb.getAck() + "\n";
 		}
+		ch.writeAndFlush(msg);
 	}
 
 	// 脱装备
@@ -89,10 +93,11 @@ public class BagDispatch {
 //				rpg.pojo.UserzbExample.Criteria createCriteria = example2.createCriteria();
 //				createCriteria.andZbidEqualTo(userzb.getZbid());
 						UserAttribute attribute = IOsession.attMp.get(user);
-						attribute.setAck(attribute.getAck() - zb.getAck()*userzb.getIsuse());
+						attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
 						list.remove(userzb);
 //				userzbMapper.deleteByExample(example2);
-						ch.writeAndFlush("脱下装备成功" + "-攻击下降：" + zb.getAck()*userzb.getIsuse() + "现在攻击力" + attribute.getAck());
+						ch.writeAndFlush(
+								"脱下装备成功" + "-攻击下降：" + zb.getAck() * userzb.getIsuse() + "现在攻击力" + attribute.getAck());
 						// 放入背包
 						Userbag userbag = new Userbag();
 						String userbagId = UUID.randomUUID().toString();
@@ -125,11 +130,11 @@ public class BagDispatch {
 		List<Userzb> list2 = IOsession.userZbMp.get(user);
 		if (msg.length == 2) {
 			for (Userbag userbag : list) {
-					if (userbag.getId().equals(msg[1])) {
-						if(list2.size()!=0) {
-							ch.writeAndFlush("请先脱下装备");
-							break;
-						}else {
+				if (userbag.getId().equals(msg[1])) {
+					if (list2.size() != 0) {
+						ch.writeAndFlush("请先脱下装备");
+						break;
+					} else {
 						// 从背包移除装备
 //					UserbagExample example2 = new UserbagExample();
 //					Criteria createCriteria = example2.createCriteria();
@@ -142,17 +147,19 @@ public class BagDispatch {
 						userzb.setUsername(nickname);
 						userzb.setZbid(userbag.getGid());
 						userzb.setNjd(userbag.getNjd());
-						if(userbag.getNjd()<=0) {
+						if (userbag.getNjd() <= 0) {
 							userzb.setIsuse(0);
-						} else userzb.setIsuse(1);
+						} else
+							userzb.setIsuse(1);
 						UserAttribute attribute = IOsession.attMp.get(user);
-						attribute.setAck(attribute.getAck() + zb.getAck()* userzb.getIsuse());
+						attribute.setAck(attribute.getAck() + zb.getAck() * userzb.getIsuse());
 						list2.add(userzb);
 //					userzbMapper.insert(userzb);
-						ch.writeAndFlush("穿戴装备成功" + "-攻击上升：" + zb.getAck()* userzb.getIsuse() + "现在攻击力" + attribute.getAck());
+						ch.writeAndFlush(
+								"穿戴装备成功" + "-攻击上升：" + zb.getAck() * userzb.getIsuse() + "现在攻击力" + attribute.getAck());
 						break;
 					}
-					}
+				}
 			}
 		} else {
 			ch.writeAndFlush("没有此物品");
