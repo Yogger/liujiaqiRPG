@@ -20,6 +20,15 @@ public class Monster {
 	private List<User> userList;
 	private List<Integer> awardList;
 	private int money;
+	private List<Integer> skillList;
+
+	public List<Integer> getSkillList() {
+		return skillList;
+	}
+
+	public void setSkillList(List<Integer> skillList) {
+		this.skillList = skillList;
+	}
 
 	public int getMoney() {
 		return money;

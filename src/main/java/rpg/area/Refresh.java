@@ -17,6 +17,7 @@ public class Refresh implements Runnable {
 			for (User user : IOsession.mp.values()) {
 				HashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
 				int addMp = 5;
+				int subHp = 0;
 				if (buffTime != null) {
 					for (Entry<Integer, Long> entry : buffTime.entrySet()) {
 //				System.out.println("id"+entry.getKey()+"时间"+entry.getValue());
@@ -31,6 +32,10 @@ public class Refresh implements Runnable {
 							case 1:
 								addMp += buff.getMp();
 								break;
+							case 2:
+								subHp+=buff.getMp();
+								System.out.println(user.getNickname() +"-血量减少"+subHp+"-当前血量:"+(user.getHp()-subHp));
+								break;
 							default:
 								break;
 							}
@@ -40,6 +45,10 @@ public class Refresh implements Runnable {
 							case 3:
 								Long long1 = buffTime.get(3);long1=null;
 								buffTime.remove(3);
+								break;
+							case 4:
+								Long long2 = buffTime.get(4);long2=null;
+								buffTime.remove(4);
 								break;
 							default:
 								break;

@@ -51,16 +51,16 @@ public class AckDispatch {
 		criteria.andUsernameEqualTo(nickname);
 		List<Userskill> list = userskillMapper.selectByExample(example);
 		// 获取地图中的怪物
-		LinkedList<Monster> monsterList = Area.sceneList.get(id-1).getMonsterList();
+		LinkedList<Monster> monsterList = Area.sceneList.get(id - 1).getMonsterList();
 		// 第一次攻击
 		if (msg.length == 3) {
-			boolean find =false;
+			boolean find = false;
 			for (Monster monster : monsterList) {
 				// 找到场景内怪物
 				if (msg[1].equals(monster.getName())) {
-					find =true;
+					find = true;
 					if (monster.getHp() > 0) {
-						monster.setCountAcker(monster.getCountAcker()+1);
+						monster.setCountAcker(monster.getCountAcker() + 1);
 						IOsession.monsterMp.put(ch.remoteAddress(), monster);
 						// 找到配置的技能
 						for (Userskill userskill : list) {
@@ -74,12 +74,14 @@ public class AckDispatch {
 									HashMap<String, Long> curSkill = new HashMap<String, Long>();
 									curSkill.put(skillId, currentTimeMillis);
 									SkillList.cdMp.put(user, curSkill);
-									
+
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
-									//更新人物buff
-									userService.updateUserBuff(user, skill);
-									//更新怪物buff
+									// 更新人物buff
+									if (skill.getId() != 1) {
+										userService.updateUserBuff(user, skill);
+									}
+									// 更新怪物buff
 									userService.updateMonsterBuff(user, skill, monster);
 									ch.writeAndFlush(
 											"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp());
@@ -89,9 +91,9 @@ public class AckDispatch {
 									for (Userzb userzb : list1) {
 										if (userzb.getNjd() <= 0) {
 											Zb zb = IOsession.zbMp.get(userzb.getZbid());
-											if(zb!=null&&attribute!=null) {
-											attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
-											userzb.setIsuse(0);
+											if (zb != null && attribute != null) {
+												attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
+												userzb.setIsuse(0);
 											}
 										}
 									}
@@ -106,56 +108,58 @@ public class AckDispatch {
 										userzb.setNjd(userzb.getNjd() - 5);
 									}
 									// 怪物攻击线程
-									if(monster.getCountAcker()==1) {
-									IOsession.monsterThreadPool.execute(new Runnable() {
-										@Override
-										public void run() {
-											while (true) {
-												boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
-												if (ackstatus) {
-													if (IOsession.ackStatus.get(ch.remoteAddress())==1) {
-														HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp.get(user);
-														//检验怪物Buff
-														String word1 = userService.checkMonsterBuff(monster, ch);
-														//检测用户状态
-														if(buffTime1.get(3)!=null) {
-															ch.writeAndFlush(word1+"-你有最强护盾护体，免疫伤害，你的血量剩余："+user.getHp());
-														} else {
-														int hp = user.getHp() - monster.getAck();
-														// 怪物存活
-														if (monster.getHp() > 0) {
-															if (hp > 0) {
-																user.setHp(hp);
-																ch.writeAndFlush(word1+
-																		"-你受到伤害：" + monster.getAck() + "-你的血量剩余：" + hp);
+									if (monster.getCountAcker() == 1) {
+										IOsession.monsterThreadPool.execute(new Runnable() {
+											@Override
+											public void run() {
+												while (true) {
+													boolean ackstatus = IOsession.ackStatus
+															.containsKey(ch.remoteAddress());
+													if (ackstatus) {
+														if (IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
+															HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp
+																	.get(user);
+															// 检验怪物Buff
+															String word1 = userService.checkMonsterBuff(monster, ch);
+															// 检测用户状态
+															if (buffTime1.get(3) != null) {
+																ch.writeAndFlush(word1 + "-你有最强护盾护体，免疫伤害，你的血量剩余："
+																		+ user.getHp());
 															} else {
-																ch.writeAndFlush("你已被打死");
-																user.setHp(100);
-																IOsession.ackStatus.put(ch.remoteAddress(), 0);
-																break;
+																int hp = user.getHp() - monster.getAck();
+																// 怪物存活
+																if (monster.getHp() > 0) {
+																	if (hp > 0) {
+																		user.setHp(hp);
+																		ch.writeAndFlush(word1 + "-你受到伤害："
+																				+ monster.getAck() + "-你的血量剩余：" + hp);
+																	} else {
+																		ch.writeAndFlush("你已被打死");
+																		user.setHp(100);
+																		IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																		break;
+																	}
+																}
+																// 怪物死亡
+																else {
+																	IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																	break;
+																}
 															}
-														}
-														// 怪物死亡
-														else {
-															IOsession.ackStatus.put(ch.remoteAddress(), 0);
+														} else {
 															break;
 														}
 													}
+													try {
+														Thread.sleep(5000);
+													} catch (InterruptedException e) {
+														e.printStackTrace();
 													}
-													 else {
-															break;
-														}
-												}
-												try {
-													Thread.sleep(5000);
-												} catch (InterruptedException e) {
-													e.printStackTrace();
 												}
 											}
-										}
-									});
-									break;
-								}
+										});
+										break;
+									}
 								}
 								// 蓝量不足
 								else {
@@ -171,7 +175,7 @@ public class AckDispatch {
 					}
 				}
 			}
-			if(!find) {
+			if (!find) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				ch.writeAndFlush("怪物不存在");
 			}
@@ -183,12 +187,10 @@ public class AckDispatch {
 			if (msg[0].equals("esc")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				ch.writeAndFlush("成功退出战斗");
-			}
-			else if (msg[0].equals("ack")) {
+			} else if (msg[0].equals("ack")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				ch.writeAndFlush("指令错误");
-			}
-			else {
+			} else {
 				for (Userskill userskill : list) {
 					String skillId = String.valueOf(userskill.getSkill());
 					if (skillId.equals(msg[0])) {
@@ -212,9 +214,11 @@ public class AckDispatch {
 //							ch.writeAndFlush("使用了" + skill.getName());
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
-									//更新人物buff
-									userService.updateUserBuff(user, skill);
-									//更新怪物buff
+									// 更新人物buff
+									if (skill.getId() != 1) {
+										userService.updateUserBuff(user, skill);
+									}
+									// 更新怪物buff
 									userService.updateMonsterBuff(user, skill, monster);
 									// 判断装备是否还有耐久度
 									UserAttribute attribute = IOsession.attMp.get(user);
@@ -222,9 +226,9 @@ public class AckDispatch {
 									for (Userzb userzb : list1) {
 										if (userzb.getNjd() <= 0) {
 											Zb zb = IOsession.zbMp.get(userzb.getZbid());
-											if(zb!=null&&attribute!=null) {
-											attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
-											userzb.setIsuse(0);
+											if (zb != null && attribute != null) {
+												attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
+												userzb.setIsuse(0);
 											}
 										}
 									}
@@ -272,9 +276,11 @@ public class AckDispatch {
 //						ch.writeAndFlush("使用了" + skill.getName());
 //								user.setMp(user.getMp() - skill.getMp());
 								user.getAndSetMp(user, user.getMp() - skill.getMp());
-								//更新人物buff
-								userService.updateUserBuff(user, skill);
-								//更新怪物buff
+								// 更新人物buff
+								if (skill.getId() != 1) {
+									userService.updateUserBuff(user, skill);
+								}
+								// 更新怪物buff
 								userService.updateMonsterBuff(user, skill, monster);
 								// 判断装备是否还有耐久度
 								UserAttribute attribute = IOsession.attMp.get(user);
@@ -282,9 +288,9 @@ public class AckDispatch {
 								for (Userzb userzb : list1) {
 									if (userzb.getNjd() <= 0) {
 										Zb zb = IOsession.zbMp.get(userzb.getZbid());
-										if(zb!=null&&attribute!=null) {
-										attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
-										userzb.setIsuse(0);
+										if (zb != null && attribute != null) {
+											attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
+											userzb.setIsuse(0);
 										}
 									}
 								}
@@ -328,4 +334,5 @@ public class AckDispatch {
 		} else {
 			ch.writeAndFlush("指令错误");
 		}
-	}}
+	}
+}

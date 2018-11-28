@@ -17,4 +17,12 @@
 		<hurt>30000</hurt>
 		<effect>3</effect>
 	</skill>
+		<skill>
+		<id>4</id>
+		<name>打晕攻击</name>
+		<cd>5000</cd>
+		<mp>60</mp>
+		<hurt>30000</hurt>
+		<effect>4</effect>
+	</skill>
 </skillList>

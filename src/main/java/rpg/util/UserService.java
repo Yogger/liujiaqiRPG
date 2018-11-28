@@ -101,9 +101,10 @@ public class UserService {
 			}
 		}
 	}
-	
+
 	/**
 	 * 更新人物buff
+	 * 
 	 * @param user
 	 * @param skill
 	 */
@@ -112,16 +113,16 @@ public class UserService {
 		Buff buff = IOsession.buffMp.get(Integer.valueOf(skill.getEffect()));
 		// 存储上次使用buff时间
 		long currentTimeMillis = System.currentTimeMillis();
-		if (IOsession.buffTimeMp.get(user) == null) {
-			HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
-			buffMap.put(buff.getId(), currentTimeMillis);
-			IOsession.buffTimeMp.put(user, buffMap);
-		} else {
-			HashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
-			buffMap.put(buff.getId(), currentTimeMillis);
-		}
+			if (IOsession.buffTimeMp.get(user) == null) {
+				HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+				buffMap.put(buff.getId(), currentTimeMillis);
+				IOsession.buffTimeMp.put(user, buffMap);
+			} else {
+				HashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
+				buffMap.put(buff.getId(), currentTimeMillis);
+			}
 	}
-	
+
 	/**
 	 * 更新怪物buff
 	 * 
@@ -146,6 +147,7 @@ public class UserService {
 
 	/**
 	 * 检查怪物Buff
+	 * 
 	 * @param monster
 	 * @param ch
 	 */

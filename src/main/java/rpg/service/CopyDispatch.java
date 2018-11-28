@@ -53,6 +53,13 @@ public class CopyDispatch {
 				awardList.add(id);
 			}
 			monster.setAwardList(awardList);
+			String[] split1 = e.elementText("skill").split(",");
+			ArrayList<Integer> skillList = new ArrayList<>();
+			for (String skillId : split1) {
+				Integer id = Integer.valueOf(skillId);
+				skillList.add(id);
+			}
+			monster.setSkillList(skillList);
 			monsterList.add(monster);
 		}
 		scene.setMonsterList(monsterList);

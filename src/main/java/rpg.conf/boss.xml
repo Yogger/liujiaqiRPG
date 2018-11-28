@@ -9,6 +9,7 @@
 		<ack>30</ack>
 		<award>101,102,1</award>
 		<money>1000</money>
+		<skill>4</skill>
 	</boss>
 	<boss>
 		<name>九辰天蛰</name>
@@ -18,5 +19,6 @@
 		<ack>30</ack>
 		<award>101,102,1</award>
 		<money>2000</money>
+		<skill>4</skill>
 	</boss>
 </bossList>
