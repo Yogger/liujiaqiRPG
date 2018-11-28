@@ -23,10 +23,13 @@ public class Refresh implements Runnable {
 //				System.out.println("id"+entry.getKey()+"时间"+entry.getValue());
 						// 通过buffID找到具体的buff
 						Integer buffId = entry.getKey();
+						if(buffId!=null) {
 						Buff buff = IOsession.buffMp.get(buffId);
 						// 获取使用Buff的时间
 						Long lastTime = entry.getValue();
+						if(lastTime!=null) {
 						long currentTimeMillis = System.currentTimeMillis();
+						if(buff!=null) {
 						if (currentTimeMillis - lastTime < buff.getLastedTime()) {
 							switch (buffId) {
 							case 1:
@@ -34,7 +37,8 @@ public class Refresh implements Runnable {
 								break;
 							case 2:
 								subHp+=buff.getMp();
-								System.out.println(user.getNickname() +"-血量减少"+subHp+"-当前血量:"+(user.getHp()-subHp));
+								user.getAndSetHp(user, user.getHp()-subHp);
+								System.out.println(user.getNickname() +"-血量减少"+subHp+"-当前血量:"+user.getHp());
 								break;
 							default:
 								break;
@@ -54,6 +58,9 @@ public class Refresh implements Runnable {
 								break;
 							}
 						}
+					}
+					}
+					}
 					}
 				}
 				if (user.getMp() < 100) {

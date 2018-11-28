@@ -32,7 +32,7 @@ public class CopyDispatch {
 		scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
 		scene.setId(0);
-		scene.setLastedTime(60000);
+		scene.setLastedTime(600000);
 		ArrayList<Monster> monsterList = new ArrayList<>();
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\boss.xml"));

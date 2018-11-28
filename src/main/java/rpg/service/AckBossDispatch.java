@@ -3,18 +3,16 @@ package rpg.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
-import rpg.area.BossSceneRefresh;
+import rpg.area.SceneBossRefresh;
 import rpg.data.dao.UserskillMapper;
 import rpg.data.dao.UserzbMapper;
 import rpg.pojo.BossScene;
-import rpg.pojo.Buff;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.Skill;
@@ -66,6 +64,7 @@ public class AckBossDispatch {
 		// 二次及以上攻击
 		else if (msg.length == 1) {
 			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+			if(monster!=null) {
 			HashMap<Integer, Long> buffTime2 = IOsession.buffTimeMp.get(user);
 			// 找到配置的技能
 			if (msg[0].equals("esc")) {
@@ -84,6 +83,7 @@ public class AckBossDispatch {
 
 						long millis = System.currentTimeMillis();// 获取当前时间毫秒值
 						HashMap<String, Long> map = SkillList.cdMp.get(user);
+						if(map!=null) {
 						Long lastmillis = map.get(skillId);
 
 						// 蓝量满足
@@ -127,10 +127,26 @@ public class AckBossDispatch {
 										if(monsterList.size()-1>bossScene.getId()) {
 											bossScene.setId(bossScene.getId()+1);
 											Monster monster2 = monsterList.get(bossScene.getId());
+											Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+											if (group2 != null) {
+												List<User> list3 = group2.getList();
+												for (User user3 : list3) {
+													ArrayList<User> userList1 = new ArrayList<>();
+													userList1.add(user3);
+													monster2.setUserList(userList1);
+												}
+											}
 											monster=null;
 											monster=monster2;
-											IOsession.monsterMp.put(ch.remoteAddress(), monster);
-											ch.writeAndFlush("新的Boss"+monster.getName()+"出现-血量:"+monster.getHp()+"攻击力:"+monster.getAck());
+											//将怪物指定用户
+											if (group2 != null) {
+												List<User> list3 = group2.getList();
+												for (User user3 : list3) {
+													Channel channel1 = IOsession.userchMp.get(user3);
+													IOsession.monsterMp.put(channel1.remoteAddress(), monster);
+													channel1.writeAndFlush("boss已被消灭,新的Boss"+monster.getName()+"出现-血量:"+monster.getHp()+"攻击力:"+monster.getAck());
+												}
+											}
 										} else {
 										ch.writeAndFlush("boss已全被消灭，退出副本");
 										Group group2 = IOsession.userGroupMp.get(user.getGroupId());
@@ -209,12 +225,28 @@ public class AckBossDispatch {
 									if(monsterList.size()-1>bossScene.getId()) {
 										bossScene.setId(bossScene.getId()+1);
 										Monster monster2 = monsterList.get(bossScene.getId());
+										Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+										if (group2 != null) {
+											List<User> list3 = group2.getList();
+											for (User user3 : list3) {
+												ArrayList<User> userList1 = new ArrayList<>();
+												userList1.add(user3);
+												monster2.setUserList(userList1);
+											}
+										}
 										monster=null;
 										monster=monster2;
-										IOsession.monsterMp.put(ch.remoteAddress(), monster);
-										ch.writeAndFlush("新的Boss"+monster.getName()+"出现-血量:"+monster.getHp()+"攻击力:"+monster.getAck());
+										//将怪物指定用户
+										if (group2 != null) {
+											List<User> list3 = group2.getList();
+											for (User user3 : list3) {
+												Channel channel1 = IOsession.userchMp.get(user3);
+												IOsession.monsterMp.put(channel1.remoteAddress(), monster);
+												channel1.writeAndFlush("boss已被消灭,新的Boss"+monster.getName()+"出现-血量:"+monster.getHp()+"攻击力:"+monster.getAck());
+											}
+										}
 									} else {
-									ch.writeAndFlush("boss已被消灭，退出副本");
+									ch.writeAndFlush("boss已全被消灭，退出副本");
 									RpgUtil.ackEnd(user, ch, monster);
 									Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 									if (group2 != null) {
@@ -255,10 +287,16 @@ public class AckBossDispatch {
 //							IOsession.ackStatus.put(ch.remoteAddress(), 0);
 							ch.writeAndFlush("蓝量不足，请充值");
 						}
+					} else {
+						ch.writeAndFlush("指令错误");
+					}
 					}
 				}
 			}
-		} else {
+		}else {
+			ch.writeAndFlush("指令错误");
+		}
+		}else {
 			ch.writeAndFlush("指令错误");
 		}
 	}
@@ -332,7 +370,7 @@ public class AckBossDispatch {
 							// 怪物攻击线程
 							if (monster.getCountAcker() == 1) {
 								bossScene.setStartTime(System.currentTimeMillis());
-								IOsession.monsterThreadPool.execute(new BossSceneRefresh(userService, user, bossScene, ch));
+								IOsession.monsterThreadPool.execute(new SceneBossRefresh(userService, user, bossScene, ch));
 //								IOsession.monsterThreadPool.execute(new Runnable() {
 //									@Override
 //									public void run() {
