@@ -1,8 +1,8 @@
 package rpg.area;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
@@ -18,22 +18,41 @@ import rpg.util.UserService;
 public class SceneBossRefresh implements Runnable {
 
 	private UserService userService;
-	private User user;
+	private User initUser;
 	private BossScene bossScene;
 	private Channel ch;
+	private Group firstGroup;
 
-	public SceneBossRefresh(UserService userService, User user, BossScene bossScene, Channel ch) {
+	public SceneBossRefresh(UserService userService, User initUser, BossScene bossScene, Channel ch,Group firstGroup) {
 		super();
 		this.userService = userService;
-		this.user = user;
+		this.initUser = initUser;
 		this.bossScene = bossScene;
 		this.ch = ch;
+		this.firstGroup=firstGroup;
 	}
 	
 	@Override
-	public void run() {
+	public  void  run() {
 
 		while (true) {
+			List<User> list3 = firstGroup.getList();
+			User user=initUser;
+			System.out.println(list3.size());
+			if(list3.size()==0) {
+				BossScene bossScene = IOsession.userBossMp.get(user.getGroupId());
+				if(bossScene!=null) {
+					bossScene=null;
+					IOsession.userBossMp.remove(user.getGroupId());
+				}
+				break;
+			}
+			if(firstGroup.getUser()!=initUser) {
+				for (User userLeader : list3) {
+					user=userLeader;
+					break;
+				}
+			}
 			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 			System.out.println(monster.getName());
 			// 达到挑战时间
@@ -60,14 +79,22 @@ public class SceneBossRefresh implements Runnable {
 				boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 				if (ackstatus) {
 					if (IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
-						HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp
-								.get(user);
+//						ConcurrentHashMap<Integer,Long> buffTime1 = IOsession.buffTimeMp
+//								.get(user);
 						// 检验怪物Buff
 						String word1 = userService.checkMonsterBuff(monster, ch);
 							// 怪物存活
 							if (monster.getHp() > 0) {
+								boolean wudiFlag=false;
+								for (User user2 : list3) {
+									ConcurrentHashMap<Integer,Long> buffTime1 = IOsession.buffTimeMp.get(user2);
+									if(buffTime1!=null&&buffTime1.get(3) != null) {
+										wudiFlag=true;
+										break;
+									}
+								}
 								// 检测用户状态
-								if (buffTime1!=null&&buffTime1.get(3) != null) {
+								if (wudiFlag) {
 									Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 									if (group2 != null) {
 										List<User> list = group2.getList();
@@ -222,7 +249,7 @@ public class SceneBossRefresh implements Runnable {
 					}
 				}
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

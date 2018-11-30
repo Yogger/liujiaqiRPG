@@ -3,6 +3,7 @@ package rpg.area;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import rpg.pojo.Buff;
 import rpg.pojo.User;
@@ -13,9 +14,11 @@ public class Refresh implements Runnable {
 	@Override
 	public synchronized void run() {
 //		System.out.println("开始执行了：");
+		try {
 		if (IOsession.mp != null) {
 			for (User user : IOsession.mp.values()) {
-				HashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
+				if(user.getLiveFlag()!=1) {
+				ConcurrentHashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
 				int addMp = 5;
 				int subHp = 0;
 				if (buffTime != null) {
@@ -58,7 +61,8 @@ public class Refresh implements Runnable {
 								break;
 							}
 						}
-					}
+					
+						}
 					}
 					}
 					}
@@ -72,6 +76,10 @@ public class Refresh implements Runnable {
 					System.out.println(user.getNickname() + "-当前蓝量：" + user.getMp());
 				}
 			}
+			}
 		}
+	}catch (Exception e) {
+		e.printStackTrace();
+	}
 	}
 }

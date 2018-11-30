@@ -24,10 +24,17 @@ public class GroupDispatch {
 		// 拒绝组队请求 指令：group no 用户
 		else if (msg[1].equals("no")&&msg.length>1) {
 			groupNo(user, ch, group, msgR);
-		} else {
+		} 
+		else if(msg[1].equals("div")&&msg.length>1) {
+			groupDiv(user,ch,group,msgR);
+		}
+		else {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
+						if(user2.getGroupId()!=null) {
+							ch.writeAndFlush("该玩家已在队伍中");
+						} else {
 						ch.writeAndFlush("邀请-" + user2.getNickname() + "-组队请求已发送");
 						Channel channel = IOsession.userchMp.get(user2);
 						channel.writeAndFlush(user.getNickname() + "-邀请你组队");
@@ -42,8 +49,35 @@ public class GroupDispatch {
 						group2.setList(list);
 						IOsession.userGroupMp.put(groupId, group2);
 					}
+					}
 				}
 			}
+		}
+	}
+
+	private void groupDiv(User user, Channel ch, ChannelGroup group, String msgR) {
+		String[] msg = msgR.split("\\s+");
+		if(msg.length==2) {
+			if(user.getGroupId()!=null) {
+			Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+			if(group2.getUser().getNickname().equals(user.getNickname())) {
+				ch.writeAndFlush("队长不能退队");
+			}else {
+				List<User> list = group2.getList();
+				list.remove(user);
+				user.setGroupId(null);
+				for (User user3 : list) {
+					if(user3!=user) {
+					Channel channel = IOsession.userchMp.get(user3);
+					channel.writeAndFlush(user.getNickname()+"离开队伍");
+					}
+				}
+			}
+			}else {
+				ch.writeAndFlush("你不在队伍中");
+			}
+		} else {
+			ch.writeAndFlush("指令错误");
 		}
 	}
 

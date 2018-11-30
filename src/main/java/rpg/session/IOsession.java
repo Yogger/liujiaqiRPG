@@ -44,7 +44,7 @@ public class IOsession {
 	// buff关系
 	public static HashMap<Integer, Buff> buffMp = new HashMap<Integer, Buff>();
 	// buff开始时间
-	public static HashMap<User, HashMap<Integer, Long>> buffTimeMp = new HashMap<User, HashMap<Integer, Long>>();
+	public static HashMap<User, ConcurrentHashMap<Integer, Long>> buffTimeMp = new HashMap<User, ConcurrentHashMap<Integer, Long>>();
 	//怪物buff开始时间
 	public static HashMap<Monster, HashMap<Integer, Long>> monsterBuffTimeMp = new HashMap<Monster, HashMap<Integer, Long>>();
 	// 装备关系

@@ -3,6 +3,7 @@ package rpg.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -114,11 +115,11 @@ public class UserService {
 		// 存储上次使用buff时间
 		long currentTimeMillis = System.currentTimeMillis();
 			if (IOsession.buffTimeMp.get(user) == null) {
-				HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+				ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
 				buffMap.put(buff.getId(), currentTimeMillis);
 				IOsession.buffTimeMp.put(user, buffMap);
 			} else {
-				HashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
+				ConcurrentHashMap<Integer,Long> buffMap = IOsession.buffTimeMp.get(user);
 				buffMap.put(buff.getId(), currentTimeMillis);
 			}
 	}

@@ -33,6 +33,7 @@ import rpg.service.StoreDispatch;
 import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
 import rpg.session.IOsession;
+import rpg.session.OffineDispatch;
 
 @Sharable
 @Component("rpgServerHandler")
@@ -66,6 +67,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private AckBossDispatch ackBossDispatch;
 	@Autowired
 	private ChatDispatch chatDispatch;
+	@Autowired
+	private OffineDispatch offineDispatch;
 	
 	//客户端超时次数
 	private Map<ChannelHandlerContext,Integer> clientOvertimeMap = new ConcurrentHashMap<>();
@@ -90,9 +93,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
-		for (Channel ch : group) {
-			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
-		}
+//		for (Channel ch : group) {
+//			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
+//		}
 		group.remove(channel);
 	}
 
@@ -102,11 +105,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 //		Channel channel = ctx.channel();
 //		System.out.println("[" + channel.remoteAddress() + "] " + "online");
 	}
-
+	
+	// 客户端断开连接
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//		Channel channel = ctx.channel();
-//		System.out.println("[" + channel.remoteAddress() + "] " + "offline");
+		Channel ch = ctx.channel();
+		offineDispatch.groupOffine(ch);
 	}
 
 	@Override

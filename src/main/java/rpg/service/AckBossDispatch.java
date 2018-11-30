@@ -3,6 +3,7 @@ package rpg.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,7 +66,7 @@ public class AckBossDispatch {
 		else if (msg.length == 1) {
 			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 			if(monster!=null) {
-			HashMap<Integer, Long> buffTime2 = IOsession.buffTimeMp.get(user);
+			ConcurrentHashMap<Integer,Long> buffTime2 = IOsession.buffTimeMp.get(user);
 			// 找到配置的技能
 			if (msg[0].equals("esc")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
@@ -76,6 +77,7 @@ public class AckBossDispatch {
 			} else if (buffTime2!=null&&buffTime2.get(4) != null) {
 				ch.writeAndFlush("你被打晕了，无法进行攻击");
 			} else {
+				if(msg[0].equals("1")||msg[0].equals("3")) {
 				for (Userskill userskill : list) {
 					String skillId = String.valueOf(userskill.getSkill());
 					if (skillId.equals(msg[0])) {
@@ -130,11 +132,11 @@ public class AckBossDispatch {
 											Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 											if (group2 != null) {
 												List<User> list3 = group2.getList();
+												ArrayList<User> userList1 = new ArrayList<>();
 												for (User user3 : list3) {
-													ArrayList<User> userList1 = new ArrayList<>();
 													userList1.add(user3);
-													monster2.setUserList(userList1);
 												}
+												monster2.setUserList(userList1);
 											}
 											monster=null;
 											monster=monster2;
@@ -169,6 +171,7 @@ public class AckBossDispatch {
 										for (Userzb userzb : list1) {
 											userzb.setNjd(userzb.getNjd() - 5);
 										}
+										removeUserlist(user, bossScene);
 										bossScene = null;// 回收boss场景
 										IOsession.userBossMp.remove(user.getGroupId());
 									}
@@ -228,11 +231,11 @@ public class AckBossDispatch {
 										Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 										if (group2 != null) {
 											List<User> list3 = group2.getList();
+											ArrayList<User> userList1 = new ArrayList<>();
 											for (User user3 : list3) {
-												ArrayList<User> userList1 = new ArrayList<>();
 												userList1.add(user3);
-												monster2.setUserList(userList1);
 											}
+											monster2.setUserList(userList1);
 										}
 										monster=null;
 										monster=monster2;
@@ -267,6 +270,7 @@ public class AckBossDispatch {
 									for (Userzb userzb : list1) {
 										userzb.setNjd(userzb.getNjd() - 5);
 									}
+									removeUserlist(user, bossScene);
 									bossScene = null;// 回收boss场景
 									IOsession.userBossMp.remove(user.getGroupId());
 								}
@@ -292,12 +296,27 @@ public class AckBossDispatch {
 					}
 					}
 				}
+			}else {
+				ch.writeAndFlush("指令错误");
+			} 
 			}
 		}else {
 			ch.writeAndFlush("指令错误");
 		}
 		}else {
 			ch.writeAndFlush("指令错误");
+		}
+	}
+
+	public void removeUserlist(User user, BossScene bossScene) {
+		ArrayList<Monster> monsterList1 = bossScene.getMonsterList();
+		// 找到场景内怪物
+		for (int i=0;i<monsterList1.size();i++) {
+			Monster monster1 = monsterList1.get(i);
+			if(monster1!=null) {
+				List<User> userList = monster1.getUserList();
+				userList.remove(user);
+			}
 		}
 	}
 
@@ -370,7 +389,8 @@ public class AckBossDispatch {
 							// 怪物攻击线程
 							if (monster.getCountAcker() == 1) {
 								bossScene.setStartTime(System.currentTimeMillis());
-								IOsession.monsterThreadPool.execute(new SceneBossRefresh(userService, user, bossScene, ch));
+								Group firstGroup = IOsession.userGroupMp.get(user.getGroupId());
+								IOsession.monsterThreadPool.execute(new SceneBossRefresh(userService, user, bossScene, ch,firstGroup));
 //								IOsession.monsterThreadPool.execute(new Runnable() {
 //									@Override
 //									public void run() {

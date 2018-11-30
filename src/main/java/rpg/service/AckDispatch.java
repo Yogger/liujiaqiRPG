@@ -3,6 +3,7 @@ package rpg.service;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -117,7 +118,7 @@ public class AckDispatch {
 															.containsKey(ch.remoteAddress());
 													if (ackstatus) {
 														if (IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
-															HashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp
+															ConcurrentHashMap<Integer,Long> buffTime1 = IOsession.buffTimeMp
 																	.get(user);
 															// 检验怪物Buff
 															String word1 = userService.checkMonsterBuff(monster, ch);

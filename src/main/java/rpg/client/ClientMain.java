@@ -3,13 +3,9 @@ package rpg.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-
-import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
@@ -30,6 +26,7 @@ public class ClientMain {
 	}
 
 	public static void main(String[] args) throws IOException {
+//		jm jm1 = new jm();
 		new ClientMain("127.0.0.1",8080).run();
 	}
 

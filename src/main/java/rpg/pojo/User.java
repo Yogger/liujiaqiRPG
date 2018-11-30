@@ -18,6 +18,16 @@ public class User {
 	private volatile int money;
 
 	private String groupId;
+	
+	private int liveFlag;//1退出，0正常
+
+	public int getLiveFlag() {
+		return liveFlag;
+	}
+
+	public void setLiveFlag(int liveFlag) {
+		this.liveFlag = liveFlag;
+	}
 
 	private static AtomicIntegerFieldUpdater<User> hpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "hp");
 	private static AtomicIntegerFieldUpdater<User> mpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "mp");
