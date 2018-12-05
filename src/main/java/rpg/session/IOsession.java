@@ -13,6 +13,7 @@ import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
 import rpg.pojo.EmailRpg;
 import rpg.pojo.Group;
+import rpg.pojo.Jy;
 import rpg.pojo.Monster;
 import rpg.pojo.Store;
 import rpg.pojo.User;
@@ -63,4 +64,8 @@ public class IOsession {
 	public static final Store store = new Store();
 	//用户邮件
 	public static HashMap<String, ArrayList<EmailRpg>> alluserEmail = new HashMap<String, ArrayList<EmailRpg>>();
+	//交易ID映射交易类
+	public static ConcurrentHashMap<String, Jy> jyMap = new ConcurrentHashMap<String, Jy>();
+	//用户名映射用户
+	public static ConcurrentHashMap<String,User> nameMap = new ConcurrentHashMap<String, User>();
 }

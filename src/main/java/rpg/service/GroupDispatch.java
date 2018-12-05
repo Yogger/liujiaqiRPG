@@ -12,6 +12,11 @@ import rpg.pojo.Group;
 import rpg.pojo.User;
 import rpg.session.IOsession;
 
+/**
+ * 组队
+ * @author ljq
+ *
+ */
 @Component
 public class GroupDispatch {
 	// 组队邀请 指令：group 用户

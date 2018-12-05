@@ -30,6 +30,7 @@ public class LoginDispatch {
 			} else {
 				IOsession.mp.put(address, user);
 				IOsession.userchMp.put(user, ch);
+				IOsession.nameMap.put(user.getNickname(), user);
 				//初始化属性
 				UserAttribute attribute = new UserAttribute();
 				attribute.setAck(105);

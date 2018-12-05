@@ -18,8 +18,39 @@ public class User {
 	private volatile int money;
 
 	private String groupId;
+
+	private int liveFlag;// 1退出，0正常
+
+	private volatile int jyFlag;// 0正常 1交易状态 2交易确认状态
 	
-	private int liveFlag;//1退出，0正常
+	private volatile int jySendFlag;//0正常 1交易发出
+	
+	private String jyId;
+
+	private static AtomicIntegerFieldUpdater<User> hpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "hp");
+	private static AtomicIntegerFieldUpdater<User> mpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "mp");
+	private static AtomicIntegerFieldUpdater<User> moneyUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class,
+			"money");
+	private static AtomicIntegerFieldUpdater<User> jyFlagUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class,
+			"jyFlag");
+	private static AtomicIntegerFieldUpdater<User> jySendFlagUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class,
+			"jySendFlag");
+	
+	public int getJySendFlag() {
+		return jySendFlag;
+	}
+	
+	public void getAndSetjySendFlag(User user, int num) {
+		jySendFlagUpdater.getAndSet(user, num);
+	}
+	
+	public int getJyFlag() {
+		return jyFlag;
+	}
+
+	public void getAndSetjyFlag(User user, int num) {
+		jyFlagUpdater.getAndSet(user, num);
+	}
 
 	public int getLiveFlag() {
 		return liveFlag;
@@ -28,11 +59,6 @@ public class User {
 	public void setLiveFlag(int liveFlag) {
 		this.liveFlag = liveFlag;
 	}
-
-	private static AtomicIntegerFieldUpdater<User> hpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "hp");
-	private static AtomicIntegerFieldUpdater<User> mpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "mp");
-	private static AtomicIntegerFieldUpdater<User> moneyUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class,
-			"money");
 
 	public void getAndSetHp(User user, int num) {
 		hpUpdater.getAndSet(user, num);
@@ -115,4 +141,13 @@ public class User {
 	public void setMoney(Integer money) {
 		this.money = money;
 	}
+
+	public String getJyId() {
+		return jyId;
+	}
+	
+	public void setJyId(String jyId) {
+		this.jyId = jyId;
+	}
+	
 }

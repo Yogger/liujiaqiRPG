@@ -36,6 +36,24 @@ public class RpgUtil {
 		userbag.setIsadd(0);
 		list.add(userbag);
 	}
+	
+	/**
+	 * 装备入包带耐久度 
+	 * @param sendUser
+	 * @param zb
+	 * @param njd
+	 */
+	public static void putZbWithNJD(User sendUser, Zb zb, Integer njd) {
+		List<Userbag> list = IOsession.userBagMp.get(sendUser);
+		Userbag userbag = new Userbag();
+		userbag.setId(UUID.randomUUID().toString());
+		userbag.setUsername(sendUser.getNickname());
+		userbag.setGid(zb.getId());
+		userbag.setNumber(1);
+		userbag.setNjd(njd);
+		userbag.setIsadd(0);
+		list.add(userbag);
+	}
 
 	/**
 	 * 药品入包

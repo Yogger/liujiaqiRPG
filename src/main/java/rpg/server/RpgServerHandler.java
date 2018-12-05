@@ -27,6 +27,7 @@ import rpg.service.BagDispatch;
 import rpg.service.ChatDispatch;
 import rpg.service.CopyDispatch;
 import rpg.service.GroupDispatch;
+import rpg.service.JyDispatch;
 import rpg.service.MoveDispatch;
 import rpg.service.PkDispatch;
 import rpg.service.StoreDispatch;
@@ -39,6 +40,8 @@ import rpg.session.OffineDispatch;
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	
+	@Autowired
+	private JyDispatch jyDispatch;
 	@Autowired
 	private PkDispatch pkDispatch;
 	@Autowired
@@ -209,9 +212,16 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 						else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
 							ackBossDispatch.ack(user, ch, group, arg1);
 						}
+						//交易状态
+						else if(user.getJyFlag()==1||user.getJyFlag()==2) {
+							jyDispatch.jyProcess(user, ch, group, arg1);
+						}
 						// 普通状态
 						else {
 							switch (msg[0]) {
+							case "jy":
+								jyDispatch.jy(user, ch, group, arg1);
+								break;
 							case "move":
 								moveDispatch.dispatch(ch, msg, user);
 								break;

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import rpg.pojo.Buff;
+import rpg.pojo.Jy;
 import rpg.pojo.User;
 import rpg.session.IOsession;
 
@@ -17,6 +18,15 @@ public class Refresh implements Runnable {
 		try {
 		if (IOsession.mp != null) {
 			for (User user : IOsession.mp.values()) {
+//				if(user.getJySendFlag()==1) {
+//					Jy jy = IOsession.jyMap.get(user.getJyId());
+//					if(jy!=null) {
+//						if(System.currentTimeMillis()-jy.getStartTime()>10000) {
+//							user.getAndSetjySendFlag(user, 0);
+//							IOsession.jyMap.remove(user.getJyId());
+//						}
+//					}
+//				}
 				if(user.getLiveFlag()!=1) {
 				ConcurrentHashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
 				int addMp = 5;
