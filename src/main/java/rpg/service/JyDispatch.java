@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.stereotype.Component;
 
-import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import rpg.pojo.Jy;
@@ -29,6 +28,7 @@ import rpg.util.RpgUtil;
 public class JyDispatch {
 
 	private Lock lock = new ReentrantLock();
+	private Lock lock1 = new ReentrantLock();
 
 	public void jy(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
@@ -40,13 +40,23 @@ public class JyDispatch {
 		else if (msg[1].equals("no") && msg.length > 1) {
 		}
 		// 发送jy请求 指令：jy 用户
-		else if (msg.length == 2&&!msg[1].equals("esc")) {
+		else if (msg.length == 2 && !msg[1].equals("esc")) {
 			sendJy(user, ch, group, msg);
 		}
-		//取消交易请求
-		else if(msg.length==2&&msg[1].equals("esc")) {
-			user.getAndSetjySendFlag(user, 0);
-			ch.writeAndFlush("交易已取消");
+		// 取消交易请求
+		else if (msg.length == 2 && msg[1].equals("esc")) {
+			lock.lock();
+			try {
+				user.getAndSetjySendFlag(user, 0);
+				Jy jy = IOsession.jyMap.get(user.getJyId());
+				jy = null;
+				IOsession.jyMap.remove(user.getJyId());
+				ch.writeAndFlush("交易已取消");
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
+			}
 		} else {
 			ch.writeAndFlush("指令错误");
 		}
@@ -55,42 +65,60 @@ public class JyDispatch {
 	public void jyProcess(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		if (msg.length == 1 && msg[0].equals("esc")) {
-			user.getAndSetjyFlag(user, 0);
-			Jy jy = IOsession.jyMap.get(user.getJyId());
-			User sendUser = jy.getSendUser();
-			if (sendUser.equals(user)) {
-				sendUser = jy.getAcceptUser();
-			}
-			sendUser.getAndSetjyFlag(sendUser, 0);
-			Channel channel = IOsession.userchMp.get(sendUser);
-			channel.writeAndFlush("对方已取消交易");
-			ch.writeAndFlush("交易取消");
-			return;
-		}
-		if (msg.length == 1 && msg[0].equals("y") && user.getJyFlag() == 2) {
-			Jy jy = IOsession.jyMap.get(user.getJyId());
-			int acceptFlag = jy.getAcceptFlag();
-			if (acceptFlag == 0) {
-				jy.setAcceptFlag(1);
+			lock1.lock();
+			try {
+				user.getAndSetjyFlag(user, 0);
+				Jy jy = IOsession.jyMap.get(user.getJyId());
 				User sendUser = jy.getSendUser();
 				if (sendUser.equals(user)) {
 					sendUser = jy.getAcceptUser();
 				}
-				ch.writeAndFlush("你已确认了");
+				sendUser.getAndSetjyFlag(sendUser, 0);
+				jy = null;
+				IOsession.jyMap.remove(user.getJyId());
 				Channel channel = IOsession.userchMp.get(sendUser);
-				channel.writeAndFlush("对方已确认");
-			} else {
-				User acceptUser = jy.getAcceptUser();
-				User sendUser = jy.getSendUser();
-				exchange(jy, acceptUser, sendUser);
-				exchange(jy, sendUser, acceptUser);
-				ch.writeAndFlush("交易成功");
-				Channel channel = IOsession.userchMp.get(sendUser);
-				channel.writeAndFlush("交易成功");
+				channel.writeAndFlush("对方已取消交易");
+				ch.writeAndFlush("交易取消");
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				lock1.unlock();
+			}
+		} else if (msg.length == 1 && msg[0].equals("y") && user.getJyFlag() == 2) {
+			lock1.lock();
+			try {
+				Jy jy = IOsession.jyMap.get(user.getJyId());
+				int acceptFlag = jy.getAcceptFlag();
+				if (acceptFlag == 0) {
+					jy.setAcceptFlag(1);
+					User sendUser = jy.getSendUser();
+					if (sendUser.equals(user)) {
+						sendUser = jy.getAcceptUser();
+					}
+					ch.writeAndFlush("你已确认了");
+					Channel channel = IOsession.userchMp.get(sendUser);
+					channel.writeAndFlush("对方已确认");
+				} else {
+					User acceptUser = jy.getAcceptUser();
+					User sendUser = jy.getSendUser();
+					exchange(jy, acceptUser, sendUser);
+					exchange(jy, sendUser, acceptUser);
+					acceptUser.getAndSetjyFlag(acceptUser, 0);
+					sendUser.getAndSetjyFlag(sendUser, 0);
+					Channel channel = IOsession.userchMp.get(sendUser);
+					channel.writeAndFlush("交易成功");
+					Channel channel2 = IOsession.userchMp.get(acceptUser);
+					channel2.writeAndFlush("交易成功");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				lock1.unlock();
 			}
 		}
 
-		if (msg.length == 2 && user.getJyFlag() == 1) {
+		else if (msg.length == 2 && user.getJyFlag() == 1) {
 			if (!msg[0].equals("0")) {
 				List<Userbag> list = IOsession.userBagMp.get(user);
 				boolean flag = false;
@@ -166,30 +194,35 @@ public class JyDispatch {
 	}
 
 	public void exchange(Jy jy, User acceptUser, User sendUser) {
-		ConcurrentHashMap<User,Userbag> jycontentMap = jy.getJycontentMap();
-		ConcurrentHashMap<User,Integer> jyMoney = jy.getJyMoney();
+		ConcurrentHashMap<User, Userbag> jycontentMap = jy.getJycontentMap();
+		ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
 		List<Userbag> acceptUseList = IOsession.userBagMp.get(acceptUser);
 		List<Userbag> sendUserList = IOsession.userBagMp.get(sendUser);
-		if(jycontentMap!=null) {
+		if (jycontentMap != null) {
 			Userbag userbag = jycontentMap.get(acceptUser);
+			if(userbag!=null) {
 			if (userbag.getIsadd() == 0) {
 				Zb zb = IOsession.zbMp.get(userbag.getGid());
 				Integer njd = userbag.getNjd();
-				//移除
+				// 移除
 				acceptUseList.remove(userbag);
-				//入包
+				// 入包
 				RpgUtil.putZbWithNJD(sendUser, zb, njd);
 			} else {
 				Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
-				acceptUseList.remove(userbag);
+				if (userbag.getNumber() == 1) {
+					acceptUseList.remove(userbag);
+				} else {
+					userbag.setNumber(userbag.getNumber() - 1);
+				}
 				RpgUtil.putYaopin(sendUser, yaopin);
 			}
 		}
+		}
 		Integer integer = jyMoney.get(acceptUser);
 		Integer integer2 = jyMoney.get(sendUser);
-		acceptUser.getAndSetMoney(acceptUser, acceptUser.getMoney()-integer+integer2);
+		acceptUser.getAndSetMoney(acceptUser, acceptUser.getMoney() - integer + integer2);
 	}
-	
 
 	private void acceptJy(User user, Channel ch, ChannelGroup group, String[] msg) {
 		if (msg.length == 3) {
