@@ -106,6 +106,8 @@ public class JyDispatch {
 					exchange(jy, sendUser, acceptUser);
 					acceptUser.getAndSetjyFlag(acceptUser, 0);
 					sendUser.getAndSetjyFlag(sendUser, 0);
+					jy=null;
+					IOsession.jyMap.remove(user.getJyId());
 					Channel channel = IOsession.userchMp.get(sendUser);
 					channel.writeAndFlush("交易成功");
 					Channel channel2 = IOsession.userchMp.get(acceptUser);

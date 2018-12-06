@@ -87,6 +87,7 @@ public class OffineDispatch {
 				IOsession.buffTimeMp.remove(user);
 				IOsession.attMp.remove(user);
 				IOsession.userBagMp.remove(user);
+				IOsession.nameMap.remove(user.getNickname());
 				user=null;
 			}
 		} else {
@@ -97,6 +98,7 @@ public class OffineDispatch {
 			IOsession.buffTimeMp.remove(user);
 			IOsession.attMp.remove(user);
 			IOsession.userBagMp.remove(user);
+			IOsession.nameMap.remove(user.getNickname());
 			user=null;
 		}
 //		user=null;
