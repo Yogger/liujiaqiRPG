@@ -13,7 +13,7 @@ public class RpgClientHandler extends SimpleChannelInboundHandler<String> {
 			ctx.writeAndFlush("心跳");
 		}
 		else {
-//			jm.printMsg(msg);
+			jm.printMsg(msg);
 		System.out.println(msg);
 		}
 	}

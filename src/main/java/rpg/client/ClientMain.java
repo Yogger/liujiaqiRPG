@@ -45,16 +45,17 @@ public class ClientMain {
 			System.out.println("login、登陆 regist、注册");
 			System.out.println("格式：login username psw");
 			System.out.println("格式：regist username psw psw");
+			jm jm1 = new jm(channel);
 			while (true) {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(System.in));
-				String input = reader.readLine();
-				if (input != null) {
-					if ("quit".equals(input)) {
-						System.exit(1);
-					}
-					channel.writeAndFlush(input+"\n");
-				}
+//				BufferedReader reader = new BufferedReader(
+//						new InputStreamReader(System.in));
+//				String input = reader.readLine();
+//				if (input != null) {
+//					if ("quit".equals(input)) {
+//						System.exit(1);
+//					}
+//					channel.writeAndFlush(input+"\n");
+//				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

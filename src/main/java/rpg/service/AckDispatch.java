@@ -123,7 +123,7 @@ public class AckDispatch {
 															// 检验怪物Buff
 															String word1 = userService.checkMonsterBuff(monster, ch);
 															// 检测用户状态
-															if (buffTime1.get(3) != null) {
+															if (buffTime1!=null&&buffTime1.get(3) != null) {
 																ch.writeAndFlush(word1 + "-你有最强护盾护体，免疫伤害，你的血量剩余："
 																		+ user.getHp());
 															} else {
@@ -152,7 +152,7 @@ public class AckDispatch {
 														}
 													}
 													try {
-														Thread.sleep(5000);
+														Thread.sleep(2000);
 													} catch (InterruptedException e) {
 														e.printStackTrace();
 													}
