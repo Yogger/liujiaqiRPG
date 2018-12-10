@@ -12,6 +12,8 @@ import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
 import rpg.pojo.EmailRpg;
+import rpg.pojo.Gh;
+import rpg.pojo.Ghuser;
 import rpg.pojo.Group;
 import rpg.pojo.Jy;
 import rpg.pojo.Monster;
@@ -68,4 +70,10 @@ public class IOsession {
 	public static ConcurrentHashMap<String, Jy> jyMap = new ConcurrentHashMap<String, Jy>();
 	//用户名映射用户
 	public static ConcurrentHashMap<String,User> nameMap = new ConcurrentHashMap<String, User>();
+	//工会id-工会
+	public static HashMap<Integer, Gh> ghMp = new HashMap<Integer, Gh>();
+	//工会id-工会玩家
+	public static HashMap<Integer, HashMap<String, Ghuser>> ghUserMp = new HashMap<Integer, HashMap<String, Ghuser>>();
+	//工会申请列表
+	public static HashMap<Integer, HashMap<String, Long>> ghsqMp = new HashMap<Integer, HashMap<String, Long>>();
 }

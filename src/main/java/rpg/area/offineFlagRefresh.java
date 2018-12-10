@@ -1,7 +1,10 @@
 package rpg.area;
 
+import java.util.HashMap;
+
 import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
+import rpg.pojo.Ghuser;
 import rpg.pojo.User;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
@@ -36,6 +39,8 @@ public class offineFlagRefresh implements Runnable {
 				IOsession.attMp.remove(user);
 				IOsession.userBagMp.remove(user);
 				IOsession.nameMap.remove(user.getNickname());
+//				HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
+//				map.remove(user.getNickname());
 				user=null;
 				break;
 			} catch (InterruptedException e) {

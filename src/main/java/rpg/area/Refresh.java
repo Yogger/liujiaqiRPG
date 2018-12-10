@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.netty.channel.Channel;
 import rpg.pojo.Buff;
 import rpg.pojo.Jy;
 import rpg.pojo.User;
@@ -18,6 +19,7 @@ public class Refresh implements Runnable {
 		try {
 		if (IOsession.mp != null) {
 			for (User user : IOsession.mp.values()) {
+				Channel channel = IOsession.userchMp.get(user);
 //				if(user.getJySendFlag()==1) {
 //					Jy jy = IOsession.jyMap.get(user.getJyId());
 //					if(jy!=null) {
@@ -52,6 +54,7 @@ public class Refresh implements Runnable {
 								subHp+=buff.getMp();
 								user.getAndSetHp(user, user.getHp()-subHp);
 								System.out.println(user.getNickname() +"-血量减少"+subHp+"-当前血量:"+user.getHp());
+								channel.writeAndFlush("001"+user.getNickname() +"-血量减少"+subHp+"-当前血量:"+user.getHp());
 								break;
 							default:
 								break;
@@ -84,6 +87,7 @@ public class Refresh implements Runnable {
 						user.getAndSetMp(user, user.getMp() + addMp);
 					}
 					System.out.println(user.getNickname() + "-当前蓝量：" + user.getMp());
+					channel.writeAndFlush("001"+user.getNickname() + "-当前蓝量：" + user.getMp());
 				}
 			}
 			}

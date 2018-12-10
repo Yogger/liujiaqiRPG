@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="rpg.data.dao.UserMapper" >
-  <resultMap id="BaseResultMap" type="rpg.pojo.User" >
+<mapper namespace="rpg.data.dao.GhMapper" >
+  <resultMap id="BaseResultMap" type="rpg.pojo.Gh" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
-    <result column="areaId" property="areaid" jdbcType="INTEGER" />
-    <result column="updatetime" property="updatetime" jdbcType="VARCHAR" />
-    <result column="hp" property="hp" jdbcType="INTEGER" />
-    <result column="mp" property="mp" jdbcType="INTEGER" />
-    <result column="money" property="money" jdbcType="INTEGER" />
-    <result column="ghId" property="ghid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="creatname" property="creatname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,15 +66,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, nickname, areaId, updatetime, hp, mp, money, ghId
+    id, name, level, creatname
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="rpg.pojo.UserExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="rpg.pojo.GhExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from user
+    from gh
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,114 +85,76 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from user
+    from gh
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from user
+    delete from gh
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="rpg.pojo.UserExample" >
-    delete from user
+  <delete id="deleteByExample" parameterType="rpg.pojo.GhExample" >
+    delete from gh
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="rpg.pojo.User" >
-    insert into user (id, nickname, areaId, 
-      updatetime, hp, mp, 
-      money, ghId)
-    values (#{id,jdbcType=INTEGER}, #{nickname,jdbcType=VARCHAR}, #{areaid,jdbcType=INTEGER}, 
-      #{updatetime,jdbcType=VARCHAR}, #{hp,jdbcType=INTEGER}, #{mp,jdbcType=INTEGER}, 
-      #{money,jdbcType=INTEGER}, #{ghid,jdbcType=INTEGER})
+  <insert id="insert" parameterType="rpg.pojo.Gh" useGeneratedKeys="true" keyProperty="id"  >
+    insert into gh (id, name, level, 
+      creatname)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      #{creatname,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="rpg.pojo.User" >
-    insert into user
+  <insert id="insertSelective" parameterType="rpg.pojo.Gh" useGeneratedKeys="true" keyProperty="id"  >
+    insert into gh
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="nickname != null" >
-        nickname,
+      <if test="name != null" >
+        name,
       </if>
-      <if test="areaid != null" >
-        areaId,
+      <if test="level != null" >
+        level,
       </if>
-      <if test="updatetime != null" >
-        updatetime,
-      </if>
-      <if test="hp != null" >
-        hp,
-      </if>
-      <if test="mp != null" >
-        mp,
-      </if>
-      <if test="money != null" >
-        money,
-      </if>
-      <if test="ghid != null" >
-        ghId,
+      <if test="creatname != null" >
+        creatname,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="nickname != null" >
-        #{nickname,jdbcType=VARCHAR},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
       </if>
-      <if test="areaid != null" >
-        #{areaid,jdbcType=INTEGER},
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
       </if>
-      <if test="updatetime != null" >
-        #{updatetime,jdbcType=VARCHAR},
-      </if>
-      <if test="hp != null" >
-        #{hp,jdbcType=INTEGER},
-      </if>
-      <if test="mp != null" >
-        #{mp,jdbcType=INTEGER},
-      </if>
-      <if test="money != null" >
-        #{money,jdbcType=INTEGER},
-      </if>
-      <if test="ghid != null" >
-        #{ghid,jdbcType=INTEGER},
+      <if test="creatname != null" >
+        #{creatname,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="rpg.pojo.UserExample" resultType="java.lang.Integer" >
-    select count(*) from user
+  <select id="countByExample" parameterType="rpg.pojo.GhExample" resultType="java.lang.Integer" >
+    select count(*) from gh
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update user
+    update gh
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.nickname != null" >
-        nickname = #{record.nickname,jdbcType=VARCHAR},
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.areaid != null" >
-        areaId = #{record.areaid,jdbcType=INTEGER},
+      <if test="record.level != null" >
+        level = #{record.level,jdbcType=INTEGER},
       </if>
-      <if test="record.updatetime != null" >
-        updatetime = #{record.updatetime,jdbcType=VARCHAR},
-      </if>
-      <if test="record.hp != null" >
-        hp = #{record.hp,jdbcType=INTEGER},
-      </if>
-      <if test="record.mp != null" >
-        mp = #{record.mp,jdbcType=INTEGER},
-      </if>
-      <if test="record.money != null" >
-        money = #{record.money,jdbcType=INTEGER},
-      </if>
-      <if test="record.ghid != null" >
-        ghId = #{record.ghid,jdbcType=INTEGER},
+      <if test="record.creatname != null" >
+        creatname = #{record.creatname,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -204,55 +162,35 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update user
+    update gh
     set id = #{record.id,jdbcType=INTEGER},
-      nickname = #{record.nickname,jdbcType=VARCHAR},
-      areaId = #{record.areaid,jdbcType=INTEGER},
-      updatetime = #{record.updatetime,jdbcType=VARCHAR},
-      hp = #{record.hp,jdbcType=INTEGER},
-      mp = #{record.mp,jdbcType=INTEGER},
-      money = #{record.money,jdbcType=INTEGER},
-      ghId = #{record.ghid,jdbcType=INTEGER}
+      name = #{record.name,jdbcType=VARCHAR},
+      level = #{record.level,jdbcType=INTEGER},
+      creatname = #{record.creatname,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="rpg.pojo.User" >
-    update user
+  <update id="updateByPrimaryKeySelective" parameterType="rpg.pojo.Gh" >
+    update gh
     <set >
-      <if test="nickname != null" >
-        nickname = #{nickname,jdbcType=VARCHAR},
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="areaid != null" >
-        areaId = #{areaid,jdbcType=INTEGER},
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
       </if>
-      <if test="updatetime != null" >
-        updatetime = #{updatetime,jdbcType=VARCHAR},
-      </if>
-      <if test="hp != null" >
-        hp = #{hp,jdbcType=INTEGER},
-      </if>
-      <if test="mp != null" >
-        mp = #{mp,jdbcType=INTEGER},
-      </if>
-      <if test="money != null" >
-        money = #{money,jdbcType=INTEGER},
-      </if>
-      <if test="ghid != null" >
-        ghId = #{ghid,jdbcType=INTEGER},
+      <if test="creatname != null" >
+        creatname = #{creatname,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="rpg.pojo.User" >
-    update user
-    set nickname = #{nickname,jdbcType=VARCHAR},
-      areaId = #{areaid,jdbcType=INTEGER},
-      updatetime = #{updatetime,jdbcType=VARCHAR},
-      hp = #{hp,jdbcType=INTEGER},
-      mp = #{mp,jdbcType=INTEGER},
-      money = #{money,jdbcType=INTEGER},
-      ghId = #{ghid,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="rpg.pojo.Gh" >
+    update gh
+    set name = #{name,jdbcType=VARCHAR},
+      level = #{level,jdbcType=INTEGER},
+      creatname = #{creatname,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

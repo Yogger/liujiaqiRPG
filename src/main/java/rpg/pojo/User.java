@@ -18,6 +18,8 @@ public class User {
 	private volatile int money;
 
 	private String groupId;
+	
+	private Integer ghid;
 
 	private int liveFlag;// 1退出，0正常
 
@@ -149,5 +151,12 @@ public class User {
 	public void setJyId(String jyId) {
 		this.jyId = jyId;
 	}
-	
+
+	public int getGhId() {
+		return ghid;
+	}
+
+	public void setGhId(int ghid) {
+		this.ghid = ghid;
+	}
 }

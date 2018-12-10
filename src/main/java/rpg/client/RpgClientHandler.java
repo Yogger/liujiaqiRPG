@@ -1,5 +1,7 @@
 package rpg.client;
 
+import javax.swing.JTextArea;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,13 +10,23 @@ public class RpgClientHandler extends SimpleChannelInboundHandler<String> {
 
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
-		if(msg.equals("心跳")) {
+	protected void messageReceived(ChannelHandlerContext ctx, String msg1) throws Exception {
+		if(msg1.equals("心跳")) {
 			ctx.writeAndFlush("心跳");
+		} else {
+			if(msg1.length()>3) {
+				String msg = msg1.substring(0, 3);
+				if(msg.equals("001")) {
+					String string = msg1.substring(3);
+					jm.printMsg(string, jm.jTextArea2);
+				} else{
+					jm.printMsg(msg1,jm.jTextArea);
+					System.out.println(msg1);
+				}
+			} else{
+			jm.printMsg(msg1,jm.jTextArea);
+			System.out.println(msg1);
 		}
-		else {
-			jm.printMsg(msg);
-		System.out.println(msg);
 		}
 	}
 	

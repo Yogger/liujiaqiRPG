@@ -1,6 +1,7 @@
 package rpg.session;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import io.netty.channel.Channel;
 import rpg.area.SceneBossRefresh;
 import rpg.area.offineFlagRefresh;
 import rpg.pojo.BossScene;
+import rpg.pojo.Ghuser;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
@@ -88,6 +90,8 @@ public class OffineDispatch {
 				IOsession.attMp.remove(user);
 				IOsession.userBagMp.remove(user);
 				IOsession.nameMap.remove(user.getNickname());
+//				HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
+//				map.remove(user.getNickname());
 				user=null;
 			}
 		} else {
@@ -99,6 +103,8 @@ public class OffineDispatch {
 			IOsession.attMp.remove(user);
 			IOsession.userBagMp.remove(user);
 			IOsession.nameMap.remove(user.getNickname());
+//			HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
+//			map.remove(user.getNickname());
 			user=null;
 		}
 //		user=null;

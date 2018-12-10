@@ -543,6 +543,66 @@ public class UserExample {
             addCriterion("money not between", value1, value2, "money");
             return (Criteria) this;
         }
+
+        public Criteria andGhidIsNull() {
+            addCriterion("ghId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidIsNotNull() {
+            addCriterion("ghId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidEqualTo(Integer value) {
+            addCriterion("ghId =", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidNotEqualTo(Integer value) {
+            addCriterion("ghId <>", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidGreaterThan(Integer value) {
+            addCriterion("ghId >", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidGreaterThanOrEqualTo(Integer value) {
+            addCriterion("ghId >=", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidLessThan(Integer value) {
+            addCriterion("ghId <", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidLessThanOrEqualTo(Integer value) {
+            addCriterion("ghId <=", value, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidIn(List<Integer> values) {
+            addCriterion("ghId in", values, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidNotIn(List<Integer> values) {
+            addCriterion("ghId not in", values, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidBetween(Integer value1, Integer value2) {
+            addCriterion("ghId between", value1, value2, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andGhidNotBetween(Integer value1, Integer value2) {
+            addCriterion("ghId not between", value1, value2, "ghid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

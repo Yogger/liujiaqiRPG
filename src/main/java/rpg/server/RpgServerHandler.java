@@ -26,6 +26,7 @@ import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
 import rpg.service.ChatDispatch;
 import rpg.service.CopyDispatch;
+import rpg.service.GhDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.JyDispatch;
 import rpg.service.MoveDispatch;
@@ -40,6 +41,8 @@ import rpg.session.OffineDispatch;
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	
+	@Autowired
+	private GhDispatch ghDIspatch;
 	@Autowired
 	private JyDispatch jyDispatch;
 	@Autowired
@@ -221,6 +224,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 							switch (msg[0]) {
 							case "jy":
 								jyDispatch.jy(user, ch, group, arg1);
+								break;
+							case "gh":
+								ghDIspatch.gh(user, ch, group, arg1);
 								break;
 							case "move":
 								moveDispatch.dispatch(ch, msg, user);
