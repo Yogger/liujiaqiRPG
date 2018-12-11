@@ -9,6 +9,8 @@ public class Gh {
 
     private String creatname;
 
+    private Integer gold;
+
     public Integer getId() {
         return id;
     }
@@ -39,5 +41,13 @@ public class Gh {
 
     public void setCreatname(String creatname) {
         this.creatname = creatname == null ? null : creatname.trim();
+    }
+
+    public Integer getGold() {
+        return gold;
+    }
+
+    public void setGold(Integer gold) {
+        this.gold = gold;
     }
 }

@@ -363,6 +363,66 @@ public class GhExample {
             addCriterion("creatname not between", value1, value2, "creatname");
             return (Criteria) this;
         }
+
+        public Criteria andGoldIsNull() {
+            addCriterion("gold is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldIsNotNull() {
+            addCriterion("gold is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldEqualTo(Integer value) {
+            addCriterion("gold =", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldNotEqualTo(Integer value) {
+            addCriterion("gold <>", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldGreaterThan(Integer value) {
+            addCriterion("gold >", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldGreaterThanOrEqualTo(Integer value) {
+            addCriterion("gold >=", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldLessThan(Integer value) {
+            addCriterion("gold <", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldLessThanOrEqualTo(Integer value) {
+            addCriterion("gold <=", value, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldIn(List<Integer> values) {
+            addCriterion("gold in", values, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldNotIn(List<Integer> values) {
+            addCriterion("gold not in", values, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldBetween(Integer value1, Integer value2) {
+            addCriterion("gold between", value1, value2, "gold");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoldNotBetween(Integer value1, Integer value2) {
+            addCriterion("gold not between", value1, value2, "gold");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

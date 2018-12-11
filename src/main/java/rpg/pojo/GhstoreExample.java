@@ -174,8 +174,8 @@ public class GhstoreExample {
             return (Criteria) this;
         }
 
-        public Criteria andGzidEqualTo(Integer value) {
-            addCriterion("gzid =", value, "gzid");
+        public Criteria andGzidEqualTo(String string) {
+            addCriterion("gzid =", string, "gzid");
             return (Criteria) this;
         }
 

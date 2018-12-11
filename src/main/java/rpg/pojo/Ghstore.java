@@ -3,7 +3,7 @@ package rpg.pojo;
 public class Ghstore {
     private Integer id;
 
-    private Integer gzid;
+    private String gzid;
 
     private Integer wpid;
 
@@ -21,11 +21,11 @@ public class Ghstore {
         this.id = id;
     }
 
-    public Integer getGzid() {
+    public String getGzid() {
         return gzid;
     }
 
-    public void setGzid(Integer gzid) {
+    public void setGzid(String gzid) {
         this.gzid = gzid;
     }
 

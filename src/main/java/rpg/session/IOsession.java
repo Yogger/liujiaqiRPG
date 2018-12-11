@@ -75,5 +75,5 @@ public class IOsession {
 	//工会id-工会玩家
 	public static HashMap<Integer, HashMap<String, Ghuser>> ghUserMp = new HashMap<Integer, HashMap<String, Ghuser>>();
 	//工会申请列表
-	public static HashMap<Integer, HashMap<String, Long>> ghsqMp = new HashMap<Integer, HashMap<String, Long>>();
+	public static HashMap<Integer, HashMap<String, String>> ghsqMp = new HashMap<Integer, HashMap<String, String>>();
 }

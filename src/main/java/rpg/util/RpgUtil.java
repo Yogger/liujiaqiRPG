@@ -82,6 +82,28 @@ public class RpgUtil {
 			list.add(userbag);
 		}
 	}
+	
+	public static void putYaopin(User user, Yaopin yaopin,int num) {
+		List<Userbag> list = IOsession.userBagMp.get(user);
+		boolean flag = false;
+		for (Userbag userbag1 : list) {
+			if (yaopin.getId() == userbag1.getGid()) {
+				userbag1.setNumber(userbag1.getNumber() + num);
+				flag = true;
+				break;
+			}
+		}
+		if (!flag) {
+			Userbag userbag = new Userbag();
+			userbag.setId(UUID.randomUUID().toString());
+			userbag.setUsername(user.getNickname());
+			userbag.setGid(yaopin.getId());
+			userbag.setNumber(1);
+			userbag.setNjd(0);
+			userbag.setIsadd(1);
+			list.add(userbag);
+		}
+	}
 
 	/**
 	 * 战斗结算奖励
