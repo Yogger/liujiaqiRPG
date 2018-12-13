@@ -17,6 +17,7 @@ public class Monster implements Cloneable{
 	private List<Integer> awardList;
 	private int money;
 	private List<Integer> skillList;
+	private int exp;
 
 	public List<Integer> getSkillList() {
 		return skillList;
@@ -96,7 +97,15 @@ public class Monster implements Cloneable{
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
+	public int getExp() {
+		return exp;
+	}
+
+	public void setExp(int exp) {
+		this.exp = exp;
+	}
+
 	@Override
 	public String toString() {
 		return "Monster [" + name + "-存活状态=" + aliveFlag + "-血量=" + hp + "-攻击力=" + ack + "]";

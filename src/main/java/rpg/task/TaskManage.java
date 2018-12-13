@@ -14,7 +14,7 @@ import rpg.util.RpgUtil;
 public class TaskManage {
 	
 	/**
-	 * 检查任务是否完成
+	 * 检查任务是否完成,带对象id
 	 * @param user
 	 * @param reqid
 	 */
@@ -33,7 +33,7 @@ public class TaskManage {
 				} else {
 					Map<Integer, TaskProcess> finishTask = user.getFinishTask();
 					finishTask.put(taskProcess.getTaskid(), taskProcess);
-					doingTask.remove(taskProcess.getReqid());
+					doingTask.remove(taskProcess.getTaskid());
 					string+="任务名称---"+task.getName()+"---完成"+"\n";
 					String string2 = getAward(user, task);
 					string+=string2;
@@ -44,7 +44,29 @@ public class TaskManage {
 		channel.writeAndFlush(string);
 	}
 	}
-
+	
+	public static void checkTaskCompleteBytaskid(User user,int taskid) {
+		String string="";
+		Map<Integer, TaskProcess> doingTask = user.getDoingTask();
+		TaskProcess taskProcess = doingTask.get(taskid);
+		int num = taskProcess.getNum();
+		Task task = IOsession.taskMp.get(taskProcess.getTaskid());
+		int num2 = task.getNum();
+		if(num+1<num2) {
+			taskProcess.setNum(num+1);
+			string+="任务名称:"+task.getName()+"---任务进度:"+taskProcess.getNum()+"/"+num2;
+		} else {
+			Map<Integer, TaskProcess> finishTask = user.getFinishTask();
+			finishTask.put(taskProcess.getTaskid(), taskProcess);
+			doingTask.remove(taskProcess.getTaskid());
+			string+="任务名称---"+task.getName()+"---完成"+"\n";
+			String string2 = getAward(user, task);
+			string+=string2;
+		}
+		Channel channel = IOsession.userchMp.get(user);
+		channel.writeAndFlush(string);
+	}
+	
 	private static String getAward(User user, Task task) {
 		String string="";
 		user.setMoney(user.getMoney()+task.getMoney());
@@ -52,10 +74,10 @@ public class TaskManage {
 		Yaopin yaopin = IOsession.yaopinMp.get(id);
 		if (zb != null) {
 			RpgUtil.putZb(user, zb);
-			string+="任务奖励---获得金钱：" + task.getMoney() + "获得装备：" + zb.getName();
+			string+="任务奖励---获得金钱：" + task.getMoney() + "获得装备：" + zb.getName()+"\n";
 		} else if (yaopin != null) {
 			RpgUtil.putYaopin(user, yaopin);
-			string+="任务奖励---获得金钱：" + task.getMoney() + "获得药品：" + yaopin.getName();
+			string+="任务奖励---获得金钱：" + task.getMoney() + "获得药品：" + yaopin.getName()+"\n";
 		}
 		return string;
 	}

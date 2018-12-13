@@ -48,7 +48,7 @@ public class BagDispatch {
 			}
 		}
 		UserAttribute attribute = IOsession.attMp.get(user);
-		ch.writeAndFlush("用户金币：" + user.getMoney() + "\n" + "用户血量：" + user.getHp() + "\n" + "用户攻击力："
+		ch.writeAndFlush("用户等级"+user.getLevel()+"---经验"+user.getExp()+"\n"+"用户金币：" + user.getMoney() + "\n" + "用户血量：" + user.getHp() + "\n" + "用户攻击力："
 				+ attribute.getAck() + "\n" + yaopinWord + zbWord);
 	}
 

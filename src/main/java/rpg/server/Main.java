@@ -197,6 +197,15 @@ public class Main {
 			monster.setHp(Integer.valueOf(e.elementText("hp")));
 			monster.setAck(Integer.valueOf(e.elementText("ack")));
 			monster.setId(Integer.valueOf(e.elementText("id")));
+			monster.setExp(Integer.valueOf(e.elementText("exp")));
+			monster.setMoney(Integer.valueOf(e.elementText("money")));
+			String[] split = e.elementText("award").split(",");
+			ArrayList<Integer> awardList = new ArrayList<>();
+			for (String awardId : split) {
+				Integer id = Integer.valueOf(awardId);
+				awardList.add(id);
+			}
+			monster.setAwardList(awardList);
 			IOsession.moster.put(Integer.valueOf(e.elementText("id")), monster);
 			Monster monster1 = (Monster) monster.clone();
 			monsterList.add(monster1);

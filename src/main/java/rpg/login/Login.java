@@ -55,6 +55,8 @@ public class Login {
 			return null;
 		Integer id = account.getId();
 		User user = userMapper.selectByPrimaryKey(id);
+		user.setLevel(1);
+		user.setExp(0);
 		return user;
 	}
 
@@ -75,12 +77,13 @@ public class Login {
 		// 加载任务
 		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>();
 		int cout =1;
-		for(int i=1;i<=1;i++) {
+		for(int i=1;i<=2;i++) {
 			Task task = IOsession.taskMp.get(i);
 			TaskProcess process = new TaskProcess();
 			process.setId(cout++);
 			process.setName(task.getName());
 			process.setNum(0);
+			if(i==2) process.setNum(1);
 			process.setReqid(task.getReqid());
 			process.setTaskid(i);
 			doingTask.put(i, process);

@@ -26,6 +26,7 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 import rpg.task.TaskManage;
+import rpg.util.RpgUtil;
 import rpg.util.UserService;
 
 /**
@@ -241,6 +242,7 @@ public class AckDispatch {
 									monster.setHp(monsterHp);
 									if (monsterHp <= 0) {
 										ch.writeAndFlush("怪物已被消灭！你真棒");
+										RpgUtil.ackEnd(user, ch, monster);
 										TaskManage.checkTaskComplete(user, monster.getId());
 										for (Channel channel : group) {
 											if (ch != channel) {
@@ -308,6 +310,7 @@ public class AckDispatch {
 								monster.setHp(monsterHp);
 								if (monsterHp <= 0) {
 									ch.writeAndFlush("怪物已被消灭！你真棒");
+									RpgUtil.ackEnd(user, ch, monster);
 									TaskManage.checkTaskComplete(user, monster.getId());
 									for (Channel channel : group) {
 										if (ch != channel) {

@@ -5,12 +5,14 @@ import java.util.Random;
 import java.util.UUID;
 
 import io.netty.channel.Channel;
+import rpg.pojo.Level;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
 import rpg.pojo.Userbag;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
+import rpg.task.TaskManage;
 
 /**
  * 工具类
@@ -111,6 +113,9 @@ public class RpgUtil {
 	 * @param ch
 	 */
 	public static void ackEnd(User user, Channel ch, Monster monster) {
+		StringBuilder string = new StringBuilder();
+		int exp = monster.getExp();
+		int checkLevel = checkLevel(user, exp, string);
 		List<Integer> awardList = monster.getAwardList();
 		Random random = new Random();
 		int randomId = random.nextInt(awardList.size());
@@ -121,10 +126,29 @@ public class RpgUtil {
 		Yaopin yaopin = IOsession.yaopinMp.get(id);
 		if (zb != null) {
 			putZb(user, zb);
-			ch.writeAndFlush("获得金钱：" + monster.getMoney() + "获得装备：" + zb.getName());
+			string.append("获得金钱：" + monster.getMoney() + "获得装备：" + zb.getName()+"\n");
 		} else if (yaopin != null) {
 			putYaopin(user, yaopin);
-			ch.writeAndFlush("获得金钱：" + monster.getMoney() + "获得药品：" + yaopin.getName());
+			string.append("获得金钱：" + monster.getMoney() + "获得药品：" + yaopin.getName()+"\n");
+		}
+		ch.writeAndFlush(string);
+		if(checkLevel==1) TaskManage.checkTaskCompleteBytaskid(user, 2);
+	}
+
+	private static int checkLevel(User user, int exp, StringBuilder string) {
+		int userlevel = user.getLevel();
+		int userexp = user.getExp();
+		Level level = IOsession.levelMp.get(userlevel+1);
+		if(userexp+exp>=level.getExpl()) {
+			userexp=userexp+exp-level.getExpl();
+			user.setExp(userexp);
+			user.setLevel(userlevel+1);
+			string.append("恭喜你升级---当前等级"+user.getLevel()+"---当前经验"+user.getExp()+"/"+level.getExpr()+"\n");
+			return 1;
+		} else {
+			user.setExp(userexp+exp);
+			string.append("获得经验"+exp+"\n");
+			return 0;
 		}
 	}
 }

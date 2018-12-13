@@ -6,13 +6,19 @@
 		<id>1</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>50000</hp>
+		<exp>10</exp>
 		<ack>1</ack>
+		<award>101,102,1</award>
+		<money>1000</money>
 	</monster>
 	<monster>
 		<name>美杜莎</name>
 		<id>2</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>200</hp>
+		<exp>200</exp>
 		<ack>15</ack>
+		<award>101,102,1</award>
+		<money>1000</money>
 	</monster>
 </monsterList>
