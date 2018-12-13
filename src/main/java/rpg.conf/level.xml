@@ -1,0 +1,27 @@
+<levels>
+	<level>
+		<id>1</id>
+		<expL>0</expL>
+		<expR>10</expR>
+	</level>
+	<level>
+		<id>2</id>
+		<expL>10</expL>
+		<expR>30</expR>
+	</level>
+	<level>
+		<id>3</id>
+		<expL>30</expL>
+		<expR>60</expR>
+	</level>
+	<level>
+		<id>4</id>
+		<expL>60</expL>
+		<expR>100</expR>
+	</level>
+	<level>
+		<id>5</id>
+		<expL>100</expL>
+		<expR>150</expR>
+	</level>
+</levels>

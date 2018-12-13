@@ -1,5 +1,6 @@
 package rpg.pojo;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class User {
@@ -28,6 +29,13 @@ public class User {
 	private volatile int jySendFlag;//0正常 1交易发出
 	
 	private String jyId;
+	
+	private Map<Integer, TaskProcess> doingTask;
+	
+	private Map<Integer, TaskProcess> finishTask;
+	
+	private int level;
+	private int exp;
 
 	private static AtomicIntegerFieldUpdater<User> hpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "hp");
 	private static AtomicIntegerFieldUpdater<User> mpUpdater = AtomicIntegerFieldUpdater.newUpdater(User.class, "mp");
@@ -158,5 +166,37 @@ public class User {
 
 	public void setGhId(int ghid) {
 		this.ghid = ghid;
+	}
+
+	public Map<Integer, TaskProcess> getDoingTask() {
+		return doingTask;
+	}
+
+	public void setDoingTask(Map<Integer, TaskProcess> doingTask) {
+		this.doingTask = doingTask;
+	}
+
+	public Map<Integer, TaskProcess> getFinishTask() {
+		return finishTask;
+	}
+
+	public void setFinishTask(Map<Integer, TaskProcess> finishTask) {
+		this.finishTask = finishTask;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getExp() {
+		return exp;
+	}
+
+	public void setExp(int exp) {
+		this.exp = exp;
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import rpg.area.Area;
+import rpg.area.Scene;
 import rpg.data.dao.UserskillMapper;
 import rpg.data.dao.UserzbMapper;
 import rpg.pojo.Monster;
@@ -24,6 +25,7 @@ import rpg.pojo.Userzb;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.task.TaskManage;
 import rpg.util.UserService;
 
 /**
@@ -239,13 +241,18 @@ public class AckDispatch {
 									monster.setHp(monsterHp);
 									if (monsterHp <= 0) {
 										ch.writeAndFlush("怪物已被消灭！你真棒");
+										TaskManage.checkTaskComplete(user, monster.getId());
 										for (Channel channel : group) {
 											if (ch != channel) {
 												channel.writeAndFlush(user.getNickname() + "消灭了" + monster.getName());
 //												IOsession.ackStatus.put(channel.remoteAddress(), false);
 											}
 										}
-										monster.setAliveFlag(false);
+										Monster monster3 = IOsession.moster.get(monster.getId());
+										Monster monster2 = (Monster) monster3.clone();
+										monsterList.remove(monster);
+										monsterList.add(monster2);
+//										monster.setAliveFlag(false);
 										IOsession.ackStatus.put(ch.remoteAddress(), 0);
 										// 损耗装备耐久度
 										for (Userzb userzb : list1) {
@@ -301,13 +308,18 @@ public class AckDispatch {
 								monster.setHp(monsterHp);
 								if (monsterHp <= 0) {
 									ch.writeAndFlush("怪物已被消灭！你真棒");
+									TaskManage.checkTaskComplete(user, monster.getId());
 									for (Channel channel : group) {
 										if (ch != channel) {
 											channel.writeAndFlush(user.getNickname() + "消灭了" + monster.getName());
 //											IOsession.ackStatus.put(channel.remoteAddress(), false);
 										}
 									}
-									monster.setAliveFlag(false);
+									Monster monster3 = IOsession.moster.get(monster.getId());
+									Monster monster2 = (Monster) monster3.clone();
+									monsterList.remove(monster);
+									monsterList.add(monster2);
+//									monster.setAliveFlag(false);
 									IOsession.ackStatus.put(ch.remoteAddress(), 0);
 									// 损耗装备耐久度
 									for (Userzb userzb : list1) {

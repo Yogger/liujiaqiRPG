@@ -36,6 +36,7 @@ import rpg.service.TalkDispatch;
 import rpg.service.UseGoods;
 import rpg.session.IOsession;
 import rpg.session.OffineDispatch;
+import rpg.task.TaskfunctionDispatch;
 
 @Sharable
 @Component("rpgServerHandler")
@@ -43,6 +44,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	
 	@Autowired
 	private GhDispatch ghDIspatch;
+	@Autowired
+	private TaskfunctionDispatch taskfunctionDispatch;
 	@Autowired
 	private JyDispatch jyDispatch;
 	@Autowired
@@ -163,6 +166,9 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 					switch (msg[0]) {
 					case "pk":
 						pkDispatch.pk(user, ch, group, arg1);
+						break;
+					case "task":
+						taskfunctionDispatch.task(user, ch, group, arg1);
 						break;
 					case "email":
 						chatDispatch.Email(user, ch, group, arg1);

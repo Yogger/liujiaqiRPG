@@ -12,12 +12,12 @@ import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
 import rpg.pojo.Buff;
 import rpg.pojo.EmailRpg;
-import rpg.pojo.Gh;
-import rpg.pojo.Ghuser;
 import rpg.pojo.Group;
 import rpg.pojo.Jy;
+import rpg.pojo.Level;
 import rpg.pojo.Monster;
 import rpg.pojo.Store;
+import rpg.pojo.Task;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.pojo.Userbag;
@@ -36,6 +36,8 @@ public class IOsession {
 	public static HashMap<SocketAddress, User> mp = new HashMap<SocketAddress, User>();
 	// 用户address关系
 	public static HashMap<User, Channel> userchMp = new HashMap<User, Channel>();
+	// 怪物信息
+	public static HashMap<Integer, Monster> moster = new HashMap<Integer, Monster>();
 	// 战斗状态
 	public static HashMap<SocketAddress, Integer> ackStatus = new HashMap<SocketAddress, Integer>();
 	// 攻击的怪物
@@ -48,7 +50,7 @@ public class IOsession {
 	public static HashMap<Integer, Buff> buffMp = new HashMap<Integer, Buff>();
 	// buff开始时间
 	public static HashMap<User, ConcurrentHashMap<Integer, Long>> buffTimeMp = new HashMap<User, ConcurrentHashMap<Integer, Long>>();
-	//怪物buff开始时间
+	// 怪物buff开始时间
 	public static HashMap<Monster, HashMap<Integer, Long>> monsterBuffTimeMp = new HashMap<Monster, HashMap<Integer, Long>>();
 	// 装备关系
 	public static HashMap<Integer, Zb> zbMp = new HashMap<Integer, Zb>();
@@ -64,16 +66,20 @@ public class IOsession {
 	public static HashMap<String, BossScene> userBossMp = new HashMap<String, BossScene>();
 	// 商店
 	public static final Store store = new Store();
-	//用户邮件
+	// 用户邮件
 	public static HashMap<String, ArrayList<EmailRpg>> alluserEmail = new HashMap<String, ArrayList<EmailRpg>>();
-	//交易ID映射交易类
+	// 交易ID映射交易类
 	public static ConcurrentHashMap<String, Jy> jyMap = new ConcurrentHashMap<String, Jy>();
-	//用户名映射用户
-	public static ConcurrentHashMap<String,User> nameMap = new ConcurrentHashMap<String, User>();
-	//工会id-工会
-	public static HashMap<Integer, Gh> ghMp = new HashMap<Integer, Gh>();
-	//工会id-工会玩家
-	public static HashMap<Integer, HashMap<String, Ghuser>> ghUserMp = new HashMap<Integer, HashMap<String, Ghuser>>();
-	//工会申请列表
+	// 用户名映射用户
+	public static ConcurrentHashMap<String, User> nameMap = new ConcurrentHashMap<String, User>();
+//	//工会id-工会
+//	public static HashMap<Integer, Gh> ghMp = new HashMap<Integer, Gh>();
+//	//工会id-工会玩家
+//	public static HashMap<Integer, HashMap<String, Ghuser>> ghUserMp = new HashMap<Integer, HashMap<String, Ghuser>>();
+	// 工会申请列表
 	public static HashMap<Integer, HashMap<String, String>> ghsqMp = new HashMap<Integer, HashMap<String, String>>();
+	// 存储任务表
+	public static HashMap<Integer, Task> taskMp = new HashMap<Integer, Task>();
+	//存儲等級表
+	public static HashMap<Integer, Level> levelMp = new HashMap<Integer, Level>();
 }

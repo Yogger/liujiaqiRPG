@@ -1,0 +1,18 @@
+<taskList>
+	<task>
+		<id>1</id>
+		<name>击杀两只史莱姆</name>
+		<reqid>1</reqid>
+		<num>2</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>1</id>
+		<name>等级提升到3级</name>
+		<reqid>0</reqid>
+		<num>3</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+</taskList>

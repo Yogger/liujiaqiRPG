@@ -1,17 +1,13 @@
 package rpg.pojo;
 
 import java.util.List;
-
-import javax.lang.model.type.PrimitiveType;
-
-import org.springframework.stereotype.Component;
 /**
  * 怪物
  * @author ljq
  *
  */
-@Component("monster")
-public class Monster {
+public class Monster implements Cloneable{
+	private int id;
 	private String name;
 	private boolean aliveFlag;
 	private int hp;
@@ -92,9 +88,27 @@ public class Monster {
 	public void setAck(int ack) {
 		this.ack = ack;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 	@Override
 	public String toString() {
 		return "Monster [" + name + "-存活状态=" + aliveFlag + "-血量=" + hp + "-攻击力=" + ack + "]";
 	}
+	
+    public Object clone() { 
+        Monster monster = null; 
+        try{ 
+        	monster = (Monster)super.clone(); 
+        }catch(CloneNotSupportedException e) { 
+            e.printStackTrace(); 
+        } 
+        return monster; 
+    }
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.context.ApplicationContext;
@@ -19,9 +20,11 @@ import rpg.area.Refresh;
 import rpg.area.Scene;
 import rpg.pojo.Buff;
 import rpg.pojo.EmailRpg;
+import rpg.pojo.Level;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
+import rpg.pojo.Task;
 import rpg.pojo.User;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
@@ -42,11 +45,44 @@ public class Main {
 		initZb();
 		initStore();
 		initEmail();
+		initTask();
+		initLevel();
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
 		serverMain.run();
+	}
+
+	private static void initLevel() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\level.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Level level = new Level();
+			level.setId(Integer.valueOf(e.elementText("id")));
+			level.setExpl(Integer.valueOf(e.elementText("expL")));
+			level.setExpr(Integer.valueOf(e.elementText("expR")));
+			IOsession.levelMp.put(Integer.valueOf(e.elementText("id")),level);
+		}
+	}
+
+	private static void initTask() throws Exception {
+		SAXReader sr = new SAXReader();
+		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\task.xml"));
+		Element root = document.getRootElement();
+		List<Element> elementList = root.elements();
+		for (Element e : elementList) {
+			Task task = new Task();
+			task.setId(Integer.valueOf(e.elementText("id")));
+			task.setName(e.elementText("name"));
+			task.setReqid(Integer.valueOf(e.elementText("reqid")));
+			task.setNum(Integer.valueOf(e.elementText("num")));
+			task.setMoney(Integer.valueOf(e.elementText("money")));
+			task.setAwardId(Integer.valueOf(e.elementText("award")));
+			IOsession.taskMp.put(Integer.valueOf(e.elementText("id")), task);
+		}
 	}
 
 	private static void initEmail() {
@@ -160,7 +196,10 @@ public class Main {
 			monster.setAliveFlag(true);
 			monster.setHp(Integer.valueOf(e.elementText("hp")));
 			monster.setAck(Integer.valueOf(e.elementText("ack")));
-			monsterList.add(monster);
+			monster.setId(Integer.valueOf(e.elementText("id")));
+			IOsession.moster.put(Integer.valueOf(e.elementText("id")), monster);
+			Monster monster1 = (Monster) monster.clone();
+			monsterList.add(monster1);
 		}
 	}
 
