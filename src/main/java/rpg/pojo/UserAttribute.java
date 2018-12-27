@@ -2,18 +2,21 @@ package rpg.pojo;
 
 public class UserAttribute {
 	private int ack;
+	private int def;
 
-	/**
-	 * @return the ack
-	 */
 	public int getAck() {
 		return ack;
 	}
 
-	/**
-	 * @param ack the ack to set
-	 */
 	public void setAck(int ack) {
 		this.ack = ack;
+	}
+
+	public int getDef() {
+		return def;
+	}
+
+	public void setDef(int def) {
+		this.def = def;
 	}
 }

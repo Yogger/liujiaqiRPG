@@ -1,7 +1,7 @@
 package rpg.pojo;
 
 public class Userzb {
-    private Integer id;
+    private String id;
 
     private String username;
 
@@ -11,12 +11,12 @@ public class Userzb {
 
     private Integer isuse;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
     }
 
     public String getUsername() {

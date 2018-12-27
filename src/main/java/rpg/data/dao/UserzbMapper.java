@@ -10,7 +10,7 @@ public interface UserzbMapper {
 
     int deleteByExample(UserzbExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(String id);
 
     int insert(Userzb record);
 
@@ -18,7 +18,7 @@ public interface UserzbMapper {
 
     List<Userzb> selectByExample(UserzbExample example);
 
-    Userzb selectByPrimaryKey(Integer id);
+    Userzb selectByPrimaryKey(String id);
 
     int updateByExampleSelective(@Param("record") Userzb record, @Param("example") UserzbExample example);
 

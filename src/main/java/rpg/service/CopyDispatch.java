@@ -29,6 +29,7 @@ import rpg.session.IOsession;
 public class CopyDispatch {
 	public void copy(User user, Channel ch, ChannelGroup group, String msgR) throws DocumentException {
 		BossScene scene = new BossScene();
+		scene.setSceneid(5001);
 		scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
 		scene.setId(0);

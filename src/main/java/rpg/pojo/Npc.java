@@ -1,12 +1,17 @@
 package rpg.pojo;
 
-import org.springframework.stereotype.Component;
-
-@Component("npc")
 public class Npc {
+	private int id;
 	private String name;
 	private String msg;
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}

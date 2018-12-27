@@ -3,12 +3,12 @@
 <npcList>
 	<npc>
 		<name>杂货老板</name>
-		<id>1</id>
+		<id>1001</id>
 		<msg>hey,小伙子,欢迎杂货店</msg>
 	</npc>
 	<npc>
 		<name>武器老板</name>
-		<id>2</id>
+		<id>1002</id>
 		<msg>欢迎光临武器店,十八般武器任你挑</msg>
 	</npc>
 </npcList>

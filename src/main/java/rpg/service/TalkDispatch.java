@@ -9,6 +9,7 @@ import io.netty.channel.group.ChannelGroup;
 import rpg.area.Area;
 import rpg.pojo.Npc;
 import rpg.pojo.User;
+import rpg.task.TaskManage;
 
 /**
  * 对话处理器
@@ -25,6 +26,7 @@ public class TalkDispatch {
 		for (Npc npc : npcList) {
 			if(npc.getName().equals(msg[1])) {
 				ch.writeAndFlush(npc.talk());
+				TaskManage.checkTaskComplete(user, npc.getId());
 				return;
 			}
 		}

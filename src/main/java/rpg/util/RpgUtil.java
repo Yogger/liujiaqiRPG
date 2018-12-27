@@ -85,6 +85,12 @@ public class RpgUtil {
 		}
 	}
 	
+	/**
+	 * 药品入包带数量
+	 * 
+	 * @param user
+	 * @param zb
+	 */
 	public static void putYaopin(User user, Yaopin yaopin,int num) {
 		List<Userbag> list = IOsession.userBagMp.get(user);
 		boolean flag = false;
@@ -134,7 +140,14 @@ public class RpgUtil {
 		ch.writeAndFlush(string);
 		if(checkLevel==1) TaskManage.checkTaskCompleteBytaskid(user, 2);
 	}
-
+	
+	/**
+	 * 检查等级
+	 * @param user
+	 * @param exp
+	 * @param string
+	 * @return
+	 */
 	private static int checkLevel(User user, int exp, StringBuilder string) {
 		int userlevel = user.getLevel();
 		int userexp = user.getExp();

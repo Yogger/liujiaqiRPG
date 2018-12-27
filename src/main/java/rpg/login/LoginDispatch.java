@@ -34,6 +34,7 @@ public class LoginDispatch {
 				//初始化属性
 				UserAttribute attribute = new UserAttribute();
 				attribute.setAck(105);
+				attribute.setDef(50);
 				IOsession.attMp.put(user, attribute);
 				login.loadData(user);
 //				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 3000, TimeUnit.MILLISECONDS);

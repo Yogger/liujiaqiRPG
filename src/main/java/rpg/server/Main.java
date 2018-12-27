@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +24,6 @@ import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 import rpg.pojo.Skill;
 import rpg.pojo.Task;
-import rpg.pojo.User;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
@@ -126,8 +124,10 @@ public class Main {
 		for (Element e : elementList) {
 			Zb zb = new Zb();
 			zb.setId(Integer.valueOf(e.elementText("id")));
+			zb.setLevel(Integer.valueOf(e.elementText("level")));
+			zb.setType(Integer.valueOf(e.elementText("type")));
 			zb.setName(e.elementText("name"));
-			zb.setAck(Integer.valueOf(e.elementText("ack")));
+			zb.setAck(Integer.valueOf(e.elementText("attribute")));
 			zb.setPrice(Integer.valueOf(e.elementText("price")));
 			zb.setNjd(Integer.valueOf(e.elementText("njd")));
 			IOsession.zbMp.put(Integer.valueOf(e.elementText("id")), zb);
@@ -220,6 +220,7 @@ public class Main {
 		List<Element> elementList = root.elements();
 		for (Element e : elementList) {
 			Npc npc = new Npc();
+			npc.setId(Integer.valueOf(e.elementText("id")));
 			npc.setName(e.elementText("name"));
 			npc.setMsg(e.elementText("msg"));
 			npcList.add(npc);

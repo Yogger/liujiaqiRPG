@@ -1,7 +1,5 @@
 package rpg.login;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,12 +16,12 @@ import rpg.pojo.AccountExample;
 import rpg.pojo.AccountExample.Criteria;
 import rpg.pojo.Task;
 import rpg.pojo.TaskProcess;
-import rpg.session.IOsession;
 import rpg.pojo.User;
 import rpg.pojo.Userbag;
 import rpg.pojo.UserbagExample;
 import rpg.pojo.Userzb;
 import rpg.pojo.UserzbExample;
+import rpg.session.IOsession;
 
 /**
  * 登陆功能
@@ -77,7 +75,7 @@ public class Login {
 		// 加载任务
 		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>();
 		int cout =1;
-		for(int i=1;i<=2;i++) {
+		for(int i=1;i<=6;i++) {
 			Task task = IOsession.taskMp.get(i);
 			TaskProcess process = new TaskProcess();
 			process.setId(cout++);

@@ -4,12 +4,25 @@ import java.util.ArrayList;
 
 public class BossScene {
 	private int id;
+	private int sceneid;
 	private String name;
 	private String groupId;
 	private ArrayList<Monster> monsterList;
 	private long startTime;
 	private long lastedTime;
 	
+	/**
+	 * @return the sceneid
+	 */
+	public int getSceneid() {
+		return sceneid;
+	}
+	/**
+	 * @param sceneid the sceneid to set
+	 */
+	public void setSceneid(int sceneid) {
+		this.sceneid = sceneid;
+	}
 	/**
 	 * @return the startTime
 	 */
