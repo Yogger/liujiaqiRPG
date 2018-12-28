@@ -6,7 +6,7 @@
 		<id>10001</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>50000</hp>
-		<ack>30</ack>
+		<ack>150</ack>
 		<award>101,102,1</award>
 		<money>1000</money>
 		<skill>1</skill>
@@ -16,7 +16,7 @@
 		<id>10002</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>80000</hp>
-		<ack>50</ack>
+		<ack>200</ack>
 		<award>101,102,1</award>
 		<money>3000</money>
 		<skill>4</skill>

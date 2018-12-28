@@ -73,6 +73,10 @@ public class User {
 	public void getAndSetHp(User user, int num) {
 		hpUpdater.getAndSet(user, num);
 	}
+	
+	public void getAndAddHp(User user, int num) {
+		hpUpdater.getAndAdd(user, num);
+	}
 
 	public void getAndSetMp(User user, int num) {
 		mpUpdater.getAndSet(user, num);

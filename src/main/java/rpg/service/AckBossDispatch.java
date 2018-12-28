@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
@@ -45,6 +46,8 @@ public class AckBossDispatch {
 	private UserzbMapper userzbMapper;
 	@Autowired
 	private UserService userService;
+	@Value("${id}")
+	private int spcid;
 
 	public void ack(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
@@ -78,7 +81,7 @@ public class AckBossDispatch {
 				} else if (buffTime2 != null && buffTime2.get(4) != null) {
 					ch.writeAndFlush("你被打晕了，无法进行攻击");
 				} else {
-					if (msg[0].equals("1") || msg[0].equals("3")) {
+					if (msg[0].equals("1") || msg[0].equals("3") || msg[0].equals("5")) {
 						for (Userskill userskill : list) {
 							String skillId = String.valueOf(userskill.getSkill());
 							if (skillId.equals(msg[0])) {
@@ -103,7 +106,162 @@ public class AckBossDispatch {
 //							ch.writeAndFlush("使用了" + skill.getName());
 //									user.setMp(user.getMp() - skill.getMp());
 												user.getAndSetMp(user, user.getMp() - skill.getMp());
+												// 判断特殊技能
+												if (skill.getId() == spcid) {
+													Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+													if (group2 != null) {
+														List<User> list3 = group2.getList();
+														for (User user3 : list3) {
+															user3.getAndAddHp(user3, skill.getHurt());
+															if (!user3.getNickname().equals(user.getNickname())) {
+																Channel channel = IOsession.userchMp.get(user3);
+																channel.writeAndFlush(user.getNickname() + "对你使用了"
+																		+ skill.getName() + "血量恢复" + skill.getHurt()
+																		+ "-剩余血量" + user3.getHp());
+															} else {
+																ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗"
+																		+ skill.getMp() + "-剩余" + user.getMp() + "\n"
+																		+ "血量恢复" + skill.getHurt() + "-剩余血量"
+																		+ user.getHp());
+															}
+														}
+													}
+												}
 												// 更新人物buff
+												else {
+													if (skill.getId() != 1) {
+														userService.updateUserBuff(user, skill);
+													}
+													// 更新怪物buff
+													userService.updateMonsterBuff(user, skill, monster);
+													// 判断装备是否还有耐久度
+													UserAttribute attribute = IOsession.attMp.get(user);
+													List<Userzb> list1 = IOsession.userZbMp.get(user);
+													for (Userzb userzb : list1) {
+														if (userzb.getNjd() <= 0) {
+															Zb zb = IOsession.zbMp.get(userzb.getZbid());
+															if (zb != null && attribute != null) {
+																attribute.setAck(attribute.getAck()
+																		- zb.getAck() * userzb.getIsuse());
+																userzb.setIsuse(0);
+															}
+														}
+													}
+													int ack = attribute.getAck();
+													int hurt = skill.getHurt() + ack;
+													int monsterHp = monster.getHp() - hurt;
+													monster.setHp(monsterHp);
+													if (monsterHp <= 0) {
+														// 产生新的boss
+														if (monsterList.size() - 1 > bossScene.getId()) {
+															bossScene.setId(bossScene.getId() + 1);
+															Monster monster2 = monsterList.get(bossScene.getId());
+															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																ArrayList<User> userList1 = new ArrayList<>();
+																for (User user3 : list3) {
+																	userList1.add(user3);
+																}
+																monster2.setUserList(userList1);
+															}
+															monster = null;
+															monster = monster2;
+															// 将怪物指定用户
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																for (User user3 : list3) {
+																	Channel channel1 = IOsession.userchMp.get(user3);
+																	IOsession.monsterMp.put(channel1.remoteAddress(),
+																			monster);
+																	channel1.writeAndFlush(
+																			"boss已被消灭,新的Boss" + monster.getName()
+																					+ "出现-血量:" + monster.getHp()
+																					+ "攻击力:" + monster.getAck());
+																}
+															}
+														} else {
+															ch.writeAndFlush("boss已全被消灭，退出副本");
+															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+															RpgUtil.ackEnd(user, ch, monster);
+															TaskManage.checkTaskComplete(user, bossScene.getSceneid());
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																for (User user3 : list3) {
+																	Channel channel1 = IOsession.userchMp.get(user3);
+																	if (channel1 != ch) {
+																		channel1.writeAndFlush(user.getNickname()
+																				+ "消灭了" + monster.getName()
+																				+ "-你已通关，退出副本");
+																		RpgUtil.ackEnd(user3, channel1, monster);
+																		TaskManage.checkTaskComplete(user3,
+																				bossScene.getSceneid());
+																	}
+																	IOsession.ackStatus.put(channel1.remoteAddress(),
+																			0);
+																}
+															}
+															monster.setAliveFlag(false);
+															IOsession.ackStatus.put(ch.remoteAddress(), 0);
+															// 损耗装备耐久度
+															for (Userzb userzb : list1) {
+																userzb.setNjd(userzb.getNjd() - 5);
+															}
+															removeUserlist(user, bossScene);
+															bossScene = null;// 回收boss场景
+															IOsession.userBossMp.remove(user.getGroupId());
+														}
+													} else {
+														ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗"
+																+ skill.getMp() + "-剩余" + user.getMp() + "\n" + "攻击了"
+																+ monster.getName() + "-造成" + hurt + "点伤害-怪物血量"
+																+ monster.getHp());
+														// 损耗装备耐久度
+														for (Userzb userzb : list1) {
+															userzb.setNjd(userzb.getNjd() - 5);
+														}
+													}
+													break;
+												}
+											}
+											// cd未到
+											else {
+												ch.writeAndFlush("技能冷却中");
+											}
+										}
+										// 技能未使用过
+										else {
+											// 存储上次使用技能时间
+											long currentTimeMillis = System.currentTimeMillis();
+											HashMap<String, Long> curSkill = new HashMap<String, Long>();
+											curSkill.put(skillId, currentTimeMillis);
+											SkillList.cdMp.put(user, curSkill);
+//						ch.writeAndFlush("使用了" + skill.getName());
+//								user.setMp(user.getMp() - skill.getMp());
+											user.getAndSetMp(user, user.getMp() - skill.getMp());
+											// 判断特殊技能
+											if (skill.getId() == spcid) {
+												Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+												if (group2 != null) {
+													List<User> list3 = group2.getList();
+													for (User user3 : list3) {
+														user3.getAndAddHp(user3, skill.getHurt());
+														if (!user3.getNickname().equals(user.getNickname())) {
+															Channel channel = IOsession.userchMp.get(user3);
+															channel.writeAndFlush(user.getNickname() + "对你使用了"
+																	+ skill.getName() + "血量恢复" + skill.getHurt()
+																	+ "-剩余血量" + user3.getHp());
+														} else {
+															ch.writeAndFlush(
+																	"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp()
+																			+ "-剩余" + user.getMp() + "\n" + "血量恢复"
+																			+ skill.getHurt() + "-剩余血量" + user.getHp());
+														}
+													}
+												}
+											}
+											// 更新人物buff
+											else {
 												if (skill.getId() != 1) {
 													userService.updateUserBuff(user, skill);
 												}
@@ -156,16 +314,16 @@ public class AckBossDispatch {
 														}
 													} else {
 														ch.writeAndFlush("boss已全被消灭，退出副本");
-														Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 														RpgUtil.ackEnd(user, ch, monster);
 														TaskManage.checkTaskComplete(user, bossScene.getSceneid());
+														Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 														if (group2 != null) {
 															List<User> list3 = group2.getList();
 															for (User user3 : list3) {
 																Channel channel1 = IOsession.userchMp.get(user3);
 																if (channel1 != ch) {
 																	channel1.writeAndFlush(user.getNickname() + "消灭了"
-																			+ monster.getName() + "-你已通关，退出副本");
+																			+ monster.getName() + "-你已通关，退出副本" + "\n");
 																	RpgUtil.ackEnd(user3, channel1, monster);
 																	TaskManage.checkTaskComplete(user3,
 																			bossScene.getSceneid());
@@ -194,110 +352,6 @@ public class AckBossDispatch {
 												}
 												break;
 											}
-											// cd未到
-											else {
-												ch.writeAndFlush("技能冷却中");
-											}
-										}
-										// 技能未使用过
-										else {
-											// 存储上次使用技能时间
-											long currentTimeMillis = System.currentTimeMillis();
-											HashMap<String, Long> curSkill = new HashMap<String, Long>();
-											curSkill.put(skillId, currentTimeMillis);
-											SkillList.cdMp.put(user, curSkill);
-//						ch.writeAndFlush("使用了" + skill.getName());
-//								user.setMp(user.getMp() - skill.getMp());
-											user.getAndSetMp(user, user.getMp() - skill.getMp());
-											// 更新人物buff
-											if (skill.getId() != 1) {
-												userService.updateUserBuff(user, skill);
-											}
-											// 更新怪物buff
-											userService.updateMonsterBuff(user, skill, monster);
-											// 判断装备是否还有耐久度
-											UserAttribute attribute = IOsession.attMp.get(user);
-											List<Userzb> list1 = IOsession.userZbMp.get(user);
-											for (Userzb userzb : list1) {
-												if (userzb.getNjd() <= 0) {
-													Zb zb = IOsession.zbMp.get(userzb.getZbid());
-													if (zb != null && attribute != null) {
-														attribute.setAck(
-																attribute.getAck() - zb.getAck() * userzb.getIsuse());
-														userzb.setIsuse(0);
-													}
-												}
-											}
-											int ack = attribute.getAck();
-											int hurt = skill.getHurt() + ack;
-											int monsterHp = monster.getHp() - hurt;
-											monster.setHp(monsterHp);
-											if (monsterHp <= 0) {
-												// 产生新的boss
-												if (monsterList.size() - 1 > bossScene.getId()) {
-													bossScene.setId(bossScene.getId() + 1);
-													Monster monster2 = monsterList.get(bossScene.getId());
-													Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-													if (group2 != null) {
-														List<User> list3 = group2.getList();
-														ArrayList<User> userList1 = new ArrayList<>();
-														for (User user3 : list3) {
-															userList1.add(user3);
-														}
-														monster2.setUserList(userList1);
-													}
-													monster = null;
-													monster = monster2;
-													// 将怪物指定用户
-													if (group2 != null) {
-														List<User> list3 = group2.getList();
-														for (User user3 : list3) {
-															Channel channel1 = IOsession.userchMp.get(user3);
-															IOsession.monsterMp.put(channel1.remoteAddress(), monster);
-															channel1.writeAndFlush("boss已被消灭,新的Boss" + monster.getName()
-																	+ "出现-血量:" + monster.getHp() + "攻击力:"
-																	+ monster.getAck());
-														}
-													}
-												} else {
-													ch.writeAndFlush("boss已全被消灭，退出副本");
-													RpgUtil.ackEnd(user, ch, monster);
-													TaskManage.checkTaskComplete(user, bossScene.getSceneid());
-													Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-													if (group2 != null) {
-														List<User> list3 = group2.getList();
-														for (User user3 : list3) {
-															Channel channel1 = IOsession.userchMp.get(user3);
-															if (channel1 != ch) {
-																channel1.writeAndFlush(user.getNickname() + "消灭了"
-																		+ monster.getName() + "-你已通关，退出副本"+"\n");
-																RpgUtil.ackEnd(user3, channel1, monster);
-																TaskManage.checkTaskComplete(user3,
-																		bossScene.getSceneid());
-															}
-															IOsession.ackStatus.put(channel1.remoteAddress(), 0);
-														}
-													}
-													monster.setAliveFlag(false);
-													IOsession.ackStatus.put(ch.remoteAddress(), 0);
-													// 损耗装备耐久度
-													for (Userzb userzb : list1) {
-														userzb.setNjd(userzb.getNjd() - 5);
-													}
-													removeUserlist(user, bossScene);
-													bossScene = null;// 回收boss场景
-													IOsession.userBossMp.remove(user.getGroupId());
-												}
-											} else {
-												ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp()
-														+ "-剩余" + user.getMp() + "\n" + "攻击了" + monster.getName()
-														+ "-造成" + hurt + "点伤害-怪物血量" + monster.getHp());
-												// 损耗装备耐久度
-												for (Userzb userzb : list1) {
-													userzb.setNjd(userzb.getNjd() - 5);
-												}
-											}
-											break;
 										}
 									}
 									// 蓝量不足
@@ -404,8 +458,8 @@ public class AckBossDispatch {
 							if (monster.getCountAcker() == 1) {
 								bossScene.setStartTime(System.currentTimeMillis());
 								Group firstGroup = IOsession.userGroupMp.get(user.getGroupId());
-								IOsession.monsterThreadPool
-										.execute(new SceneBossRefresh(userService, user, bossScene, ch, firstGroup));
+								IOsession.monsterThreadPool.execute(
+										new SceneBossRefresh(userService, user, bossScene, ch, firstGroup, attribute));
 //								IOsession.monsterThreadPool.execute(new Runnable() {
 //									@Override
 //									public void run() {

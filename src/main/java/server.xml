@@ -47,4 +47,5 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
+    <context:property-placeholder  location="classpath:specialSkill.properties"/>
 </beans>
