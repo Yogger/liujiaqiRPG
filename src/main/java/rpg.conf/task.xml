@@ -47,4 +47,52 @@
 		<money>100</money>
 		<award>101</award>
 	</task>
+	<task>
+		<id>7</id>
+		<name>第一次组队</name>
+		<reqid>0</reqid>
+		<num>1</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>8</id>
+		<name>第一次加入工会</name>
+		<reqid>0</reqid>
+		<num>1</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>9</id>
+		<name>第一次与玩家交易</name>
+		<reqid>0</reqid>
+		<num>1</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>10</id>
+		<name>第一次在pk中战胜</name>
+		<reqid>0</reqid>
+		<num>1</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>11</id>
+		<name>金币达到10000</name>
+		<reqid>0</reqid>
+		<num>10000</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
+	<task>
+		<id>12</id>
+		<name>添加一个好友</name>
+		<reqid>0</reqid>
+		<num>1</num>
+		<money>100</money>
+		<award>101</award>
+	</task>
 </taskList>

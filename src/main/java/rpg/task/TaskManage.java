@@ -135,6 +135,32 @@ public class TaskManage {
 		}
 	}
 
+	public static void checkMoneyTaskCompleteBytaskid(User user, int taskid) {
+		String string = "";
+		Map<Integer, TaskProcess> doingTask = user.getDoingTask();
+		if (doingTask != null) {
+			TaskProcess taskProcess = doingTask.get(taskid);
+			if (taskProcess != null) {
+				int num = taskProcess.getNum();
+				Task task = IOsession.taskMp.get(taskProcess.getTaskid());
+				int num2 = task.getNum();
+				if (user.getMoney() < num2) {
+					taskProcess.setNum(user.getMoney());
+					string += "任务名称:" + task.getName() + "---任务进度:" + taskProcess.getNum() + "/" + num2+"\n";
+				} else {
+					Map<Integer, TaskProcess> finishTask = user.getFinishTask();
+					finishTask.put(taskProcess.getTaskid(), taskProcess);
+					doingTask.remove(taskProcess.getTaskid());
+					string += "任务名称---" + task.getName() + "---完成" + "\n";
+					String string2 = getAward(user, task);
+					string += string2;
+				}
+				Channel channel = IOsession.userchMp.get(user);
+				channel.writeAndFlush(string);
+			}
+		}
+	}
+	
 	/**
 	 * 获取任务奖励
 	 * 
@@ -155,6 +181,7 @@ public class TaskManage {
 			RpgUtil.putYaopin(user, yaopin);
 			string += "任务奖励---获得金钱：" + task.getMoney() + "获得药品：" + yaopin.getName() + "\n";
 		}
+		TaskManage.checkMoneyTaskCompleteBytaskid(user, 11);
 		return string;
 	}
 }

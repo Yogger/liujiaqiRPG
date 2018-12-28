@@ -26,7 +26,7 @@ public class ServerMain {
 		bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
 		bootstrap.group(acceptor, worker);
 		bootstrap.channel(NioServerSocketChannel.class);
-		bootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048));//处理字符串过长的问题
+		bootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(4096));//处理字符串过长的问题
 		bootstrap.childOption(ChannelOption.TCP_NODELAY, true).childOption(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.childHandler(serverIniterHandler);
 		try {

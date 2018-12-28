@@ -1,6 +1,5 @@
 package rpg.service;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import rpg.pojo.Userskill;
 import rpg.pojo.Userzb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.task.TaskManage;
 import rpg.util.UserService;
 
 @Component
@@ -31,7 +31,7 @@ public class PkDispatch {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
 						if (user2.getAreaid() == user.getAreaid()) {
-							if (user2.getAreaid()!=1) {
+							if (user2.getAreaid() != 1) {
 								for (Userskill userskill : skillList) {
 									String skillId = String.valueOf(userskill.getSkill());
 									if (skillId.equals(msg[2])) {
@@ -55,6 +55,7 @@ public class PkDispatch {
 												Channel channel = IOsession.userchMp.get(user2);
 												if (userHp <= 0) {
 													ch.writeAndFlush("你已将" + user2.getNickname() + "打死！");
+													TaskManage.checkTaskCompleteBytaskid(user, 10);
 													user2.setHp(1000);
 													user2.setAreaid(1);
 													channel.writeAndFlush(
@@ -68,7 +69,9 @@ public class PkDispatch {
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
 																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush("你受到了"+user.getNickname()+"的技能"+skill.getName()+"-造成" + hurt + "点伤害-你的血量" + user2.getHp());
+													channel.writeAndFlush(
+															"你受到了" + user.getNickname() + "的技能" + skill.getName()
+																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp());
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
@@ -96,6 +99,7 @@ public class PkDispatch {
 												Channel channel = IOsession.userchMp.get(user2);
 												if (userHp <= 0) {
 													ch.writeAndFlush("你已将" + user2.getNickname() + "打死！");
+													TaskManage.checkTaskCompleteBytaskid(user, 10);
 													user2.setHp(1000);
 													user2.setAreaid(1);
 													channel.writeAndFlush(
@@ -109,7 +113,9 @@ public class PkDispatch {
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
 																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush("你受到了"+user.getNickname()+"的技能"+skill.getName()+"-造成" + hurt + "点伤害-你的血量" + user2.getHp());
+													channel.writeAndFlush(
+															"你受到了" + user.getNickname() + "的技能" + skill.getName()
+																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp());
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);

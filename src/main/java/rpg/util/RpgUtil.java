@@ -138,6 +138,7 @@ public class RpgUtil {
 			string.append("获得金钱：" + monster.getMoney() + "获得药品：" + yaopin.getName()+"\n");
 		}
 		ch.writeAndFlush(string);
+		TaskManage.checkMoneyTaskCompleteBytaskid(user, 11);
 		if(checkLevel==1) TaskManage.checkTaskCompleteBytaskid(user, 2);
 	}
 	

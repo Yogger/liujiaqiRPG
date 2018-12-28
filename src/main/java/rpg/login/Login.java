@@ -75,7 +75,7 @@ public class Login {
 		// 加载任务
 		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>();
 		int cout =1;
-		for(int i=1;i<=6;i++) {
+		for(int i=1;i<=12;i++) {
 			Task task = IOsession.taskMp.get(i);
 			TaskProcess process = new TaskProcess();
 			process.setId(cout++);

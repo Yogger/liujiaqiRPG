@@ -26,6 +26,7 @@ import rpg.service.AoiDispatch;
 import rpg.service.BagDispatch;
 import rpg.service.ChatDispatch;
 import rpg.service.CopyDispatch;
+import rpg.service.FriendDispatch;
 import rpg.service.GhDispatch;
 import rpg.service.GroupDispatch;
 import rpg.service.JyDispatch;
@@ -41,7 +42,7 @@ import rpg.task.TaskfunctionDispatch;
 @Sharable
 @Component("rpgServerHandler")
 public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
-	
+
 	@Autowired
 	private GhDispatch ghDIspatch;
 	@Autowired
@@ -78,10 +79,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	private ChatDispatch chatDispatch;
 	@Autowired
 	private OffineDispatch offineDispatch;
-	
-	//客户端超时次数
-	private Map<ChannelHandlerContext,Integer> clientOvertimeMap = new ConcurrentHashMap<>();
-	private final int MAX_OVERTIME  = 3;  //超时次数超过该值则注销连接
+	@Autowired
+	private FriendDispatch friendDispatch;
+
+	// 客户端超时次数
+	private Map<ChannelHandlerContext, Integer> clientOvertimeMap = new ConcurrentHashMap<>();
+	private final int MAX_OVERTIME = 3; // 超时次数超过该值则注销连接
 
 	// 存储连接进来的玩家
 	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -114,7 +117,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 //		Channel channel = ctx.channel();
 //		System.out.println("[" + channel.remoteAddress() + "] " + "online");
 	}
-	
+
 	// 客户端断开连接
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -133,168 +136,169 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 
 	protected void messageReceived(ChannelHandlerContext arg0, String arg1) throws Exception {
-		if(!arg1.equals("心跳")) {
-		Channel channel = arg0.channel();
-		// 遍历所有连接
-		for (Channel ch : group) {
-			// 当前连接客户
-			if (ch == channel) {
-				// 获取session
-				SocketAddress address = ch.remoteAddress();
-				boolean key = IOsession.mp.containsKey(address);
-				// 如果用户未登陆
-				if (!key) {
-					String[] type = arg1.split("\\s+");
-					switch (type[0]) {
-					case "login":
-						dispatch.dispatch(ch, arg1, address);
-						break;
-					case "regist":
-						registDispatch.dispatch(ch, arg1);
-						break;
-					default:
-						ch.writeAndFlush("指令错误,请重新输入" + "\n");
-						break;
+		if (!arg1.equals("心跳")) {
+			Channel channel = arg0.channel();
+			// 遍历所有连接
+			for (Channel ch : group) {
+				// 当前连接客户
+				if (ch == channel) {
+					// 获取session
+					SocketAddress address = ch.remoteAddress();
+					boolean key = IOsession.mp.containsKey(address);
+					// 如果用户未登陆
+					if (!key) {
+						String[] type = arg1.split("\\s+");
+						switch (type[0]) {
+						case "login":
+							dispatch.dispatch(ch, arg1, address);
+							break;
+						case "regist":
+							registDispatch.dispatch(ch, arg1);
+							break;
+						default:
+							ch.writeAndFlush("指令错误,请重新输入" + "\n");
+							break;
+						}
 					}
-				}
-				// 用户已登陆
-				else {
-					boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
-					String[] msg = arg1.split("\\s+");
-					User user = IOsession.mp.get(address);
-					if(msg.length>0) {
-					switch (msg[0]) {
-					case "pk":
-						pkDispatch.pk(user, ch, group, arg1);
-						break;
-					case "task":
-						taskfunctionDispatch.task(user, ch, group, arg1);
-						break;
-					case "email":
-						chatDispatch.Email(user, ch, group, arg1);
-						break;
-					case "showemail":
-						chatDispatch.showEmail(user, ch, group, arg1);
-						break;
-					case "chatall":
-						chatDispatch.chatAll(user, ch, group, arg1);
-						break;
-					case "chat":
-						chatDispatch.chat(user, ch, group, arg1);
-						break;
-					case "store":
-						storeDispatch.store(user, ch, group, arg1);
-						break;
-					case "group":
-						groupDispatch.group(user, ch, group, arg1);
-						break;
-					case "copy":
-						copyDispatch.copy(user, ch, group, arg1);
-						break;
-					case "showgroup":
-						groupDispatch.showgroup(user, ch, group, arg1);
-						break;
-					case "showbag":
-						bagDispatch.showBag(user, ch, group);
-						break;
-					case "use":
-						useGoods.use(user, ch, group, arg1);
-						break;
-					case "showzb":
-						bagDispatch.showZb(user, ch, group);
-						break;
-					case "tkff":
-						bagDispatch.tkffZb(user, ch, group, arg1);
-						break;
-					case "wear":
-						bagDispatch.wearzb(user, ch, group, arg1);
-						break;
-					case "fix":
-						bagDispatch.fix(user, ch, group, arg1);
-						break;
-					default:
-						// 普通战斗状态
-						if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
-							ackDispatch.ack(user, ch, group, arg1);
-						}
-						// 副本战斗状态
-						else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
-							ackBossDispatch.ack(user, ch, group, arg1);
-						}
-						//交易状态
-						else if(user.getJyFlag()==1||user.getJyFlag()==2) {
-							jyDispatch.jyProcess(user, ch, group, arg1);
-						}
-						// 普通状态
-						else {
+					// 用户已登陆
+					else {
+						boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
+						String[] msg = arg1.split("\\s+");
+						User user = IOsession.mp.get(address);
+						if (msg.length > 0) {
 							switch (msg[0]) {
-							case "jy":
-								jyDispatch.jy(user, ch, group, arg1);
+							case "f":
+								friendDispatch.friend(user, ch, group, arg1);
 								break;
-							case "gh":
-								ghDIspatch.gh(user, ch, group, arg1);
+							case "pk":
+								pkDispatch.pk(user, ch, group, arg1);
 								break;
-							case "move":
-								moveDispatch.dispatch(ch, msg, user);
+							case "task":
+								taskfunctionDispatch.task(user, ch, group, arg1);
 								break;
-							case "aoi":
-								aoiDispatch.aoi(user, ch, group);
+							case "email":
+								chatDispatch.Email(user, ch, group, arg1);
 								break;
-							case "talk":
-								talkDispatch.talk(user, ch, group, arg1);
+							case "showemail":
+								chatDispatch.showEmail(user, ch, group, arg1);
 								break;
-							case "ack":
-								IOsession.ackStatus.put(address, 1);
-								ackDispatch.ack(user, ch, group, arg1);
+							case "chatall":
+								chatDispatch.chatAll(user, ch, group, arg1);
+								break;
+							case "chat":
+								chatDispatch.chat(user, ch, group, arg1);
+								break;
+							case "store":
+								storeDispatch.store(user, ch, group, arg1);
+								break;
+							case "group":
+								groupDispatch.group(user, ch, group, arg1);
+								break;
+							case "copy":
+								copyDispatch.copy(user, ch, group, arg1);
+								break;
+							case "showgroup":
+								groupDispatch.showgroup(user, ch, group, arg1);
+								break;
+							case "showbag":
+								bagDispatch.showBag(user, ch, group);
+								break;
+							case "use":
+								useGoods.use(user, ch, group, arg1);
+								break;
+							case "showzb":
+								bagDispatch.showZb(user, ch, group);
+								break;
+							case "tkff":
+								bagDispatch.tkffZb(user, ch, group, arg1);
+								break;
+							case "wear":
+								bagDispatch.wearzb(user, ch, group, arg1);
+								break;
+							case "fix":
+								bagDispatch.fix(user, ch, group, arg1);
 								break;
 							default:
-								ch.writeAndFlush("无效指令");
+								// 普通战斗状态
+								if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
+									ackDispatch.ack(user, ch, group, arg1);
+								}
+								// 副本战斗状态
+								else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
+									ackBossDispatch.ack(user, ch, group, arg1);
+								}
+								// 交易状态
+								else if (user.getJyFlag() == 1 || user.getJyFlag() == 2) {
+									jyDispatch.jyProcess(user, ch, group, arg1);
+								}
+								// 普通状态
+								else {
+									switch (msg[0]) {
+									case "jy":
+										jyDispatch.jy(user, ch, group, arg1);
+										break;
+									case "gh":
+										ghDIspatch.gh(user, ch, group, arg1);
+										break;
+									case "move":
+										moveDispatch.dispatch(ch, msg, user);
+										break;
+									case "aoi":
+										aoiDispatch.aoi(user, ch, group);
+										break;
+									case "talk":
+										talkDispatch.talk(user, ch, group, arg1);
+										break;
+									case "ack":
+										IOsession.ackStatus.put(address, 1);
+										ackDispatch.ack(user, ch, group, arg1);
+										break;
+									default:
+										ch.writeAndFlush("无效指令");
+										break;
+									}
+								}
 								break;
 							}
 						}
-						break;
 					}
 				}
+				// 其他连接客户
+				else {
+//				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 				}
 			}
-			// 其他连接客户
-			else {
-//				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
-			}
-		}
 		}
 		resetReconnectTimes();
 //		System.out.println("服务端收到心跳");
-		clientOvertimeMap.remove(arg0);//只要接受到数据包，则清空超时次数
+		clientOvertimeMap.remove(arg0);// 只要接受到数据包，则清空超时次数
 	}
-	
 
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
-		    throws Exception {
-	    //心跳包检测读超时
-	    if (evt instanceof IdleStateEvent) {
-		    IdleStateEvent e = (IdleStateEvent) evt;
-		    if (e.state() == IdleState.READER_IDLE) {
-			    System.err.println("客户端读超时");
-			    int overtimeTimes = clientOvertimeMap.getOrDefault(ctx, 0);
-			    if(overtimeTimes < MAX_OVERTIME){
-				    ctx.writeAndFlush("心跳");
-				    addUserOvertime(ctx);
-			    }else{
-				    ServerManager.ungisterUserContext(ctx);
-			    }
-		    } 
-	    }
-    }
-    
-    private void addUserOvertime(ChannelHandlerContext ctx){
-	    int oldTimes = 0;
-	    if(clientOvertimeMap.containsKey(ctx)){
-		    oldTimes = clientOvertimeMap.get(ctx);
-	    }
-	    clientOvertimeMap.put(ctx, (int)(oldTimes+1));
-    }
-    
+	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+		// 心跳包检测读超时
+		if (evt instanceof IdleStateEvent) {
+			IdleStateEvent e = (IdleStateEvent) evt;
+			if (e.state() == IdleState.READER_IDLE) {
+				System.err.println("客户端读超时");
+				int overtimeTimes = clientOvertimeMap.getOrDefault(ctx, 0);
+				if (overtimeTimes < MAX_OVERTIME) {
+					ctx.writeAndFlush("心跳");
+					addUserOvertime(ctx);
+				} else {
+					ServerManager.ungisterUserContext(ctx);
+				}
+			}
+		}
+	}
+
+	private void addUserOvertime(ChannelHandlerContext ctx) {
+		int oldTimes = 0;
+		if (clientOvertimeMap.containsKey(ctx)) {
+			oldTimes = clientOvertimeMap.get(ctx);
+		}
+		clientOvertimeMap.put(ctx, (int) (oldTimes + 1));
+	}
+
 	public void resetReconnectTimes() {
 		if (ClientMain.reconnectTimes > 0) {
 			ClientMain.reconnectTimes = 0;

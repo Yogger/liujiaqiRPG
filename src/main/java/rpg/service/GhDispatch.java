@@ -29,6 +29,7 @@ import rpg.pojo.Userbag;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
+import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
 
 /**
@@ -494,6 +495,7 @@ public class GhDispatch {
 					ch.writeAndFlush(user2.getNickname() + "加入工会");
 					Channel channel = IOsession.userchMp.get(user2);
 					channel.writeAndFlush("你成功加入工会");
+					TaskManage.checkTaskCompleteBytaskid(user2, 8);
 				} else {
 					ch.writeAndFlush("你没有权限");
 				}
@@ -562,6 +564,7 @@ public class GhDispatch {
 //		map.put(name, ghuser);
 //		IOsession.ghUserMp.put(id, map);
 		ch.writeAndFlush("创建工会成功");
+		TaskManage.checkTaskCompleteBytaskid(user, 8);
 	}
 
 	private void showGh(User user, Channel ch, ChannelGroup group, String[] msg) {

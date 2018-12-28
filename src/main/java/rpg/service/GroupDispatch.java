@@ -11,6 +11,7 @@ import io.netty.channel.group.ChannelGroup;
 import rpg.pojo.Group;
 import rpg.pojo.User;
 import rpg.session.IOsession;
+import rpg.task.TaskManage;
 
 /**
  * 组队
@@ -53,6 +54,7 @@ public class GroupDispatch {
 						list.add(user);
 						group2.setList(list);
 						IOsession.userGroupMp.put(groupId, group2);
+						TaskManage.checkTaskCompleteBytaskid(user, 7);
 					}
 					}
 				}
@@ -133,6 +135,7 @@ public class GroupDispatch {
 							list.add(user);
 							ch.writeAndFlush("你已进入" + user2.getNickname() + "队伍");
 							channel.writeAndFlush(user.getNickname() + "进入队伍");
+							TaskManage.checkTaskCompleteBytaskid(user, 7);
 						}
 					}
 				}

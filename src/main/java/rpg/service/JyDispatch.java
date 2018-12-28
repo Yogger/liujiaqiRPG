@@ -16,6 +16,7 @@ import rpg.pojo.Userbag;
 import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
+import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
 
 /**
@@ -243,6 +244,7 @@ public class JyDispatch {
 						ch.writeAndFlush("进入交易状态");
 						Channel channel = IOsession.userchMp.get(user2);
 						channel.writeAndFlush("和" + user.getNickname() + "开始交易");
+						TaskManage.checkTaskCompleteBytaskid(user, 9);
 					} else if (user2.getJySendFlag() == 0) {
 						ch.writeAndFlush("交易已过期");
 					} else {
@@ -280,6 +282,7 @@ public class JyDispatch {
 							ch.writeAndFlush("向" + user2.getNickname() + "-交易请求已发送");
 							Channel channel = IOsession.userchMp.get(user2);
 							channel.writeAndFlush(jyId + "--" + user.getNickname() + "请求跟你交易");
+							TaskManage.checkTaskCompleteBytaskid(user, 9);
 						}
 					}
 				}

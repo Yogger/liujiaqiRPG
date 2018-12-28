@@ -82,4 +82,6 @@ public class IOsession {
 	public static HashMap<Integer, Task> taskMp = new HashMap<Integer, Task>();
 	//存儲等級表
 	public static HashMap<Integer, Level> levelMp = new HashMap<Integer, Level>();
+	//存储好友申请信息
+	public static HashMap<String, List<String>> friendMp = new HashMap<String, List<String>>();
 }
