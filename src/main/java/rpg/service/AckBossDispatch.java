@@ -2,7 +2,9 @@ package rpg.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,10 @@ public class AckBossDispatch {
 		}
 		// 二次及以上攻击
 		else if (msg.length == 1) {
-			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+//			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
+			List<Monster> linkedList = IOsession.monsterMp.get(ch.remoteAddress());
+			Monster monster = list2.get(0);
 			if (monster != null) {
 				ConcurrentHashMap<Integer, Long> buffTime2 = IOsession.buffTimeMp.get(user);
 				// 找到配置的技能
@@ -152,64 +157,90 @@ public class AckBossDispatch {
 													int monsterHp = monster.getHp() - hurt;
 													monster.setHp(monsterHp);
 													if (monsterHp <= 0) {
-														// 产生新的boss
-														if (monsterList.size() - 1 > bossScene.getId()) {
-															bossScene.setId(bossScene.getId() + 1);
-															Monster monster2 = monsterList.get(bossScene.getId());
-															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-															if (group2 != null) {
-																List<User> list3 = group2.getList();
-																ArrayList<User> userList1 = new ArrayList<>();
-																for (User user3 : list3) {
-																	userList1.add(user3);
-																}
-																monster2.setUserList(userList1);
-															}
+														if (linkedList.size() != 1) {
+															linkedList.remove(monster);
+															ch.writeAndFlush("消灭了" + monster.getName());
 															monster = null;
-															monster = monster2;
-															// 将怪物指定用户
-															if (group2 != null) {
-																List<User> list3 = group2.getList();
-																for (User user3 : list3) {
-																	Channel channel1 = IOsession.userchMp.get(user3);
-																	IOsession.monsterMp.put(channel1.remoteAddress(),
-																			monster);
-																	channel1.writeAndFlush(
-																			"boss已被消灭,新的Boss" + monster.getName()
-																					+ "出现-血量:" + monster.getHp()
-																					+ "攻击力:" + monster.getAck());
-																}
-															}
-														} else {
-															ch.writeAndFlush("boss已全被消灭，退出副本");
-															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-															RpgUtil.ackEnd(user, ch, monster);
-															TaskManage.checkTaskComplete(user, bossScene.getSceneid());
-															if (group2 != null) {
-																List<User> list3 = group2.getList();
-																for (User user3 : list3) {
-																	Channel channel1 = IOsession.userchMp.get(user3);
-																	if (channel1 != ch) {
-																		channel1.writeAndFlush(user.getNickname()
-																				+ "消灭了" + monster.getName()
-																				+ "-你已通关，退出副本");
-																		RpgUtil.ackEnd(user3, channel1, monster);
-																		TaskManage.checkTaskComplete(user3,
-																				bossScene.getSceneid());
+														}
+														// 产生新的boss
+														else {
+															if (bossScene.getLayer() - 1 > bossScene.getId()) {
+																bossScene.setId(bossScene.getId() + 1);
+//															Monster monster2 = monsterList.get(bossScene.getId());
+																Map<Integer, Integer> struct = bossScene.getStruct();
+																Integer csid1 = struct.get(bossScene.getId());
+																Integer csid2 = struct.get(bossScene.getId() - 1);
+																LinkedList<Monster> linkedList2 = new LinkedList<>();
+																Group group2 = IOsession.userGroupMp
+																		.get(user.getGroupId());
+																for (int i = csid2 + 1; i <= csid1; i++) {
+																	Monster monster2 = monsterList.get(i);
+																	if (group2 != null) {
+																		List<User> list3 = group2.getList();
+																		ArrayList<User> userList1 = new ArrayList<>();
+																		for (User user3 : list3) {
+																			userList1.add(user3);
+																		}
+																		monster2.setUserList(userList1);
 																	}
-																	IOsession.ackStatus.put(channel1.remoteAddress(),
-																			0);
+//																monster = null;
+//																monster = monster2;
+																	linkedList2.add(monster2);
 																}
+																linkedList = null;
+																linkedList = linkedList2;
+																// 将怪物指定用户
+																if (group2 != null) {
+																	List<User> list3 = group2.getList();
+																	for (User user3 : list3) {
+																		Channel channel1 = IOsession.userchMp
+																				.get(user3);
+																		IOsession.monsterMp.put(
+																				channel1.remoteAddress(), linkedList);
+																		String word1 = "";
+																		for (Monster monster2 : linkedList) {
+																			word1 += monster2.getName() + "-血量:"
+																					+ monster2.getHp() + "攻击力:"
+																					+ monster2.getAck() + "\n";
+																		}
+																		channel1.writeAndFlush(
+																				"boss已被消灭,新的Boss出现\n" + word1);
+																	}
+																}
+															} else {
+																ch.writeAndFlush("boss已全被消灭，退出副本");
+																Group group2 = IOsession.userGroupMp
+																		.get(user.getGroupId());
+																RpgUtil.ackEnd(user, ch, monster);
+																TaskManage.checkTaskComplete(user,
+																		bossScene.getSceneid());
+																if (group2 != null) {
+																	List<User> list3 = group2.getList();
+																	for (User user3 : list3) {
+																		Channel channel1 = IOsession.userchMp
+																				.get(user3);
+																		if (channel1 != ch) {
+																			channel1.writeAndFlush(user.getNickname()
+																					+ "消灭了" + monster.getName()
+																					+ "-你已通关，退出副本");
+																			RpgUtil.ackEnd(user3, channel1, monster);
+																			TaskManage.checkTaskComplete(user3,
+																					bossScene.getSceneid());
+																		}
+																		IOsession.ackStatus
+																				.put(channel1.remoteAddress(), 0);
+																	}
+																}
+																monster.setAliveFlag(false);
+																IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																// 损耗装备耐久度
+																for (Userzb userzb : list1) {
+																	userzb.setNjd(userzb.getNjd() - 5);
+																}
+																removeUserlist(user, bossScene);
+																bossScene = null;// 回收boss场景
+																IOsession.userBossMp.remove(user.getGroupId());
 															}
-															monster.setAliveFlag(false);
-															IOsession.ackStatus.put(ch.remoteAddress(), 0);
-															// 损耗装备耐久度
-															for (Userzb userzb : list1) {
-																userzb.setNjd(userzb.getNjd() - 5);
-															}
-															removeUserlist(user, bossScene);
-															bossScene = null;// 回收boss场景
-															IOsession.userBossMp.remove(user.getGroupId());
 														}
 													} else {
 														ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗"
@@ -285,61 +316,85 @@ public class AckBossDispatch {
 												int monsterHp = monster.getHp() - hurt;
 												monster.setHp(monsterHp);
 												if (monsterHp <= 0) {
-													// 产生新的boss
-													if (monsterList.size() - 1 > bossScene.getId()) {
-														bossScene.setId(bossScene.getId() + 1);
-														Monster monster2 = monsterList.get(bossScene.getId());
-														Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-														if (group2 != null) {
-															List<User> list3 = group2.getList();
-															ArrayList<User> userList1 = new ArrayList<>();
-															for (User user3 : list3) {
-																userList1.add(user3);
-															}
-															monster2.setUserList(userList1);
-														}
+													if (linkedList.size() != 1) {
+														linkedList.remove(monster);
+														ch.writeAndFlush("消灭了" + monster.getName());
 														monster = null;
-														monster = monster2;
-														// 将怪物指定用户
-														if (group2 != null) {
-															List<User> list3 = group2.getList();
-															for (User user3 : list3) {
-																Channel channel1 = IOsession.userchMp.get(user3);
-																IOsession.monsterMp.put(channel1.remoteAddress(),
-																		monster);
-																channel1.writeAndFlush("boss已被消灭,新的Boss"
-																		+ monster.getName() + "出现-血量:" + monster.getHp()
-																		+ "攻击力:" + monster.getAck());
-															}
-														}
-													} else {
-														ch.writeAndFlush("boss已全被消灭，退出副本");
-														RpgUtil.ackEnd(user, ch, monster);
-														TaskManage.checkTaskComplete(user, bossScene.getSceneid());
-														Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-														if (group2 != null) {
-															List<User> list3 = group2.getList();
-															for (User user3 : list3) {
-																Channel channel1 = IOsession.userchMp.get(user3);
-																if (channel1 != ch) {
-																	channel1.writeAndFlush(user.getNickname() + "消灭了"
-																			+ monster.getName() + "-你已通关，退出副本" + "\n");
-																	RpgUtil.ackEnd(user3, channel1, monster);
-																	TaskManage.checkTaskComplete(user3,
-																			bossScene.getSceneid());
+													}
+													// 产生新的boss
+													else {
+														if (bossScene.getLayer() - 1 > bossScene.getId()) {
+															bossScene.setId(bossScene.getId() + 1);
+//														Monster monster2 = monsterList.get(bossScene.getId());
+															Map<Integer, Integer> struct = bossScene.getStruct();
+															Integer csid1 = struct.get(bossScene.getId());
+															Integer csid2 = struct.get(bossScene.getId() - 1);
+															LinkedList<Monster> linkedList2 = new LinkedList<>();
+															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+															for (int i = csid2 + 1; i <= csid1; i++) {
+																Monster monster2 = monsterList.get(i);
+																if (group2 != null) {
+																	List<User> list3 = group2.getList();
+																	ArrayList<User> userList1 = new ArrayList<>();
+																	for (User user3 : list3) {
+																		userList1.add(user3);
+																	}
+																	monster2.setUserList(userList1);
 																}
-																IOsession.ackStatus.put(channel1.remoteAddress(), 0);
+//															monster = null;
+//															monster = monster2;
+																linkedList2.add(monster2);
 															}
+															linkedList = null;
+															linkedList = linkedList2;
+															// 将怪物指定用户
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																for (User user3 : list3) {
+																	Channel channel1 = IOsession.userchMp.get(user3);
+																	IOsession.monsterMp.put(channel1.remoteAddress(),
+																			linkedList);
+																	String word1 = "";
+																	for (Monster monster2 : linkedList) {
+																		word1 += monster2.getName() + "-血量:"
+																				+ monster2.getHp() + "攻击力:"
+																				+ monster2.getAck() + "\n";
+																	}
+																	channel1.writeAndFlush(
+																			"boss已被消灭,新的Boss出现\n" + word1);
+																}
+															}
+														} else {
+															ch.writeAndFlush("boss已全被消灭，退出副本");
+															RpgUtil.ackEnd(user, ch, monster);
+															TaskManage.checkTaskComplete(user, bossScene.getSceneid());
+															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																for (User user3 : list3) {
+																	Channel channel1 = IOsession.userchMp.get(user3);
+																	if (channel1 != ch) {
+																		channel1.writeAndFlush(user.getNickname()
+																				+ "消灭了" + monster.getName()
+																				+ "-你已通关，退出副本" + "\n");
+																		RpgUtil.ackEnd(user3, channel1, monster);
+																		TaskManage.checkTaskComplete(user3,
+																				bossScene.getSceneid());
+																	}
+																	IOsession.ackStatus.put(channel1.remoteAddress(),
+																			0);
+																}
+															}
+															monster.setAliveFlag(false);
+															IOsession.ackStatus.put(ch.remoteAddress(), 0);
+															// 损耗装备耐久度
+															for (Userzb userzb : list1) {
+																userzb.setNjd(userzb.getNjd() - 5);
+															}
+															removeUserlist(user, bossScene);
+															bossScene = null;// 回收boss场景
+															IOsession.userBossMp.remove(user.getGroupId());
 														}
-														monster.setAliveFlag(false);
-														IOsession.ackStatus.put(ch.remoteAddress(), 0);
-														// 损耗装备耐久度
-														for (Userzb userzb : list1) {
-															userzb.setNjd(userzb.getNjd() - 5);
-														}
-														removeUserlist(user, bossScene);
-														bossScene = null;// 回收boss场景
-														IOsession.userBossMp.remove(user.getGroupId());
 													}
 												} else {
 													ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp()
@@ -400,7 +455,7 @@ public class AckBossDispatch {
 				monster.setCountAcker(monster.getCountAcker() + 1);
 				// 添加怪物的攻击者
 				if (monster.getCountAcker() == 1) {
-					ArrayList<User> userList = new ArrayList<>();
+					LinkedList<User> userList = new LinkedList<>();
 					userList.add(user);
 					monster.setUserList(userList);
 				} else {
@@ -409,7 +464,9 @@ public class AckBossDispatch {
 				}
 				// 将怪物指定到用户
 				for (Channel channel : group) {
-					IOsession.monsterMp.put(channel.remoteAddress(), monster);
+					List<Monster> list2 = new ArrayList<>();
+					list2.add(monster);
+					IOsession.monsterMp.put(channel.remoteAddress(), list2);
 				}
 				// 找到配置的技能
 				for (Userskill userskill : list) {

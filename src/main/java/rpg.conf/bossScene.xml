@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bossSceneList>
+	<bossScene>
+		<sceneid>5001</sceneid>
+		<name>噩梦之地</name>
+		<lastedTime>600000</lastedTime>
+		<bossid>10001,10002,10003,10004</bossid>
+		<layer>3</layer>
+		<struct>0:0,1:2,2:3</struct>
+	</bossScene>
+</bossSceneList>

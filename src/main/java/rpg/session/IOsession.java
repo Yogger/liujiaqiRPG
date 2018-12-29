@@ -41,7 +41,7 @@ public class IOsession {
 	// 战斗状态
 	public static HashMap<SocketAddress, Integer> ackStatus = new HashMap<SocketAddress, Integer>();
 	// 攻击的怪物
-	public static HashMap<SocketAddress, Monster> monsterMp = new HashMap<SocketAddress, Monster>();
+	public static HashMap<SocketAddress, List<Monster>> monsterMp = new HashMap<SocketAddress, List<Monster>>();
 	// 怪物线程池
 	public static ExecutorService monsterThreadPool = Executors.newCachedThreadPool();
 	// 药品关系

@@ -1,6 +1,8 @@
 package rpg.pojo;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class BossScene {
 	private int id;
@@ -10,7 +12,46 @@ public class BossScene {
 	private ArrayList<Monster> monsterList;
 	private long startTime;
 	private long lastedTime;
+	private Map<Integer, Integer> struct; 
+	private List<Integer> bossid;
+	private int layer;
 	
+	/**
+	 * @return the layer
+	 */
+	public int getLayer() {
+		return layer;
+	}
+	/**
+	 * @param layer the layer to set
+	 */
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
+	/**
+	 * @return the bossid
+	 */
+	public List<Integer> getBossid() {
+		return bossid;
+	}
+	/**
+	 * @param bossid the bossid to set
+	 */
+	public void setBossid(List<Integer> bossid) {
+		this.bossid = bossid;
+	}
+	/**
+	 * @return the struct
+	 */
+	public Map<Integer, Integer> getStruct() {
+		return struct;
+	}
+	/**
+	 * @param struct the struct to set
+	 */
+	public void setStruct(Map<Integer, Integer> struct) {
+		this.struct = struct;
+	}
 	/**
 	 * @return the sceneid
 	 */

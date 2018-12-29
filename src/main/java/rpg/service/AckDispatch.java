@@ -1,5 +1,6 @@
 package rpg.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,7 +68,9 @@ public class AckDispatch {
 					find = true;
 					if (monster.getHp() > 0) {
 						monster.setCountAcker(monster.getCountAcker() + 1);
-						IOsession.monsterMp.put(ch.remoteAddress(), monster);
+						List<Monster> list2 = new ArrayList<>();
+						list2.add(monster);
+						IOsession.monsterMp.put(ch.remoteAddress(), list2);
 						// 找到配置的技能
 						for (Userskill userskill : list) {
 							String skillId = String.valueOf(userskill.getSkill());
@@ -191,7 +194,8 @@ public class AckDispatch {
 		}
 		// 二次及以上攻击
 		else if (msg.length == 1) {
-			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
+			Monster monster = list2.get(list2.size()-1);
 			// 找到配置的技能
 			if (msg[0].equals("esc")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);

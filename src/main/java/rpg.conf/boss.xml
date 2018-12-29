@@ -16,6 +16,26 @@
 		<id>10002</id>
 		<aliveFlag>true</aliveFlag>
 		<hp>80000</hp>
+		<ack>100</ack>
+		<award>101,102,1</award>
+		<money>3000</money>
+		<skill>4</skill>
+	</boss>
+	<boss>
+		<name>小boss</name>
+		<id>10003</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>80000</hp>
+		<ack>100</ack>
+		<award>101,102,1</award>
+		<money>3000</money>
+		<skill>4</skill>
+	</boss>
+	<boss>
+		<name>大boss</name>
+		<id>10004</id>
+		<aliveFlag>true</aliveFlag>
+		<hp>80000</hp>
 		<ack>200</ack>
 		<award>101,102,1</award>
 		<money>3000</money>

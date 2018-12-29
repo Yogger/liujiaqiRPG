@@ -2,6 +2,7 @@ package rpg.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -29,11 +30,36 @@ import rpg.session.IOsession;
 public class CopyDispatch {
 	public void copy(User user, Channel ch, ChannelGroup group, String msgR) throws DocumentException {
 		BossScene scene = new BossScene();
-		scene.setSceneid(5001);
-		scene.setName("噩梦之地");
+		// 解析bossScene.xml文件，创建副本
+		SAXReader sr1 = new SAXReader();
+		Document document1 = sr1.read(new File("src\\main\\java\\rpg.conf\\bossScene.xml"));
+		Element root1 = document1.getRootElement();
+		List<Element> elementList1 = root1.elements();
+		for (Element e : elementList1) {
+			scene.setSceneid(Integer.valueOf(e.elementText("sceneid")));
+			scene.setName(e.elementText("name"));
+			scene.setLastedTime(Integer.valueOf(e.elementText("lastedTime")));
+			scene.setLayer(Integer.valueOf(e.elementText("layer")));
+			String[] split = e.elementText("bossid").split(",");
+			ArrayList<Integer> bossidList = new ArrayList<>();
+			for (String bossid : split) {
+				bossidList.add(Integer.valueOf(bossid));
+			}
+			scene.setBossid(bossidList);
+			HashMap<Integer,Integer> hashMap = new HashMap<>();
+			String[] split2 = e.elementText("struct").split(",");
+			for (String string : split2) {
+				String[] split3 = string.split(":");
+				hashMap.put(Integer.valueOf(split3[0]), Integer.valueOf(split3[1]));
+			}
+			scene.setStruct(hashMap);
+		}
+//		scene.setSceneid(5001);
+//		scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
 		scene.setId(0);
-		scene.setLastedTime(600000);
+//		scene.setLastedTime(600000);
+		List<Integer> bossid = scene.getBossid();
 		ArrayList<Monster> monsterList = new ArrayList<>();
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\boss.xml"));
@@ -41,6 +67,7 @@ public class CopyDispatch {
 		List<Element> elementList = root.elements();
 		for (Element e : elementList) {
 			Monster monster = new Monster();
+			monster.setId(Integer.valueOf(e.elementText("id")));
 			monster.setName(e.elementText("name"));
 			monster.setAliveFlag(true);
 			monster.setHp(Integer.valueOf(e.elementText("hp")));
@@ -61,7 +88,9 @@ public class CopyDispatch {
 				skillList.add(id);
 			}
 			monster.setSkillList(skillList);
-			monsterList.add(monster);
+			if (bossid.contains(monster.getId())) {
+				monsterList.add(monster);
+			}
 		}
 		scene.setMonsterList(monsterList);
 		IOsession.userBossMp.put(user.getGroupId(), scene);
