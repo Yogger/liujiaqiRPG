@@ -23,6 +23,6 @@
 		<id>4</id>
 		<name>打晕buff</name>
 		<mp>1</mp>
-		<lastedTime>2000</lastedTime>
+		<lastedTime>1000</lastedTime>
 	</buff>
 </buffList>

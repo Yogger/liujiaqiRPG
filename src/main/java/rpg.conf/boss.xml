@@ -29,7 +29,7 @@
 		<ack>100</ack>
 		<award>101,102,1</award>
 		<money>3000</money>
-		<skill>4</skill>
+		<skill>1</skill>
 	</boss>
 	<boss>
 		<name>大boss</name>

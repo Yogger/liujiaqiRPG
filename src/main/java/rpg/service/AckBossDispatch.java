@@ -68,6 +68,26 @@ public class AckBossDispatch {
 		if (msg.length == 3) {
 			ackFirst(user, ch, group, msg, id, nickname, list, monsterList, bossScene);
 		}
+		// 转换攻击目标
+		else if (msg.length == 2 && msg[0].equals("a")) {
+			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
+			int index = -1;
+			for (int i = 0; i < list2.size(); i++) {
+				Monster monster = list2.get(i);
+				if (monster.getName().equals(msg[1])) {
+					index = i;
+					break;
+				}
+			}
+			if (index != -1) {
+				Monster monster = list2.get(index);
+				list2.remove(monster);
+				list2.add(0, monster);
+				ch.writeAndFlush("转换攻击目标-" + monster.getName() + "-成功");
+			} else {
+				ch.writeAndFlush("指令错误");
+			}
+		}
 		// 二次及以上攻击
 		else if (msg.length == 1) {
 //			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
@@ -170,38 +190,38 @@ public class AckBossDispatch {
 																Map<Integer, Integer> struct = bossScene.getStruct();
 																Integer csid1 = struct.get(bossScene.getId());
 																Integer csid2 = struct.get(bossScene.getId() - 1);
-																LinkedList<Monster> linkedList2 = new LinkedList<>();
 																Group group2 = IOsession.userGroupMp
 																		.get(user.getGroupId());
-																for (int i = csid2 + 1; i <= csid1; i++) {
-																	Monster monster2 = monsterList.get(i);
-																	if (group2 != null) {
-																		List<User> list3 = group2.getList();
-																		ArrayList<User> userList1 = new ArrayList<>();
-																		for (User user3 : list3) {
-																			userList1.add(user3);
-																		}
-																		monster2.setUserList(userList1);
-																	}
-//																monster = null;
-//																monster = monster2;
-																	linkedList2.add(monster2);
-																}
-																linkedList = null;
-																linkedList = linkedList2;
 																// 将怪物指定用户
 																if (group2 != null) {
 																	List<User> list3 = group2.getList();
 																	for (User user3 : list3) {
+																		LinkedList<Monster> linkedList2 = new LinkedList<>();
+																		for (int i = csid2 + 1; i <= csid1; i++) {
+																			Monster monster2 = monsterList.get(i);
+																			if (group2 != null) {
+																				List<User> list31 = group2.getList();
+																				ArrayList<User> userList1 = new ArrayList<>();
+																				for (User user31 : list31) {
+																					userList1.add(user31);
+																				}
+																				monster2.setUserList(userList1);
+																			}
+//																		monster = null;
+//																		monster = monster2;
+																			linkedList2.add(monster2);
+																		}
+																		linkedList = null;
+																		linkedList = linkedList2;
 																		Channel channel1 = IOsession.userchMp
 																				.get(user3);
 																		IOsession.monsterMp.put(
 																				channel1.remoteAddress(), linkedList);
 																		String word1 = "";
-																		for (Monster monster2 : linkedList) {
-																			word1 += monster2.getName() + "-血量:"
-																					+ monster2.getHp() + "攻击力:"
-																					+ monster2.getAck() + "\n";
+																		for (Monster monster21 : linkedList) {
+																			word1 += monster21.getName() + "-血量:"
+																					+ monster21.getHp() + "攻击力:"
+																					+ monster21.getAck() + "\n";
 																		}
 																		channel1.writeAndFlush(
 																				"boss已被消灭,新的Boss出现\n" + word1);
@@ -325,40 +345,40 @@ public class AckBossDispatch {
 													else {
 														if (bossScene.getLayer() - 1 > bossScene.getId()) {
 															bossScene.setId(bossScene.getId() + 1);
-//														Monster monster2 = monsterList.get(bossScene.getId());
+//															Monster monster2 = monsterList.get(bossScene.getId());
 															Map<Integer, Integer> struct = bossScene.getStruct();
 															Integer csid1 = struct.get(bossScene.getId());
 															Integer csid2 = struct.get(bossScene.getId() - 1);
-															LinkedList<Monster> linkedList2 = new LinkedList<>();
 															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-															for (int i = csid2 + 1; i <= csid1; i++) {
-																Monster monster2 = monsterList.get(i);
-																if (group2 != null) {
-																	List<User> list3 = group2.getList();
-																	ArrayList<User> userList1 = new ArrayList<>();
-																	for (User user3 : list3) {
-																		userList1.add(user3);
-																	}
-																	monster2.setUserList(userList1);
-																}
-//															monster = null;
-//															monster = monster2;
-																linkedList2.add(monster2);
-															}
-															linkedList = null;
-															linkedList = linkedList2;
 															// 将怪物指定用户
 															if (group2 != null) {
 																List<User> list3 = group2.getList();
 																for (User user3 : list3) {
+																	LinkedList<Monster> linkedList2 = new LinkedList<>();
+																	for (int i = csid2 + 1; i <= csid1; i++) {
+																		Monster monster2 = monsterList.get(i);
+																		if (group2 != null) {
+																			List<User> list31 = group2.getList();
+																			ArrayList<User> userList1 = new ArrayList<>();
+																			for (User user31 : list31) {
+																				userList1.add(user31);
+																			}
+																			monster2.setUserList(userList1);
+																		}
+//																		monster = null;
+//																		monster = monster2;
+																		linkedList2.add(monster2);
+																	}
+																	linkedList = null;
+																	linkedList = linkedList2;
 																	Channel channel1 = IOsession.userchMp.get(user3);
 																	IOsession.monsterMp.put(channel1.remoteAddress(),
 																			linkedList);
 																	String word1 = "";
-																	for (Monster monster2 : linkedList) {
-																		word1 += monster2.getName() + "-血量:"
-																				+ monster2.getHp() + "攻击力:"
-																				+ monster2.getAck() + "\n";
+																	for (Monster monster21 : linkedList) {
+																		word1 += monster21.getName() + "-血量:"
+																				+ monster21.getHp() + "攻击力:"
+																				+ monster21.getAck() + "\n";
 																	}
 																	channel1.writeAndFlush(
 																			"boss已被消灭,新的Boss出现\n" + word1);
