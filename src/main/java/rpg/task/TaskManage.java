@@ -12,6 +12,7 @@ import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 
 public class TaskManage {
 
@@ -44,7 +45,7 @@ public class TaskManage {
 				}
 			}
 			Channel channel = IOsession.userchMp.get(user);
-			channel.writeAndFlush(string);
+			SendMsg.send(string, channel);
 		}
 	}
 
@@ -75,7 +76,7 @@ public class TaskManage {
 					string += string2;
 				}
 				Channel channel = IOsession.userchMp.get(user);
-				channel.writeAndFlush(string);
+				SendMsg.send(string, channel);
 			}
 		}
 	}
@@ -102,17 +103,17 @@ public class TaskManage {
 						string += string2;
 					}
 					Channel channel = IOsession.userchMp.get(user);
-					channel.writeAndFlush(string);
+					SendMsg.send(string, channel);
 				}
 			}
 		}
 	}
 
 	public static void checkTaskCompleteByTaskidWithZbList(User user, int taskid, List<Userzb> list) {
-		int num=0;
+		int num = 0;
 		for (Userzb userzb : list) {
 			Zb zb = IOsession.zbMp.get(userzb.getZbid());
-			num+=zb.getLevel();
+			num += zb.getLevel();
 		}
 		String string = "";
 		Map<Integer, TaskProcess> doingTask = user.getDoingTask();
@@ -130,7 +131,7 @@ public class TaskManage {
 					string += string2;
 				}
 				Channel channel = IOsession.userchMp.get(user);
-				channel.writeAndFlush(string);
+				SendMsg.send(string, channel);
 			}
 		}
 	}
@@ -146,7 +147,7 @@ public class TaskManage {
 				int num2 = task.getNum();
 				if (user.getMoney() < num2) {
 					taskProcess.setNum(user.getMoney());
-					string += "任务名称:" + task.getName() + "---任务进度:" + taskProcess.getNum() + "/" + num2+"\n";
+					string += "任务名称:" + task.getName() + "---任务进度:" + taskProcess.getNum() + "/" + num2 + "\n";
 				} else {
 					Map<Integer, TaskProcess> finishTask = user.getFinishTask();
 					finishTask.put(taskProcess.getTaskid(), taskProcess);
@@ -156,11 +157,11 @@ public class TaskManage {
 					string += string2;
 				}
 				Channel channel = IOsession.userchMp.get(user);
-				channel.writeAndFlush(string);
+				SendMsg.send(string, channel);
 			}
 		}
 	}
-	
+
 	/**
 	 * 获取任务奖励
 	 * 

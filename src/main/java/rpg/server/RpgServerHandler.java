@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleState;
@@ -38,10 +38,11 @@ import rpg.service.UseGoods;
 import rpg.session.IOsession;
 import rpg.session.OffineDispatch;
 import rpg.task.TaskfunctionDispatch;
+import rpg.util.SendMsg;
 
 @Sharable
 @Component("rpgServerHandler")
-public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
+public class RpgServerHandler extends ChannelHandlerAdapter {
 
 	@Autowired
 	private GhDispatch ghDIspatch;
@@ -93,29 +94,29 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
-//		for (Channel ch : group) {
-//			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
-//		}
+		// for (Channel ch : group) {
+		// ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
+		// }
 		group.add(channel);
-//		int size = group.size();
-//		System.out.println(size);
+		// int size = group.size();
+		// System.out.println(size);
 	}
 
 	// 客户端断开连接
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
-//		for (Channel ch : group) {
-//			ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
-//		}
+		// for (Channel ch : group) {
+		// ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
+		// }
 		group.remove(channel);
 	}
 
 	// 连接处于活跃状态
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//		Channel channel = ctx.channel();
-//		System.out.println("[" + channel.remoteAddress() + "] " + "online");
+		// Channel channel = ctx.channel();
+		// System.out.println("[" + channel.remoteAddress() + "] " + "online");
 	}
 
 	// 客户端断开连接
@@ -133,9 +134,8 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 	}
 
 	// 服务端处理客户端请求消息
-	@Override
-
-	protected void messageReceived(ChannelHandlerContext arg0, String arg1) throws Exception {
+	public void channelRead(ChannelHandlerContext arg0, Object arg) throws Exception {
+		String arg1 = (String) arg;
 		if (!arg1.equals("心跳")) {
 			Channel channel = arg0.channel();
 			// 遍历所有连接
@@ -156,7 +156,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 							registDispatch.dispatch(ch, arg1);
 							break;
 						default:
-							ch.writeAndFlush("指令错误,请重新输入" + "\n");
+							SendMsg.send("指令错误,请重新输入" + "\n",ch);
 							break;
 						}
 					}
@@ -254,7 +254,7 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 										ackDispatch.ack(user, ch, group, arg1);
 										break;
 									default:
-										ch.writeAndFlush("无效指令");
+										SendMsg.send("无效指令",ch);
 										break;
 									}
 								}
@@ -265,12 +265,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 				}
 				// 其他连接客户
 				else {
-//				ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
+					// ch.writeAndFlush(channel.remoteAddress() + "上线" + "\n");
 				}
 			}
 		}
 		resetReconnectTimes();
-//		System.out.println("服务端收到心跳");
+		// System.out.println("服务端收到心跳");
 		clientOvertimeMap.remove(arg0);// 只要接受到数据包，则清空超时次数
 	}
 
@@ -278,11 +278,12 @@ public class RpgServerHandler extends SimpleChannelInboundHandler<String> {
 		// 心跳包检测读超时
 		if (evt instanceof IdleStateEvent) {
 			IdleStateEvent e = (IdleStateEvent) evt;
+			Channel channel = ctx.channel();
 			if (e.state() == IdleState.READER_IDLE) {
 				System.err.println("客户端读超时");
 				int overtimeTimes = clientOvertimeMap.getOrDefault(ctx, 0);
 				if (overtimeTimes < MAX_OVERTIME) {
-					ctx.writeAndFlush("心跳");
+					SendMsg.send("心跳",channel);
 					addUserOvertime(ctx);
 				} else {
 					ServerManager.ungisterUserContext(ctx);

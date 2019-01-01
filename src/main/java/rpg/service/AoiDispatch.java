@@ -7,6 +7,7 @@ import io.netty.channel.group.ChannelGroup;
 import rpg.area.Area;
 import rpg.pojo.User;
 import rpg.session.IOsession;
+import rpg.util.SendMsg;
 
 /**
  * aoi指令处理器
@@ -33,21 +34,21 @@ public class AoiDispatch {
 			select(user, ch, group, id);
 			break;
 		default:
-			ch.writeAndFlush("您在地图内吗" + "\n");
+			SendMsg.send("您在地图内吗" + "\n",ch);
 			break;
 		}
 	}
 
 	public void select(User user, Channel ch, ChannelGroup group, int id) {
 		String string = Area.sceneList.get(id - 1).toString();
-		ch.writeAndFlush(string);
-		ch.writeAndFlush("本角色:" + user.getNickname() + "  ");
+		SendMsg.send(string, ch);
+		SendMsg.send("本角色:" + user.getNickname() + "  ", ch);
 		for (Channel channel : group) {
 			if (channel != ch) {
 				if (IOsession.mp.get(channel.remoteAddress()) != null) {
 					User user2 = IOsession.mp.get(channel.remoteAddress());
 					if (user2.getAreaid() == user.getAreaid())// 判断是否在一个场景
-						ch.writeAndFlush("其他角色:" + user2.getNickname());
+						SendMsg.send("其他角色:" + user2.getNickname(), ch);
 				}
 			}
 		}

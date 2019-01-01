@@ -14,6 +14,7 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 
 @Component
 public class StoreDispatch {
@@ -30,25 +31,25 @@ public class StoreDispatch {
 						if (zb.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - zb.getPrice());
 							RpgUtil.putZb(user, zb);
-							ch.writeAndFlush("购买" + zb.getName() + "成功");
+							SendMsg.send("购买" + zb.getName() + "成功",ch);
 							TaskManage.checkTaskCompleteBytaskidWithzb(user, 4, zb);
 						} else {
-							ch.writeAndFlush("金币不足，购买失败");
+							SendMsg.send("金币不足，购买失败",ch);
 						}
 					} else if (yaopinMap.get(Integer.valueOf(msg[2])) != null) {
 						Yaopin yaopin = yaopinMap.get(Integer.valueOf(msg[2]));
 						if (yaopin.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - yaopin.getPrice());
 							RpgUtil.putYaopin(user, yaopin);
-							ch.writeAndFlush("购买" + yaopin.getName() + "成功");
+							SendMsg.send("购买" + yaopin.getName() + "成功",ch);
 						} else {
-							ch.writeAndFlush("金币不足，购买失败");
+							SendMsg.send("金币不足，购买失败",ch);
 						}
 					} else {
-						ch.writeAndFlush("物品不存在");
+						SendMsg.send("物品不存在",ch);
 					}
 				} else {
-					ch.writeAndFlush("指令错误");
+					SendMsg.send("指令错误",ch);
 				}
 			} else if (msg[1].equals("sell")) {
 
@@ -74,9 +75,9 @@ public class StoreDispatch {
 				for (Yaopin yaopin : yaopinMap.values()) {
 					word += "编号:" + yaopin.getId() + "-名字:" + yaopin.getName() + "-价钱:" + yaopin.getPrice();
 				}
-				ch.writeAndFlush(word);
+				SendMsg.send(word,ch);
 			} else {
-				ch.writeAndFlush("指令错误");
+				SendMsg.send("指令错误",ch);
 			}
 		}
 	}

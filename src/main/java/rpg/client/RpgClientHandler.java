@@ -1,47 +1,54 @@
 package rpg.client;
 
-import javax.swing.JTextArea;
-
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import rpg.util.SendMsg;
 
-public class RpgClientHandler extends SimpleChannelInboundHandler<String> {
+public class RpgClientHandler extends ChannelHandlerAdapter {
 
-
-	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String msg1) throws Exception {
-		if(msg1.equals("心跳")) {
-			ctx.writeAndFlush("心跳");
+	public void channelRead(ChannelHandlerContext ctx, Object msg3) throws Exception {
+		String msg1 = (String) msg3;
+		Channel channel = ctx.channel();
+		if (msg1.equals("心跳")) {
+			SendMsg.send("心跳",channel);
 		} else {
-			if(msg1.length()>3) {
+			if (msg1.length() > 3) {
 				String msg = msg1.substring(0, 3);
-				if(msg.equals("001")) {
+				if (msg.equals("001")) {
 					String string = msg1.substring(3);
 					jm.printMsg(string, jm.jTextArea2);
-				} else{
-					jm.printMsg(msg1,jm.jTextArea);
+				} else if (msg.equals("002")) {
+					String string = msg1.substring(3);
+					jm.printMsg(string, jm.jTextArea3);
+					System.out.println(msg1);
+				} else if (msg.equals("003")) {
+					String string = msg1.substring(3);
+					jm.printMsg(string, jm.jTextArea4);
+					System.out.println(msg1);
+				} else {
+					jm.printMsg(msg1, jm.jTextArea);
 					System.out.println(msg1);
 				}
-			} else{
-			jm.printMsg(msg1,jm.jTextArea);
-			System.out.println(msg1);
-		}
+			} else {
+				jm.printMsg(msg1, jm.jTextArea);
+				System.out.println(msg1);
+			}
 		}
 	}
-	
+
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		System.err.println("客户端关闭3");
 		Channel channel = ctx.channel();
 		cause.printStackTrace();
-		if(channel.isActive()){
-			System.err.println("simpleclient"+channel.remoteAddress()+"异常");
+		if (channel.isActive()) {
+			System.err.println("simpleclient" + channel.remoteAddress() + "异常");
 		}
 	}
-	
+
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		new ClientMain("127.0.0.1",8080).reConnectServer();
+		new ClientMain("127.0.0.1", 8080).reConnectServer();
 	}
 }

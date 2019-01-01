@@ -28,6 +28,7 @@ import rpg.session.IOsession;
 import rpg.skill.SkillList;
 import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 import rpg.util.UserService;
 
 /**
@@ -92,8 +93,8 @@ public class AckDispatch {
 									}
 									// 更新怪物buff
 									userService.updateMonsterBuff(user, skill, monster);
-									ch.writeAndFlush(
-											"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp());
+									SendMsg.send(
+											"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp(),ch);
 									// 判断装备是否还有耐久度
 									UserAttribute attribute = IOsession.attMp.get(user);
 									List<Userzb> list1 = IOsession.userZbMp.get(user);
@@ -110,8 +111,8 @@ public class AckDispatch {
 									int hurt = skill.getHurt() + ack;
 
 									monster.setHp(monster.getHp() - hurt);
-									ch.writeAndFlush(
-											"攻击了" + monster.getName() + "-造成" + hurt + "点伤害-怪物血量" + monster.getHp());
+									SendMsg.send(
+											"攻击了" + monster.getName() + "-造成" + hurt + "点伤害-怪物血量" + monster.getHp(),ch);
 									// 损耗装备耐久度
 									for (Userzb userzb : list1) {
 										userzb.setNjd(userzb.getNjd() - 5);
@@ -130,10 +131,11 @@ public class AckDispatch {
 																	.get(user);
 															// 检验怪物Buff
 															String word1 = userService.checkMonsterBuff(monster, ch);
+															SendMsg.send(word1, ch);
 															// 检测用户状态
 															if (buffTime1 != null && buffTime1.get(3) != null) {
-																ch.writeAndFlush(word1 + "-你有最强护盾护体，免疫伤害，你的血量剩余："
-																		+ user.getHp());
+																SendMsg.send("002" + "-你有最强护盾护体，免疫伤害，你的血量剩余："
+																		+ user.getHp(),ch);
 															} else {
 																int monsterAck = monster.getAck() - attribute.getDef();
 																if (monsterAck <= 0)
@@ -143,10 +145,10 @@ public class AckDispatch {
 																if (monster.getHp() > 0) {
 																	if (hp > 0) {
 																		user.setHp(hp);
-																		ch.writeAndFlush(word1 + "-你受到伤害：" + monsterAck
-																				+ "-你的血量剩余：" + hp);
+																		SendMsg.send("002" + "-你受到伤害：" + monsterAck
+																				+ "-你的血量剩余：" + hp,ch);
 																	} else {
-																		ch.writeAndFlush("你已被打死");
+																		SendMsg.send("你已被打死",ch);
 																		user.setHp(100);
 																		IOsession.ackStatus.put(ch.remoteAddress(), 0);
 																		break;
@@ -175,21 +177,21 @@ public class AckDispatch {
 								}
 								// 蓝量不足
 								else {
-									ch.writeAndFlush("蓝量不足，请充值");
+									SendMsg.send("蓝量不足，请充值",ch);
 								}
 							}
 
 						}
 					} else {
 						IOsession.ackStatus.put(ch.remoteAddress(), 0);
-						ch.writeAndFlush("怪物不存在");
+						SendMsg.send("怪物不存在",ch);
 						break;
 					}
 				}
 			}
 			if (!find) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
-				ch.writeAndFlush("怪物不存在");
+				SendMsg.send("怪物不存在",ch);
 			}
 		}
 		// 二次及以上攻击
@@ -199,10 +201,10 @@ public class AckDispatch {
 			// 找到配置的技能
 			if (msg[0].equals("esc")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
-				ch.writeAndFlush("成功退出战斗");
+				SendMsg.send("成功退出战斗",ch);
 			} else if (msg[0].equals("ack")) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
-				ch.writeAndFlush("指令错误");
+				SendMsg.send("指令错误",ch);
 			} else {
 				for (Userskill userskill : list) {
 					String skillId = String.valueOf(userskill.getSkill());
@@ -224,15 +226,15 @@ public class AckDispatch {
 									curSkill.put(skillId, currentTimeMillis);
 									SkillList.cdMp.put(user, curSkill);
 
-//							ch.writeAndFlush("使用了" + skill.getName());
+//							SendMsg.send("使用了" + skill.getName());
 //									user.setMp(user.getMp() - skill.getMp());
 									user.getAndSetMp(user, user.getMp() - skill.getMp());
 									// 判断特殊技能
 									if (skill.getId() == spcid) {
 										user.getAndAddHp(user, skill.getHurt());
-										ch.writeAndFlush(
+										SendMsg.send(
 												"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp()
-														+ "\n" + "血量恢复" + skill.getHurt() + "-剩余血量" + user.getHp());
+														+ "\n" + "血量恢复" + skill.getHurt() + "-剩余血量" + user.getHp(),ch);
 									}
 
 									// 更新人物buff
@@ -260,13 +262,13 @@ public class AckDispatch {
 										int monsterHp = monster.getHp() - hurt;
 										monster.setHp(monsterHp);
 										if (monsterHp <= 0) {
-											ch.writeAndFlush("怪物已被消灭！你真棒");
+											SendMsg.send("怪物已被消灭！你真棒",ch);
 											RpgUtil.ackEnd(user, ch, monster);
 											TaskManage.checkTaskComplete(user, monster.getId());
 											for (Channel channel : group) {
 												if (ch != channel) {
-													channel.writeAndFlush(
-															user.getNickname() + "消灭了" + monster.getName());
+													SendMsg.send(
+															user.getNickname() + "消灭了" + monster.getName(),channel);
 //												IOsession.ackStatus.put(channel.remoteAddress(), false);
 												}
 											}
@@ -281,9 +283,9 @@ public class AckDispatch {
 												userzb.setNjd(userzb.getNjd() - 5);
 											}
 										} else {
-											ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
+											SendMsg.send("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
 													+ user.getMp() + "\n" + "攻击了" + monster.getName() + "-造成" + hurt
-													+ "点伤害-怪物血量" + monster.getHp());
+													+ "点伤害-怪物血量" + monster.getHp(),ch);
 											// 损耗装备耐久度
 											for (Userzb userzb : list1) {
 												userzb.setNjd(userzb.getNjd() - 5);
@@ -294,7 +296,7 @@ public class AckDispatch {
 								}
 								// cd未到
 								else {
-									ch.writeAndFlush("技能冷却中");
+									SendMsg.send("技能冷却中",ch);
 								}
 							}
 							// 技能未使用过
@@ -304,14 +306,14 @@ public class AckDispatch {
 								HashMap<String, Long> curSkill = new HashMap<String, Long>();
 								curSkill.put(skillId, currentTimeMillis);
 								SkillList.cdMp.put(user, curSkill);
-//						ch.writeAndFlush("使用了" + skill.getName());
+//						SendMsg.send("使用了" + skill.getName());
 //								user.setMp(user.getMp() - skill.getMp());
 								user.getAndSetMp(user, user.getMp() - skill.getMp());
 								// 判断特殊技能
 								if (skill.getId() == spcid) {
 									user.getAndAddHp(user, skill.getHurt());
-									ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
-											+ user.getMp() + "\n" + "血量恢复" + skill.getHurt() + "-剩余血量" + user.getHp());
+									SendMsg.send("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
+											+ user.getMp() + "\n" + "血量恢复" + skill.getHurt() + "-剩余血量" + user.getHp(),ch);
 								}
 
 								// 更新人物buff
@@ -338,12 +340,12 @@ public class AckDispatch {
 									int monsterHp = monster.getHp() - hurt;
 									monster.setHp(monsterHp);
 									if (monsterHp <= 0) {
-										ch.writeAndFlush("怪物已被消灭！你真棒");
+										SendMsg.send("怪物已被消灭！你真棒",ch);
 										RpgUtil.ackEnd(user, ch, monster);
 										TaskManage.checkTaskComplete(user, monster.getId());
 										for (Channel channel : group) {
 											if (ch != channel) {
-												channel.writeAndFlush(user.getNickname() + "消灭了" + monster.getName());
+												SendMsg.send(user.getNickname() + "消灭了" + monster.getName(),channel);
 //											IOsession.ackStatus.put(channel.remoteAddress(), false);
 											}
 										}
@@ -358,9 +360,9 @@ public class AckDispatch {
 											userzb.setNjd(userzb.getNjd() - 5);
 										}
 									} else {
-										ch.writeAndFlush("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
+										SendMsg.send("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余"
 												+ user.getMp() + "\n" + "攻击了" + monster.getName() + "-造成" + hurt
-												+ "点伤害-怪物血量" + monster.getHp());
+												+ "点伤害-怪物血量" + monster.getHp(),ch);
 										// 损耗装备耐久度
 										for (Userzb userzb : list1) {
 											userzb.setNjd(userzb.getNjd() - 5);
@@ -372,13 +374,13 @@ public class AckDispatch {
 						}
 						// 蓝量不足
 						else {
-							ch.writeAndFlush("蓝量不足，请充值");
+							SendMsg.send("蓝量不足，请充值",ch);
 						}
 					}
 				}
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 }

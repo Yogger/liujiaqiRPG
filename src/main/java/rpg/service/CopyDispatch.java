@@ -18,6 +18,7 @@ import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
 import rpg.session.IOsession;
+import rpg.util.SendMsg;
 
 /**
  * Boss副本
@@ -46,7 +47,7 @@ public class CopyDispatch {
 				bossidList.add(Integer.valueOf(bossid));
 			}
 			scene.setBossid(bossidList);
-			HashMap<Integer,Integer> hashMap = new HashMap<>();
+			HashMap<Integer, Integer> hashMap = new HashMap<>();
 			String[] split2 = e.elementText("struct").split(",");
 			for (String string : split2) {
 				String[] split3 = string.split(":");
@@ -54,11 +55,11 @@ public class CopyDispatch {
 			}
 			scene.setStruct(hashMap);
 		}
-//		scene.setSceneid(5001);
-//		scene.setName("噩梦之地");
+		// scene.setSceneid(5001);
+		// scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
 		scene.setId(0);
-//		scene.setLastedTime(600000);
+		// scene.setLastedTime(600000);
 		List<Integer> bossid = scene.getBossid();
 		ArrayList<Monster> monsterList = new ArrayList<>();
 		SAXReader sr = new SAXReader();
@@ -95,8 +96,8 @@ public class CopyDispatch {
 		scene.setMonsterList(monsterList);
 		IOsession.userBossMp.put(user.getGroupId(), scene);
 		IOsession.ackStatus.put(ch.remoteAddress(), 2);
-		ch.writeAndFlush("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:" + monsterList.get(0).getHp()
-				+ "-攻击力:" + monsterList.get(0).getAck());
+		SendMsg.send("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:" + monsterList.get(0).getHp()
+				+ "-攻击力:" + monsterList.get(0).getAck(), ch);
 		Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 		if (group2 != null) {
 			List<User> list = group2.getList();
@@ -104,8 +105,8 @@ public class CopyDispatch {
 				if (user2 != group2.getUser()) {
 					Channel channel = IOsession.userchMp.get(user2);
 					IOsession.ackStatus.put(channel.remoteAddress(), 2);
-					channel.writeAndFlush("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:"
-							+ monsterList.get(0).getHp() + "-攻击力:" + monsterList.get(0).getAck());
+					SendMsg.send("进入噩梦之地，Boss:" + "名字：" + monsterList.get(0).getName() + "-血量:"
+							+ monsterList.get(0).getHp() + "-攻击力:" + monsterList.get(0).getAck(), channel);
 				}
 			}
 		}

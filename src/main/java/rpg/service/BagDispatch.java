@@ -15,6 +15,7 @@ import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.task.TaskManage;
+import rpg.util.SendMsg;
 
 @Component
 public class BagDispatch {
@@ -45,9 +46,9 @@ public class BagDispatch {
 			}
 		}
 		UserAttribute attribute = IOsession.attMp.get(user);
-		ch.writeAndFlush("用户等级" + user.getLevel() + "---经验" + user.getExp() + "\n" + "用户金币：" + user.getMoney() + "\n"
+		SendMsg.send("用户等级" + user.getLevel() + "---经验" + user.getExp() + "\n" + "用户金币：" + user.getMoney() + "\n"
 				+ "用户血量：" + user.getHp() + "\n" + "用户攻击力：" + attribute.getAck() + "\n" + "用户防御力：" + attribute.getDef()
-				+ "\n" + yaopinWord + zbWord);
+				+ "\n" + yaopinWord + zbWord,ch);
 	}
 
 	// 展示装备
@@ -70,7 +71,7 @@ public class BagDispatch {
 						+ zb.getLevel() + "\n";
 			}
 		}
-		ch.writeAndFlush(msg);
+		SendMsg.send(msg,ch);
 	}
 
 	// 脱装备
@@ -98,12 +99,12 @@ public class BagDispatch {
 					UserAttribute attribute = IOsession.attMp.get(user);
 					if (zb.getType() == 1) {
 						attribute.setAck(attribute.getAck() - zb.getAck() * userzb.getIsuse());
-						ch.writeAndFlush(
-								"脱下装备成功" + "-攻击下降：" + zb.getAck() * userzb.getIsuse() + "现在攻击力" + attribute.getAck());
+						SendMsg.send(
+								"脱下装备成功" + "-攻击下降：" + zb.getAck() * userzb.getIsuse() + "现在攻击力" + attribute.getAck(),ch);
 					} else if (zb.getType() == 2) {
 						attribute.setDef(attribute.getDef() - zb.getAck() * userzb.getIsuse());
-						ch.writeAndFlush(
-								"脱下装备成功" + "-防御下降：" + zb.getAck() * userzb.getIsuse() + "现在防御力" + attribute.getDef());
+						SendMsg.send(
+								"脱下装备成功" + "-防御下降：" + zb.getAck() * userzb.getIsuse() + "现在防御力" + attribute.getDef(),ch);
 					}
 					list.remove(userzb);
 //				userzbMapper.deleteByExample(example2);
@@ -122,7 +123,7 @@ public class BagDispatch {
 				}
 			}
 		} else {
-			ch.writeAndFlush("没有此物品");
+			SendMsg.send("没有此物品",ch);
 		}
 	}
 
@@ -140,7 +141,7 @@ public class BagDispatch {
 			for (Userbag userbag : list) {
 				if (userbag.getId().equals(msg[1])) {
 					if (list2.size() >= 3) {
-						ch.writeAndFlush("请先脱下装备");
+						SendMsg.send("请先脱下装备",ch);
 						break;
 					} else {
 						// 从背包移除装备
@@ -166,14 +167,14 @@ public class BagDispatch {
 						if (zb.getType() == 1) {
 							attribute.setAck(attribute.getAck() + zb.getAck() * userzb.getIsuse());
 							list2.add(userzb);
-							ch.writeAndFlush("穿戴装备成功" + "-攻击力上升：" + zb.getAck() * userzb.getIsuse() + "现在攻击力"
-									+ attribute.getAck());
+							SendMsg.send("穿戴装备成功" + "-攻击力上升：" + zb.getAck() * userzb.getIsuse() + "现在攻击力"
+									+ attribute.getAck(),ch);
 							TaskManage.checkTaskCompleteByTaskidWithZbList(user, 5, list2);
 						} else if (zb.getType() == 2) {
 							attribute.setDef(attribute.getDef() + zb.getAck() * userzb.getIsuse());
 							list2.add(userzb);
-							ch.writeAndFlush("穿戴装备成功" + "-防御力上升：" + zb.getAck() * userzb.getIsuse() + "现在防御力"
-									+ attribute.getDef());
+							SendMsg.send("穿戴装备成功" + "-防御力上升：" + zb.getAck() * userzb.getIsuse() + "现在防御力"
+									+ attribute.getDef(),ch);
 							TaskManage.checkTaskCompleteByTaskidWithZbList(user, 5, list2);
 						}
 //					userzbMapper.insert(userzb);
@@ -182,7 +183,7 @@ public class BagDispatch {
 				}
 			}
 		} else {
-			ch.writeAndFlush("没有此物品");
+			SendMsg.send("没有此物品",ch);
 		}
 	}
 
@@ -200,12 +201,12 @@ public class BagDispatch {
 						UserAttribute attribute = IOsession.attMp.get(user);
 						attribute.setAck(attribute.getAck() + zb.getAck());
 						userzb.setIsuse(1);
-						ch.writeAndFlush("装备修理成功");
+						SendMsg.send("装备修理成功",ch);
 					}
 				}
 			}
 		} else {
-			ch.writeAndFlush("没有此物品");
+			SendMsg.send("没有此物品",ch);
 		}
 	}
 }

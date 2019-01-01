@@ -38,9 +38,10 @@ public class RpgUtil {
 		userbag.setIsadd(0);
 		list.add(userbag);
 	}
-	
+
 	/**
-	 * 装备入包带耐久度 
+	 * 装备入包带耐久度
+	 * 
 	 * @param sendUser
 	 * @param zb
 	 * @param njd
@@ -84,14 +85,14 @@ public class RpgUtil {
 			list.add(userbag);
 		}
 	}
-	
+
 	/**
 	 * 药品入包带数量
 	 * 
 	 * @param user
 	 * @param zb
 	 */
-	public static void putYaopin(User user, Yaopin yaopin,int num) {
+	public static void putYaopin(User user, Yaopin yaopin, int num) {
 		List<Userbag> list = IOsession.userBagMp.get(user);
 		boolean flag = false;
 		for (Userbag userbag1 : list) {
@@ -115,6 +116,7 @@ public class RpgUtil {
 
 	/**
 	 * 战斗结算奖励
+	 * 
 	 * @param user
 	 * @param ch
 	 */
@@ -132,18 +134,21 @@ public class RpgUtil {
 		Yaopin yaopin = IOsession.yaopinMp.get(id);
 		if (zb != null) {
 			putZb(user, zb);
-			string.append("获得金钱：" + monster.getMoney() + "获得装备：" + zb.getName()+"\n");
+			string.append("获得金钱：" + monster.getMoney() + "获得装备：" + zb.getName() + "\n");
 		} else if (yaopin != null) {
 			putYaopin(user, yaopin);
-			string.append("获得金钱：" + monster.getMoney() + "获得药品：" + yaopin.getName()+"\n");
+			string.append("获得金钱：" + monster.getMoney() + "获得药品：" + yaopin.getName() + "\n");
 		}
-		ch.writeAndFlush(string);
+		String s = "" + string;
+		SendMsg.send(s, ch);
 		TaskManage.checkMoneyTaskCompleteBytaskid(user, 11);
-		if(checkLevel==1) TaskManage.checkTaskCompleteBytaskid(user, 2);
+		if (checkLevel == 1)
+			TaskManage.checkTaskCompleteBytaskid(user, 2);
 	}
-	
+
 	/**
 	 * 检查等级
+	 * 
 	 * @param user
 	 * @param exp
 	 * @param string
@@ -152,16 +157,16 @@ public class RpgUtil {
 	private static int checkLevel(User user, int exp, StringBuilder string) {
 		int userlevel = user.getLevel();
 		int userexp = user.getExp();
-		Level level = IOsession.levelMp.get(userlevel+1);
-		if(userexp+exp>=level.getExpl()) {
-			userexp=userexp+exp-level.getExpl();
+		Level level = IOsession.levelMp.get(userlevel + 1);
+		if (userexp + exp >= level.getExpl()) {
+			userexp = userexp + exp - level.getExpl();
 			user.setExp(userexp);
-			user.setLevel(userlevel+1);
-			string.append("恭喜你升级---当前等级"+user.getLevel()+"---当前经验"+user.getExp()+"/"+level.getExpr()+"\n");
+			user.setLevel(userlevel + 1);
+			string.append("恭喜你升级---当前等级" + user.getLevel() + "---当前经验" + user.getExp() + "/" + level.getExpr() + "\n");
 			return 1;
 		} else {
-			user.setExp(userexp+exp);
-			string.append("获得经验"+exp+"\n");
+			user.setExp(userexp + exp);
+			string.append("获得经验" + exp + "\n");
 			return 0;
 		}
 	}

@@ -15,6 +15,7 @@ import rpg.pojo.Userzb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 import rpg.task.TaskManage;
+import rpg.util.SendMsg;
 import rpg.util.UserService;
 
 @Component
@@ -54,24 +55,26 @@ public class PkDispatch {
 												user2.setHp(userHp);
 												Channel channel = IOsession.userchMp.get(user2);
 												if (userHp <= 0) {
-													ch.writeAndFlush("你已将" + user2.getNickname() + "打死！");
+													SendMsg.send("你已将" + user2.getNickname() + "打死！", ch);
 													TaskManage.checkTaskCompleteBytaskid(user, 10);
 													user2.setHp(1000);
 													user2.setAreaid(1);
-													channel.writeAndFlush(
-															"你已被" + user.getNickname() + "打死!" + "-你被传送至起始之地");
+													SendMsg.send("你已被" + user.getNickname() + "打死!" + "-你被传送至起始之地",
+															channel);
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
 													}
 												} else {
-													ch.writeAndFlush(
+													SendMsg.send(
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
-																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush(
+																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp(),
+															ch);
+													SendMsg.send(
 															"你受到了" + user.getNickname() + "的技能" + skill.getName()
-																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp());
+																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp(),
+															channel);
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
@@ -80,7 +83,7 @@ public class PkDispatch {
 											}
 											// cd未到
 											else if (userService.cdStatus(user, skillId, skill) == 2) {
-												ch.writeAndFlush("技能冷却中");
+												SendMsg.send("技能冷却中", ch);
 											}
 											// 技能未被使用
 											else {
@@ -98,24 +101,26 @@ public class PkDispatch {
 												user2.setHp(userHp);
 												Channel channel = IOsession.userchMp.get(user2);
 												if (userHp <= 0) {
-													ch.writeAndFlush("你已将" + user2.getNickname() + "打死！");
+													SendMsg.send("你已将" + user2.getNickname() + "打死！", ch);
 													TaskManage.checkTaskCompleteBytaskid(user, 10);
 													user2.setHp(1000);
 													user2.setAreaid(1);
-													channel.writeAndFlush(
-															"你已被" + user.getNickname() + "打死!" + "-你被传送至起始之地");
+													SendMsg.send("你已被" + user.getNickname() + "打死!" + "-你被传送至起始之地",
+															channel);
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
 													}
 												} else {
-													ch.writeAndFlush(
+													SendMsg.send(
 															"使用了" + skill.getName() + "-蓝量消耗" + skill.getMp() + "-剩余MP"
 																	+ user.getMp() + "\n" + "攻击了" + user2.getNickname()
-																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp());
-													channel.writeAndFlush(
+																	+ "-造成" + hurt + "点伤害-对方血量" + user2.getHp(),
+															ch);
+													SendMsg.send(
 															"你受到了" + user.getNickname() + "的技能" + skill.getName()
-																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp());
+																	+ "-造成" + hurt + "点伤害-你的血量" + user2.getHp(),
+															channel);
 													// 损耗装备耐久度
 													for (Userzb userzb : list1) {
 														userzb.setNjd(userzb.getNjd() - 5);
@@ -123,22 +128,22 @@ public class PkDispatch {
 												}
 											}
 										} else {
-											ch.writeAndFlush("蓝量不足，请充值");
+											SendMsg.send("蓝量不足，请充值", ch);
 										}
 									}
 								}
 							} else {
-								ch.writeAndFlush("该场景不允许pk");
+								SendMsg.send("该场景不允许pk", ch);
 							}
 						} else {
-							ch.writeAndFlush("玩家不在当前场景");
+							SendMsg.send("玩家不在当前场景", ch);
 						}
 						break;
 					}
 				}
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误", ch);
 		}
 	}
 }

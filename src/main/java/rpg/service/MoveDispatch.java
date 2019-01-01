@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import rpg.pojo.User;
+import rpg.util.SendMsg;
 
 /**
  * 移动处理器
@@ -21,7 +22,7 @@ public class MoveDispatch {
 		if(msg.length>1) {
 			move.move(ch, msg[1], user);
 		} else {
-			ch.writeAndFlush("无效指令");
+			SendMsg.send("无效指令",ch);
 		}
 	}
 }

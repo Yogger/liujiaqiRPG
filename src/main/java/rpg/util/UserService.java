@@ -113,15 +113,17 @@ public class UserService {
 		// 找到所产生的Buff
 		Buff buff = IOsession.buffMp.get(Integer.valueOf(skill.getEffect()));
 		// 存储上次使用buff时间
-		long currentTimeMillis = System.currentTimeMillis();
+		if (buff != null) {
+			long currentTimeMillis = System.currentTimeMillis();
 			if (IOsession.buffTimeMp.get(user) == null) {
 				ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
 				buffMap.put(buff.getId(), currentTimeMillis);
 				IOsession.buffTimeMp.put(user, buffMap);
 			} else {
-				ConcurrentHashMap<Integer,Long> buffMap = IOsession.buffTimeMp.get(user);
+				ConcurrentHashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
 				buffMap.put(buff.getId(), currentTimeMillis);
 			}
+		}
 	}
 
 	/**
@@ -135,14 +137,16 @@ public class UserService {
 		// 找到所产生的Buff
 		Buff buff = IOsession.buffMp.get(Integer.valueOf(skill.getEffect()));
 		// 存储上次使用buff时间
-		long currentTimeMillis = System.currentTimeMillis();
-		if (IOsession.monsterBuffTimeMp.get(monster) == null) {
-			HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
-			buffMap.put(buff.getId(), currentTimeMillis);
-			IOsession.monsterBuffTimeMp.put(monster, buffMap);
-		} else {
-			HashMap<Integer, Long> buffMap = IOsession.monsterBuffTimeMp.get(monster);
-			buffMap.put(buff.getId(), currentTimeMillis);
+		if (buff != null) {
+			long currentTimeMillis = System.currentTimeMillis();
+			if (IOsession.monsterBuffTimeMp.get(monster) == null) {
+				HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+				buffMap.put(buff.getId(), currentTimeMillis);
+				IOsession.monsterBuffTimeMp.put(monster, buffMap);
+			} else {
+				HashMap<Integer, Long> buffMap = IOsession.monsterBuffTimeMp.get(monster);
+				buffMap.put(buff.getId(), currentTimeMillis);
+			}
 		}
 	}
 
@@ -166,8 +170,11 @@ public class UserService {
 				if (currentTimeMillis - lastTime < buff.getLastedTime()) {
 					switch (buff.getId()) {
 					case 2:
-						monster.setHp(monster.getHp() - buff.getMp());
-						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
+						int monHp = monster.getHp() - buff.getMp();
+						if (monHp <= 0)
+							monHp = 0;
+						monster.setHp(monHp);
+						msg += "003" + monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
 								+ monster.getHp();
 						break;
 					default:

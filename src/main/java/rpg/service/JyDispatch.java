@@ -18,6 +18,7 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 
 /**
  * 交易逻辑
@@ -52,14 +53,14 @@ public class JyDispatch {
 				Jy jy = IOsession.jyMap.get(user.getJyId());
 				jy = null;
 				IOsession.jyMap.remove(user.getJyId());
-				ch.writeAndFlush("交易已取消");
+				SendMsg.send("交易已取消",ch);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				lock.unlock();
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -78,8 +79,8 @@ public class JyDispatch {
 				jy = null;
 				IOsession.jyMap.remove(user.getJyId());
 				Channel channel = IOsession.userchMp.get(sendUser);
-				channel.writeAndFlush("对方已取消交易");
-				ch.writeAndFlush("交易取消");
+				SendMsg.send("对方已取消交易",channel);
+				SendMsg.send("交易取消",ch);
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -97,9 +98,9 @@ public class JyDispatch {
 					if (sendUser.equals(user)) {
 						sendUser = jy.getAcceptUser();
 					}
-					ch.writeAndFlush("你已确认了");
+					SendMsg.send("你已确认了",ch);
 					Channel channel = IOsession.userchMp.get(sendUser);
-					channel.writeAndFlush("对方已确认");
+					SendMsg.send("对方已确认",channel);
 				} else {
 					User acceptUser = jy.getAcceptUser();
 					User sendUser = jy.getSendUser();
@@ -110,9 +111,9 @@ public class JyDispatch {
 					jy=null;
 					IOsession.jyMap.remove(user.getJyId());
 					Channel channel = IOsession.userchMp.get(sendUser);
-					channel.writeAndFlush("交易成功");
+					SendMsg.send("交易成功",channel);
 					Channel channel2 = IOsession.userchMp.get(acceptUser);
-					channel2.writeAndFlush("交易成功");
+					SendMsg.send("交易成功",channel2);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -155,11 +156,11 @@ public class JyDispatch {
 							Channel channel = IOsession.userchMp.get(sendUser);
 							if (userbag.getIsadd() == 0) {
 								Zb zb = IOsession.zbMp.get(userbag.getGid());
-								channel.writeAndFlush(user.getNickname() + "---装备:" + zb.getName() + "---金币:" + msg[1]);
+								SendMsg.send(user.getNickname() + "---装备:" + zb.getName() + "---金币:" + msg[1],channel);
 							} else {
 								Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
-								channel.writeAndFlush(
-										user.getNickname() + "---药品:" + yaopin.getName() + "---金币:" + msg[1]);
+								SendMsg.send(
+										user.getNickname() + "---药品:" + yaopin.getName() + "---金币:" + msg[1],channel);
 							}
 						}
 						flag = true;
@@ -167,7 +168,7 @@ public class JyDispatch {
 					}
 				}
 				if (flag == false) {
-					ch.writeAndFlush("物品不存在，请重新放入");
+					SendMsg.send("物品不存在，请重新放入",ch);
 				}
 			} else {
 				Jy jy = IOsession.jyMap.get(user.getJyId());
@@ -188,11 +189,11 @@ public class JyDispatch {
 					// 改变状态
 					user.getAndSetjyFlag(user, 2);
 					Channel channel = IOsession.userchMp.get(sendUser);
-					channel.writeAndFlush(user.getNickname() + "---金币:" + msg[1]);
+					SendMsg.send(user.getNickname() + "---金币:" + msg[1],channel);
 				}
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -241,14 +242,14 @@ public class JyDispatch {
 						user.getAndSetjyFlag(user, 1);
 						user.setJyId(jy.getId());
 						jy.setAcceptUser(user);
-						ch.writeAndFlush("进入交易状态");
+						SendMsg.send("进入交易状态",ch);
 						Channel channel = IOsession.userchMp.get(user2);
-						channel.writeAndFlush("和" + user.getNickname() + "开始交易");
+						SendMsg.send("和" + user.getNickname() + "开始交易",channel);
 						TaskManage.checkTaskCompleteBytaskid(user, 9);
 					} else if (user2.getJySendFlag() == 0) {
-						ch.writeAndFlush("交易已过期");
+						SendMsg.send("交易已过期",ch);
 					} else {
-						ch.writeAndFlush("对方正在交易中");
+						SendMsg.send("对方正在交易中",ch);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -256,10 +257,10 @@ public class JyDispatch {
 					lock.unlock();
 				}
 			} else {
-				ch.writeAndFlush("交易单号不存在");
+				SendMsg.send("交易单号不存在",ch);
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -269,7 +270,7 @@ public class JyDispatch {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
 						if (user2.getJyFlag() == 1) {
-							ch.writeAndFlush("对方正在交易中,请稍后再试");
+							SendMsg.send("对方正在交易中,请稍后再试",ch);
 						} else {
 							user.getAndSetjySendFlag(user, 1);
 							String jyId = UUID.randomUUID().toString();
@@ -279,16 +280,16 @@ public class JyDispatch {
 							jy.setStartTime(System.currentTimeMillis());
 							jy.setSendUser(user);
 							IOsession.jyMap.put(jyId, jy);
-							ch.writeAndFlush("向" + user2.getNickname() + "-交易请求已发送");
+							SendMsg.send("向" + user2.getNickname() + "-交易请求已发送",ch);
 							Channel channel = IOsession.userchMp.get(user2);
-							channel.writeAndFlush(jyId + "--" + user.getNickname() + "请求跟你交易");
+							SendMsg.send(jyId + "--" + user.getNickname() + "请求跟你交易",channel);
 							TaskManage.checkTaskCompleteBytaskid(user, 9);
 						}
 					}
 				}
 			}
 		} else {
-			ch.writeAndFlush("操作频繁，请稍后再试");
+			SendMsg.send("操作频繁，请稍后再试",ch);
 		}
 	}
 

@@ -1,20 +1,18 @@
 package rpg.session;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
-import rpg.area.SceneBossRefresh;
 import rpg.area.offineFlagRefresh;
 import rpg.pojo.BossScene;
-import rpg.pojo.Ghuser;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
 import rpg.skill.SkillList;
+import rpg.util.SendMsg;
 
 @Component("offineDispatch")
 public class OffineDispatch {
@@ -47,7 +45,7 @@ public class OffineDispatch {
 //						user.setGroupId(null);
 						for (User user3 : list) {
 							Channel channel = IOsession.userchMp.get(user3);
-							channel.writeAndFlush(user2.getNickname()+"成为队长");
+							SendMsg.send(user2.getNickname()+"成为队长",channel);
 						}
 						System.out.println("执行");
 						break;
@@ -63,7 +61,7 @@ public class OffineDispatch {
 				for (User user3 : list) {
 					if(user3!=user) {
 					Channel channel = IOsession.userchMp.get(user3);
-					channel.writeAndFlush(user.getNickname()+"离开队伍");
+					SendMsg.send(user.getNickname()+"离开队伍",channel);
 					}
 				}
 			}

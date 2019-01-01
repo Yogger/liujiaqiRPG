@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
+import rpg.util.SendMsg;
 
 /**
  * 注册处理器
@@ -21,13 +22,13 @@ public class RegistDispatch {
 		String[] msg = arg1.split("\\s+");
 		if (msg.length > 3) {
 			boolean b = regist.regist(msg[1], msg[2], msg[3]);
-			if(b) {
-				ch.writeAndFlush("恭喜注册成功" + "\n");
+			if (b) {
+				SendMsg.send("恭喜注册成功" + "\n", ch);
 			} else {
-				ch.writeAndFlush("两次密码不一致" + "\n");
+				SendMsg.send("两次密码不一致" + "\n", ch);
 			}
 		} else {
-			ch.writeAndFlush("指令错误，重输：" + "\n");
+			SendMsg.send("指令错误，重输：" + "\n", ch);
 		}
 
 	}

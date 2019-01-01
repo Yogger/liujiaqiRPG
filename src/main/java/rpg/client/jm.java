@@ -18,16 +18,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import io.netty.channel.Channel;
+import rpg.util.SendMsg;
 
 public class jm extends JFrame implements KeyListener {
 	JPanel jPanel1, jPanel2; // 三块面板，两块是按钮，一块是输出台
-	JScrollPane jPanel4, jPanel5, jPanel6,jPanel7;
+	JScrollPane jPanel4, jPanel5, jPanel6, jPanel7;
 
-	JButton jButton1, jButton2,jButton3,jButton4,jButton5,jButton6,jButton7; // 两个按钮，一个清屏，一个展示
+	JButton jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7; // 两个按钮，一个清屏，一个展示
 
 	JTextField txt;
 
-	static JTextArea jTextArea, jTextArea2, jTextArea3,jTextArea4; // 输出台
+	static JTextArea jTextArea, jTextArea2, jTextArea3, jTextArea4; // 输出台
 
 	Channel channel;
 
@@ -53,20 +54,20 @@ public class jm extends JFrame implements KeyListener {
 		txt = new JTextField();
 		// 输出台
 
-		jTextArea = new JTextArea(15,30);
+		jTextArea = new JTextArea(15, 30);
 		Font x = new Font("宋体", 1, 17);
 		jTextArea.setFont(x);
 		jTextArea.setEditable(false);
 
-		jTextArea2 = new JTextArea(10,30);
+		jTextArea2 = new JTextArea(10, 30);
 		jTextArea2.setFont(x);
 		jTextArea2.setEditable(false);
 
-		jTextArea3 = new JTextArea(8,30);
+		jTextArea3 = new JTextArea(8, 30);
 		jTextArea3.setFont(x);
 		jTextArea3.setEditable(false);
-		
-		jTextArea4 = new JTextArea(8,30);
+
+		jTextArea4 = new JTextArea(8, 30);
 		jTextArea4.setFont(x);
 		jTextArea4.setEditable(false);
 		// 设置布局
@@ -93,31 +94,31 @@ public class jm extends JFrame implements KeyListener {
 		jPanel1.add(jButton6);
 		jPanel1.add(jButton7);
 		jPanel1.setSize(700, 100);
-		
+
 		jPanel2.setLayout(new BorderLayout());
-		jPanel2.setSize(700,100);
+		jPanel2.setSize(700, 100);
 
 		jPanel4 = new JScrollPane(jTextArea);
 		jPanel4.setBackground(Color.pink);
-//		jPanel4.setBounds(0, 0, 5, 30);
+		// jPanel4.setBounds(0, 0, 5, 30);
 		jPanel4.setBorder(BorderFactory.createTitledBorder("玩家输出信息"));
-//		jPanel4.setSize(700, 100);
+		// jPanel4.setSize(700, 100);
 
 		jPanel5 = new JScrollPane(jTextArea2);
 		jPanel5.setBackground(Color.pink);
-//		jPanel5.setBounds(0, 0, 5, 30);
+		// jPanel5.setBounds(0, 0, 5, 30);
 		jPanel5.setBorder(BorderFactory.createTitledBorder("玩家buff信息"));
-//		jPanel5.setSize(700, 100);
+		// jPanel5.setSize(700, 100);
 
 		jPanel6 = new JScrollPane(jTextArea3);
 		jPanel6.setBackground(Color.pink);
-//		jPanel6.setBounds(0, 0, 5, 30);
+		// jPanel6.setBounds(0, 0, 5, 30);
 		jPanel6.setBorder(BorderFactory.createTitledBorder("怪物攻击信息"));
-//		jPanel6.setSize(700, 100);
-		
+		// jPanel6.setSize(700, 100);
+
 		jPanel7 = new JScrollPane(jTextArea4);
 		jPanel7.setBackground(Color.pink);
-//		jPanel7.setBounds(0, 0, 5, 30);
+		// jPanel7.setBounds(0, 0, 5, 30);
 		jPanel7.setBorder(BorderFactory.createTitledBorder("怪物buff信息"));
 		jPanel7.setSize(700, 100);
 
@@ -141,7 +142,7 @@ public class jm extends JFrame implements KeyListener {
 		this.setSize(1500, 1000);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-//		this.setResizable(false);
+		// this.setResizable(false);
 
 		jButton1.addActionListener(new ActionListener() {
 
@@ -157,44 +158,44 @@ public class jm extends JFrame implements KeyListener {
 		jButton2.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("showbag\n");
+				SendMsg.send("showbag", channel);
 			}
 
 		});
-		
+
 		jButton3.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("store\n");
+				SendMsg.send("store", channel);
 			}
 		});
-		
+
 		jButton4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("use 蓝药\n");
+				SendMsg.send("use 蓝药", channel);
 			}
 		});
-		
+
 		jButton5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("ack 史莱姆 1\n");
+				SendMsg.send("ack 史莱姆 1", channel);
 			}
 		});
-		
+
 		jButton6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("1\n");
+				SendMsg.send("1", channel);
 			}
 		});
-		
+
 		jButton7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				channel.writeAndFlush("3\n");
+				SendMsg.send("3", channel);
 			}
 		});
 	}
 
-	public static void printMsg(String msg,JTextArea jTextArea) {
+	public static void printMsg(String msg, JTextArea jTextArea) {
 		jTextArea.append(msg + "\r\n");
 		jTextArea.paintImmediately(jTextArea.getBounds());
 		// 手动设置光标的位置为最后一行
@@ -208,7 +209,7 @@ public class jm extends JFrame implements KeyListener {
 			{
 				String req = txt.getText();
 				txt.setText("");
-				channel.writeAndFlush(req + "\n");
+				SendMsg.send(req, channel);
 			}
 		}
 	}

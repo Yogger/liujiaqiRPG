@@ -11,6 +11,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import rpg.util.SendMsg;
 
 public class ClientMain {
 	private String host;
@@ -35,7 +36,7 @@ public class ClientMain {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(worker);
 		bootstrap.channel(NioSocketChannel.class);
-		bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048));
+//		bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(2048));
 		bootstrap.option(ChannelOption.TCP_NODELAY, true).option(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.handler(new ClientIniter());
 
@@ -54,7 +55,8 @@ public class ClientMain {
 					if ("quit".equals(input)) {
 						System.exit(1);
 					}
-					channel.writeAndFlush(input+"\n");
+//					channel.writeAndFlush(input+"\n");
+					SendMsg.send(input, channel);
 				}
 			}
 		} catch (InterruptedException e) {

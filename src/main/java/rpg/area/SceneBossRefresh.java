@@ -14,6 +14,7 @@ import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.util.SendMsg;
 import rpg.util.UserService;
 
 public class SceneBossRefresh implements Runnable {
@@ -58,7 +59,7 @@ public class SceneBossRefresh implements Runnable {
 					break;
 				}
 			}
-//			Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+			// Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 			List<Monster> list4 = IOsession.monsterMp.get(ch.remoteAddress());
 			// 达到挑战时间
 			if (System.currentTimeMillis() - bossScene.getStartTime() >= bossScene.getLastedTime()) {
@@ -67,7 +68,7 @@ public class SceneBossRefresh implements Runnable {
 					List<User> list2 = group2.getList();
 					for (User user2 : list2) {
 						Channel channel = IOsession.userchMp.get(user2);
-						channel.writeAndFlush("已达挑战时间上限，副本挑战失败，自动退出副本");
+						SendMsg.send("已达挑战时间上限，副本挑战失败，自动退出副本", channel);
 						IOsession.ackStatus.put(channel.remoteAddress(), 0);
 					}
 				}
@@ -82,14 +83,22 @@ public class SceneBossRefresh implements Runnable {
 				for (int index = 0; index < list4.size(); index++) {
 					Monster monster = list4.get(index);
 					System.out.println(monster.getName());
-//				Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
+					// Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 					boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
 					if (ackstatus) {
 						if (IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
-//						ConcurrentHashMap<Integer,Long> buffTime1 = IOsession.buffTimeMp
-//								.get(user);
+							// ConcurrentHashMap<Integer,Long> buffTime1 = IOsession.buffTimeMp
+							// .get(user);
 							// 检验怪物Buff
 							String word1 = userService.checkMonsterBuff(monster, ch);
+							Group group6 = IOsession.userGroupMp.get(user.getGroupId());
+							if (group6 != null) {
+								List<User> list = group6.getList();
+								for (User user6 : list) {
+									Channel channel = IOsession.userchMp.get(user6);
+									SendMsg.send(word1, channel);
+								}
+							}
 							// 怪物存活
 							if (monster.getHp() > 0) {
 								boolean wudiFlag = false;
@@ -107,13 +116,13 @@ public class SceneBossRefresh implements Runnable {
 										List<User> list = group2.getList();
 										for (User user2 : list) {
 											Channel channel = IOsession.userchMp.get(user2);
-											channel.writeAndFlush(word1 + "-" + monster.getName()
-													+ "-你有最强护盾护体，免疫伤害，你的血量剩余：" + user2.getHp());
+											SendMsg.send("002" + "-" + monster.getName() + "-你有最强护盾护体，免疫伤害，你的血量剩余："
+													+ user2.getHp(), channel);
 										}
 									}
 								} else {
 									List<User> userList = monster.getUserList();
-//					int hp = user.getHp() - monster.getAck();
+									// int hp = user.getHp() - monster.getAck();
 									Random random = new Random();
 									int monsterSkillId = random.nextInt(2);
 									int ackuserId = random.nextInt(userList.size());
@@ -133,29 +142,29 @@ public class SceneBossRefresh implements Runnable {
 											Buff getBuff = IOsession.buffMp.get(Integer.valueOf(skill2.getEffect()));
 											user3.setHp(hp);
 											// 推送攻击消息
-											ch1.writeAndFlush(word1 + "-你受到" + monster.getName() + "单体技能(无视防御)"
+											SendMsg.send("002" + "-你受到" + monster.getName() + "单体技能(无视防御)"
 													+ skill2.getName() + "伤害：" + monster.getAck() + "-你的血量剩余：" + hp
-													+ "你产生了" + getBuff.getName());
+													+ "你产生了" + getBuff.getName(), ch1);
 											if (group2 != null) {
 												List<User> list = group2.getList();
 												for (User user2 : list) {
 													Channel channel = IOsession.userchMp.get(user2);
 													if (channel != ch1) {
-														channel.writeAndFlush(word1 + "-" + user3.getNickname() + "受到"
+														SendMsg.send("002" + "-" + user3.getNickname() + "受到"
 																+ monster.getName() + "单体技能(无视防御)伤害：" + monster.getAck()
-																+ "-血量剩余：" + hp);
+																+ "-血量剩余：" + hp, channel);
 													}
 												}
 											}
 										} else {
-											ch1.writeAndFlush("你已被打死，副本挑战失败，你已被传送出副本");
+											SendMsg.send("你已被打死，副本挑战失败，你已被传送出副本", ch1);
 											if (group2 != null) {
 												List<User> list = group2.getList();
 												for (User user2 : list) {
 													Channel channel = IOsession.userchMp.get(user2);
 													if (channel != ch1)
-														channel.writeAndFlush(
-																user3.getNickname() + "已被打死，副本挑战失败，你已被传送出副本");
+														SendMsg.send(user3.getNickname() + "已被打死，副本挑战失败，你已被传送出副本",
+																channel);
 													IOsession.ackStatus.put(channel.remoteAddress(), 0);
 												}
 											}
@@ -183,18 +192,19 @@ public class SceneBossRefresh implements Runnable {
 												// 血量满足
 												if (hp > 0) {
 													user2.setHp(hp);
-													channel.writeAndFlush(word1 + "-你受到" + monster.getName()
-															+ "全体技能(无视护盾)伤害：" + monsterAck + "-你的血量剩余：" + hp);
+													SendMsg.send("002" + "-你受到" + monster.getName() + "全体技能(无视护盾)伤害："
+															+ monsterAck + "-你的血量剩余：" + hp, channel);
 												} else {
 													Channel ch1 = IOsession.userchMp.get(user2);
-													ch1.writeAndFlush("你已被打死，副本挑战失败，你已被传送出副本");
+													SendMsg.send("你已被打死，副本挑战失败，你已被传送出副本", ch1);
 													if (group2 != null) {
 														List<User> list = group2.getList();
 														for (User user3 : list) {
 															Channel channel1 = IOsession.userchMp.get(user3);
 															if (channel1 != ch1)
-																channel1.writeAndFlush(
-																		user2.getNickname() + "已被打死，副本挑战失败，你已被传送出副本");
+																SendMsg.send(
+																		user2.getNickname() + "已被打死，副本挑战失败，你已被传送出副本",
+																		channel1);
 															IOsession.ackStatus.put(channel1.remoteAddress(), 0);
 														}
 													}

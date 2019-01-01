@@ -15,6 +15,7 @@ import rpg.pojo.UserfriendExample;
 import rpg.pojo.UserfriendExample.Criteria;
 import rpg.session.IOsession;
 import rpg.task.TaskManage;
+import rpg.util.SendMsg;
 
 /**
  * 好友功能
@@ -59,15 +60,15 @@ public class FriendDispatch {
 				list.remove(string);
 				User user2 = IOsession.nameMap.get(msg[2]);
 				Channel channel = IOsession.userchMp.get(user2);
-				ch.writeAndFlush("添加好友成功\n");
+				SendMsg.send("添加好友成功\n",ch);
 				TaskManage.checkMoneyTaskCompleteBytaskid(user, 12);
-				channel.writeAndFlush("你已经和"+name+"成为好友\n");
+				SendMsg.send("你已经和"+name+"成为好友\n",channel);
 				TaskManage.checkMoneyTaskCompleteBytaskid(user2, 12);
 				break;
 			}
 		}
 		if(!flag) {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -81,7 +82,7 @@ public class FriendDispatch {
 		for (Userfriend userfriend : list) {
 			word+=userfriend.getFriend()+"\n";
 		}
-		ch.writeAndFlush(word);
+		SendMsg.send(word,ch);
 	}
 
 	private void showsq(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -90,7 +91,7 @@ public class FriendDispatch {
 		for (String string : list) {
 			word += string + "\n";
 		}
-		ch.writeAndFlush(word);
+		SendMsg.send(word,ch);
 	}
 
 	private void addFriend(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -102,9 +103,9 @@ public class FriendDispatch {
 					String username2 = user.getNickname();
 					list.add(username2);
 					IOsession.friendMp.put(username1, list);
-					ch.writeAndFlush("好友申请已发送");
+					SendMsg.send("好友申请已发送",ch);
 					Channel channel = IOsession.userchMp.get(user2);
-					channel.writeAndFlush(user.getNickname() + "申请与您成为好友");
+					SendMsg.send(user.getNickname() + "申请与您成为好友",channel);
 				}
 			}
 		}

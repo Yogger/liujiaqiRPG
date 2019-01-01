@@ -10,6 +10,7 @@ import rpg.pojo.Task;
 import rpg.pojo.TaskProcess;
 import rpg.pojo.User;
 import rpg.session.IOsession;
+import rpg.util.SendMsg;
 
 @Component
 public class TaskfunctionDispatch {
@@ -20,7 +21,7 @@ public class TaskfunctionDispatch {
 		} else if (msg.length == 2 && msg[1].equals("showf")){
 			showFinishTask(user,ch);
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -33,7 +34,7 @@ public class TaskfunctionDispatch {
 				string += "任务名称：" + taskProcess.getName()+"\n";
 			}
 		}
-		ch.writeAndFlush(string);
+		SendMsg.send(string,ch);
 	}
 
 	private void showTask(User user, Channel ch) {
@@ -45,6 +46,6 @@ public class TaskfunctionDispatch {
 				string += "任务名称：" + taskProcess.getName() + "----任务进度" + taskProcess.getNum() + "/" + task.getNum()+"\n";
 			}
 		}
-		ch.writeAndFlush(string);
+		SendMsg.send(string,ch);
 	}
 }

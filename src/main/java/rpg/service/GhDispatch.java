@@ -31,6 +31,7 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 
 /**
  * 工会逻辑
@@ -111,12 +112,12 @@ public class GhDispatch {
 									List<Userbag> list2 = IOsession.userBagMp.get(user);
 									list2.add(userbag);
 									ghstoreMapper.deleteByExample(example2);
-									ch.writeAndFlush("物品拿取成功");
+									SendMsg.send("物品拿取成功",ch);
 								} else {
-									ch.writeAndFlush("数量错误");
+									SendMsg.send("数量错误",ch);
 								}
 							} else {
-								ch.writeAndFlush("指令错误");
+								SendMsg.send("指令错误",ch);
 							}
 						} else {
 							if (StringUtils.isNumeric(msg[4])) {
@@ -136,18 +137,18 @@ public class GhDispatch {
 									if (ghstore.getNumber() > num) {
 										ghstore.setNumber(ghstore.getNumber() - num);
 										ghstoreMapper.updateByExample(ghstore, example2);
-										ch.writeAndFlush("物品拿取成功");
+										SendMsg.send("物品拿取成功",ch);
 									} else if (ghstore.getNumber() == num) {
 										ghstoreMapper.deleteByExample(example2);
-										ch.writeAndFlush("物品拿取成功");
+										SendMsg.send("物品拿取成功",ch);
 									} else {
-										ch.writeAndFlush("指令错误");
+										SendMsg.send("指令错误",ch);
 									}
 								} else {
-									ch.writeAndFlush("请放入正确的数量");
+									SendMsg.send("请放入正确的数量",ch);
 								}
 							} else {
-								ch.writeAndFlush("指令错误");
+								SendMsg.send("指令错误",ch);
 							}
 						}
 						break;
@@ -160,15 +161,15 @@ public class GhDispatch {
 						gh.setGold(gh.getGold() - Integer.valueOf(msg[3]));
 						ghMapper.updateByPrimaryKey(gh);
 						user.setMoney(user.getMoney() + Integer.valueOf(msg[3]));
-						ch.writeAndFlush("金币取出成功");
+						SendMsg.send("金币取出成功",ch);
 					} else {
-						ch.writeAndFlush("金币不足");
+						SendMsg.send("金币不足",ch);
 					}
 				} else {
-					ch.writeAndFlush("指令错误");
+					SendMsg.send("指令错误",ch);
 				}
 			} else {
-				ch.writeAndFlush("指令错误");
+				SendMsg.send("指令错误",ch);
 			} 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -196,7 +197,7 @@ public class GhDispatch {
 			}
 		}
 		Gh gh = ghMapper.selectByPrimaryKey(user.getGhId());
-		ch.writeAndFlush("金币：" + gh.getGold() + "\n" + yaopinWord + zbWord);
+		SendMsg.send("金币：" + gh.getGold() + "\n" + yaopinWord + zbWord,ch);
 	}
 
 	private void putGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -216,12 +217,12 @@ public class GhDispatch {
 								ghstore.setIsadd(0);
 								ghstoreMapper.insert(ghstore);
 								list.remove(userbag);
-								ch.writeAndFlush("物品放入成功");
+								SendMsg.send("物品放入成功",ch);
 							} else {
-								ch.writeAndFlush("数量不足");
+								SendMsg.send("数量不足",ch);
 							}
 						} else {
-							ch.writeAndFlush("指令错误");
+							SendMsg.send("指令错误",ch);
 						}
 					} else {
 						if (StringUtils.isNumeric(msg[4])) {
@@ -242,12 +243,12 @@ public class GhDispatch {
 									ghstoreMapper.insert(ghstore);
 									if (userbag.getNumber() > num) {
 										userbag.setNumber(userbag.getNumber() - num);
-										ch.writeAndFlush("物品放入成功");
+										SendMsg.send("物品放入成功",ch);
 									} else if (userbag.getNumber() == num) {
 										list.remove(userbag);
-										ch.writeAndFlush("物品放入成功");
+										SendMsg.send("物品放入成功",ch);
 									} else {
-										ch.writeAndFlush("数量不足");
+										SendMsg.send("数量不足",ch);
 									}
 								} else {
 									Ghstore ghstore = list2.get(0);
@@ -255,19 +256,19 @@ public class GhDispatch {
 									ghstoreMapper.updateByExample(ghstore, example);
 									if (userbag.getNumber() > num) {
 										userbag.setNumber(userbag.getNumber() - num);
-										ch.writeAndFlush("物品放入成功");
+										SendMsg.send("物品放入成功",ch);
 									} else if (userbag.getNumber() == num) {
 										list.remove(userbag);
-										ch.writeAndFlush("物品放入成功");
+										SendMsg.send("物品放入成功",ch);
 									} else {
-										ch.writeAndFlush("数量不足");
+										SendMsg.send("数量不足",ch);
 									}
 								}
 							} else {
-								ch.writeAndFlush("请放入正确的数量");
+								SendMsg.send("请放入正确的数量",ch);
 							}
 						} else {
-							ch.writeAndFlush("指令错误");
+							SendMsg.send("指令错误",ch);
 						}
 					}
 					break;
@@ -280,15 +281,15 @@ public class GhDispatch {
 					gh.setGold(gh.getGold() + Integer.valueOf(msg[3]));
 					ghMapper.updateByPrimaryKey(gh);
 					user.setMoney(user.getMoney() - Integer.valueOf(msg[3]));
-					ch.writeAndFlush("金币放入成功");
+					SendMsg.send("金币放入成功",ch);
 				} else {
-					ch.writeAndFlush("金币不足");
+					SendMsg.send("金币不足",ch);
 				}
 			} else {
-				ch.writeAndFlush("指令错误");
+				SendMsg.send("指令错误",ch);
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -313,10 +314,10 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							ch.writeAndFlush("降低职位成功");
-							channel.writeAndFlush("你被降级为精英");
+							SendMsg.send("降低职位成功",ch);
+							SendMsg.send("你被降级为精英",channel);
 						} else {
-							ch.writeAndFlush("权限不够,不能降级该职位");
+							SendMsg.send("权限不够,不能降级该职位",ch);
 						}
 					} else if (msg[3].equals("4") && ghuser2.getPower() < 4) {
 						if (ghuser.getPower() < 3) {
@@ -325,22 +326,22 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							ch.writeAndFlush("降低职位成功");
-							channel.writeAndFlush("你被降级为成员");
+							SendMsg.send("降低职位成功",ch);
+							SendMsg.send("你被降级为成员",channel);
 						} else {
-							ch.writeAndFlush("权限不够,不能降级该职位");
+							SendMsg.send("权限不够,不能降级该职位",ch);
 						}
 					} else {
-						ch.writeAndFlush("指令错误");
+						SendMsg.send("指令错误",ch);
 					}
 				} else {
-					ch.writeAndFlush("权限不够,不能降级该玩家头衔");
+					SendMsg.send("权限不够,不能降级该玩家头衔",ch);
 				}
 			} else {
-				ch.writeAndFlush("不存在该玩家");
+				SendMsg.send("不存在该玩家",ch);
 			}
 		} else {
-			ch.writeAndFlush("你不在工会");
+			SendMsg.send("你不在工会",ch);
 		}
 	}
 
@@ -365,10 +366,10 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							ch.writeAndFlush("提升职位成功");
-							channel.writeAndFlush("你被提升为精英");
+							SendMsg.send("提升职位成功",ch);
+							SendMsg.send("你被提升为精英",channel);
 						} else {
-							ch.writeAndFlush("权限不够,不能提升该职位");
+							SendMsg.send("权限不够,不能提升该职位",ch);
 						}
 					} else if (msg[3].equals("2")) {
 						if (ghuser.getPower() < 2) {
@@ -377,22 +378,22 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							ch.writeAndFlush("提升职位成功");
-							channel.writeAndFlush("你被提升为副会长");
+							SendMsg.send("提升职位成功",ch);
+							SendMsg.send("你被提升为副会长",channel);
 						} else {
-							ch.writeAndFlush("权限不够,不能提升该职位");
+							SendMsg.send("权限不够,不能提升该职位",ch);
 						}
 					} else {
-						ch.writeAndFlush("指令错误");
+						SendMsg.send("指令错误",ch);
 					}
 				} else {
-					ch.writeAndFlush("权限不够,不能提升该玩家头衔");
+					SendMsg.send("权限不够,不能提升该玩家头衔",ch);
 				}
 			} else {
-				ch.writeAndFlush("不存在该玩家");
+				SendMsg.send("不存在该玩家",ch);
 			}
 		} else {
-			ch.writeAndFlush("你不在工会");
+			SendMsg.send("你不在工会",ch);
 		}
 	}
 
@@ -403,7 +404,7 @@ public class GhDispatch {
 		ghuserMapper.deleteByExample(example);
 		user.setGhId(0);
 		userMapper.updateByPrimaryKey(user);
-		ch.writeAndFlush("退出工会成功");
+		SendMsg.send("退出工会成功",ch);
 	}
 
 	private void jsGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -429,17 +430,17 @@ public class GhDispatch {
 					user2.setGhId(0);
 					userMapper.updateByPrimaryKey(user2);
 					Channel channel = IOsession.userchMp.get(user2);
-					ch.writeAndFlush("已将该玩家踢出");
-					channel.writeAndFlush("你被踢出工会");
+					SendMsg.send("已将该玩家踢出",ch);
+					SendMsg.send("你被踢出工会",channel);
 				} else {
-					ch.writeAndFlush("权限不够,不能移除该玩家");
+					SendMsg.send("权限不够,不能移除该玩家",ch);
 				}
 			} else {
-				ch.writeAndFlush("不存在该玩家");
+				SendMsg.send("不存在该玩家",ch);
 				return;
 			}
 		} else {
-			ch.writeAndFlush("你不在工会");
+			SendMsg.send("你不在工会",ch);
 			return;
 		}
 	}
@@ -453,7 +454,7 @@ public class GhDispatch {
 		for (Ghuser ghuser : list) {
 			string += "用户名:" + ghuser.getUsername() + "---职位:" + ghuser.getJobname() + "\n";
 		}
-		ch.writeAndFlush(string);
+		SendMsg.send(string,ch);
 	}
 
 	private void showsqGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -464,10 +465,10 @@ public class GhDispatch {
 				for (Entry<String, String> entry : map.entrySet()) {
 					string += "申请人：" + entry.getKey() + "---申请时间:" + entry.getValue();
 				}
-				ch.writeAndFlush(string);
+				SendMsg.send(string,ch);
 			}
 		} else {
-			ch.writeAndFlush("你没有工会");
+			SendMsg.send("你没有工会",ch);
 		}
 	}
 
@@ -492,18 +493,18 @@ public class GhDispatch {
 					ghuser.setPower(4);
 					ghuser.setJobname("成员");
 					ghuserMapper.insert(ghuser);
-					ch.writeAndFlush(user2.getNickname() + "加入工会");
+					SendMsg.send(user2.getNickname() + "加入工会",ch);
 					Channel channel = IOsession.userchMp.get(user2);
-					channel.writeAndFlush("你成功加入工会");
+					SendMsg.send("你成功加入工会",channel);
 					TaskManage.checkTaskCompleteBytaskid(user2, 8);
 				} else {
-					ch.writeAndFlush("你没有权限");
+					SendMsg.send("你没有权限",ch);
 				}
 			} else {
-				ch.writeAndFlush("指令错误");
+				SendMsg.send("指令错误",ch);
 			}
 		} else {
-			ch.writeAndFlush("你没有工会");
+			SendMsg.send("你没有工会",ch);
 		}
 	}
 
@@ -513,8 +514,8 @@ public class GhDispatch {
 //			if (ghuser.getPower() < 4) {
 //				User user2 = IOsession.nameMap.get(ghuser.getUsername());
 //				Channel channel = IOsession.userchMp.get(user2);
-//				ch.writeAndFlush("申请已发送");
-//				channel.writeAndFlush(user.getNickname()+"---申请加入工会");
+//				SendMsg.send("申请已发送");
+//				SendMsg.send(user.getNickname()+"---申请加入工会");
 //			}
 //		}
 		GhuserExample example = new GhuserExample();
@@ -532,12 +533,12 @@ public class GhDispatch {
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 					hashMap.put(name, df.format(new Date()));
 					IOsession.ghsqMp.put(id, hashMap);
-					channel.writeAndFlush(user.getNickname() + "---申请加入工会");
+					SendMsg.send(user.getNickname() + "---申请加入工会",channel);
 				}
 			}
-			ch.writeAndFlush("申请已发送");
+			SendMsg.send("申请已发送",ch);
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -563,7 +564,7 @@ public class GhDispatch {
 //		HashMap<String, Ghuser> map = new HashMap<>();
 //		map.put(name, ghuser);
 //		IOsession.ghUserMp.put(id, map);
-		ch.writeAndFlush("创建工会成功");
+		SendMsg.send("创建工会成功",ch);
 		TaskManage.checkTaskCompleteBytaskid(user, 8);
 	}
 
@@ -581,6 +582,6 @@ public class GhDispatch {
 //						+ gh.getLevel() + "\n";
 //			}
 //		}
-		ch.writeAndFlush(req);
+		SendMsg.send(req,ch);
 	}
 }

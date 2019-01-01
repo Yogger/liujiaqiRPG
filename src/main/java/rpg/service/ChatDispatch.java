@@ -17,6 +17,7 @@ import rpg.pojo.Yaopin;
 import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.util.RpgUtil;
+import rpg.util.SendMsg;
 
 /**
  * 聊天功能
@@ -32,10 +33,10 @@ public class ChatDispatch {
 		String[] msg = msg1.split("\\s+");
 		if (msg.length == 2) {
 			for (Channel channel : group) {
-				channel.writeAndFlush("全服喇叭----" + user.getNickname() + ":" + msg[1]);
+				SendMsg.send("全服喇叭----" + user.getNickname() + ":" + msg[1],channel);
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -46,14 +47,14 @@ public class ChatDispatch {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
-						ch.writeAndFlush(user.getNickname() + ":" + msg[2]);
+						SendMsg.send(user.getNickname() + ":" + msg[2],ch);
 						Channel channel = IOsession.userchMp.get(user2);
-						channel.writeAndFlush(user.getNickname() + ":" + msg[2]);
+						SendMsg.send(user.getNickname() + ":" + msg[2],channel);
 					}
 				}
 			}
 		} else {
-			ch.writeAndFlush("错误指令");
+			SendMsg.send("错误指令",ch);
 		}
 	}
 
@@ -82,12 +83,12 @@ public class ChatDispatch {
 						ArrayList<EmailRpg> list = IOsession.alluserEmail.get(msg[1]);
 						list.add(emailRpg);
 //								System.out.println(list.get(0).getFujian().getUsername());
-						ch.writeAndFlush("发送邮件成功");
+						SendMsg.send("发送邮件成功",ch);
 						if (IOsession.mp != null) {
 							for (User user2 : IOsession.mp.values()) {
 								Channel channel = IOsession.userchMp.get(user2);
 								if (IOsession.userchMp.get(user2) != null&&ch!=channel) {
-									channel.writeAndFlush("收到一封来自" + user.getNickname() + "邮件");
+									SendMsg.send("收到一封来自" + user.getNickname() + "邮件",channel);
 								}
 							}
 						}
@@ -95,7 +96,7 @@ public class ChatDispatch {
 					}
 				}
 			} else {
-				ch.writeAndFlush("用户不存在");
+				SendMsg.send("用户不存在",ch);
 			}
 		} else if (msg.length == 2) {
 			ArrayList<EmailRpg> list = IOsession.alluserEmail.get(user.getNickname());
@@ -106,15 +107,15 @@ public class ChatDispatch {
 				RpgUtil.putZb(user, zb);
 				int index=Integer.valueOf(msg[1]);
 				list.remove(index);
-				ch.writeAndFlush("提取邮件成功");
+				SendMsg.send("提取邮件成功",ch);
 			} else if (yaopin != null) {
 				RpgUtil.putYaopin(user, yaopin);
 				int index=Integer.valueOf(msg[1]);
 				list.remove(index);
-				ch.writeAndFlush("提取邮件成功");
+				SendMsg.send("提取邮件成功",ch);
 			}
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 
@@ -141,9 +142,9 @@ public class ChatDispatch {
 					i++;
 				}
 			}
-			ch.writeAndFlush(zbmsg + yaopinmsg);
+			SendMsg.send(zbmsg + yaopinmsg,ch);
 		} else {
-			ch.writeAndFlush("指令错误");
+			SendMsg.send("指令错误",ch);
 		}
 	}
 }
