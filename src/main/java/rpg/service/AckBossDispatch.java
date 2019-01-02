@@ -108,7 +108,11 @@ public class AckBossDispatch {
 			} else if (buffTime2 != null && buffTime2.get(4) != null) {
 				SendMsg.send("你被打晕了，无法进行攻击", ch);
 			} else {
-				if (msg[0].equals("1") || msg[0].equals("3") || msg[0].equals("5") || msg[0].equals("6")) {
+				if (msg[0].equals("1") || msg[0].equals("3")) {
+					if (msg[0].equals("3")) {
+						String s = RpgUtil.skillChange(msg[0], user);
+						msg[0] = s;
+					}
 					for (Userskill userskill : list) {
 						String skillId = String.valueOf(userskill.getSkill());
 						if (skillId.equals(msg[0])) {
@@ -178,6 +182,12 @@ public class AckBossDispatch {
 															}
 														}
 													}
+													if (skill.getId() == 7) {
+														SendMsg.send(skill.getName() + "对" + monster.getName()
+																+ "进行攻击-蓝量消耗" + skill.getMp() + "-剩余" + user.getMp(),
+																ch);
+														break;
+													}
 													int ack = attribute.getAck();
 													int hurt = skill.getHurt() + ack;
 													int monsterHp = monster.getHp() - hurt;
@@ -187,8 +197,17 @@ public class AckBossDispatch {
 															linkedList.remove(monster);
 															SendMsg.send("消灭了" + monster.getName(), ch);
 															monster = null;
+															// 更新怪物列表
+															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+															if (group2 != null) {
+																List<User> list3 = group2.getList();
+																for (User user3 : list3) {
+																	Channel channel = IOsession.userchMp.get(user3);
+																	IOsession.monsterMp.put(channel.remoteAddress(),
+																			linkedList);
+																}
+															}
 															index--;
-															continue;
 														}
 														// 产生新的boss
 														else {
@@ -347,6 +366,11 @@ public class AckBossDispatch {
 														}
 													}
 												}
+												if (skill.getId() == 7) {
+													SendMsg.send(skill.getName() + "对" + monster.getName() + "进行攻击-蓝量消耗"
+															+ skill.getMp() + "-剩余" + user.getMp(), ch);
+													break;
+												}
 												int ack = attribute.getAck();
 												int hurt = skill.getHurt() + ack;
 												int monsterHp = monster.getHp() - hurt;
@@ -356,8 +380,17 @@ public class AckBossDispatch {
 														linkedList.remove(monster);
 														SendMsg.send("消灭了" + monster.getName(), ch);
 														monster = null;
+														// 更新怪物列表
+														Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+														if (group2 != null) {
+															List<User> list3 = group2.getList();
+															for (User user3 : list3) {
+																Channel channel = IOsession.userchMp.get(user3);
+																IOsession.monsterMp.put(channel.remoteAddress(),
+																		linkedList);
+															}
+														}
 														index--;
-														continue;
 													}
 													// 产生新的boss
 													else {
@@ -478,7 +511,7 @@ public class AckBossDispatch {
 		}
 	}
 
-	public void removeUserlist(User user, BossScene bossScene) {
+	public static void removeUserlist(User user, BossScene bossScene) {
 		ArrayList<Monster> monsterList1 = bossScene.getMonsterList();
 		// 找到场景内怪物
 		for (int i = 0; i < monsterList1.size(); i++) {

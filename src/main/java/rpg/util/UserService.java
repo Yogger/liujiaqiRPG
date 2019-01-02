@@ -171,10 +171,26 @@ public class UserService {
 					switch (buff.getId()) {
 					case 2:
 						int monHp = monster.getHp() - buff.getMp();
-						if (monHp <= 0)
+						if (monHp <= 0) {
 							monHp = 0;
+							monster.setDeadType(1);
+						}
 						monster.setHp(monHp);
-						msg += "003" + monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
+						if (msg == "")
+							msg += "003";
+						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
+								+ monster.getHp();
+						break;
+					case 5:
+						int monHp1 = monster.getHp() - buff.getMp();
+						if (monHp1 <= 0) {
+							monHp1 = 0;
+							monster.setDeadType(1);
+						}
+						monster.setHp(monHp1);
+						if (msg == "")
+							msg += "003";
+						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
 								+ monster.getHp();
 						break;
 					default:

@@ -18,6 +18,15 @@ public class Monster implements Cloneable{
 	private int money;
 	private List<Integer> skillList;
 	private int exp;
+	private int deadType;//0被玩家杀 1被buff杀
+
+	public int getDeadType() {
+		return deadType;
+	}
+
+	public void setDeadType(int deadType) {
+		this.deadType = deadType;
+	}
 
 	public List<Integer> getSkillList() {
 		return skillList;

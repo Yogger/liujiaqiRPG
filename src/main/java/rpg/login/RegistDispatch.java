@@ -20,12 +20,17 @@ public class RegistDispatch {
 
 	public void dispatch(Channel ch, String arg1) {
 		String[] msg = arg1.split("\\s+");
-		if (msg.length > 3) {
-			boolean b = regist.regist(msg[1], msg[2], msg[3]);
-			if (b) {
-				SendMsg.send("恭喜注册成功" + "\n", ch);
+		if (msg.length > 4) {
+			Integer roleid = Integer.valueOf(msg[4]);
+			if (roleid < 5 && roleid > 0) {
+				boolean b = regist.regist(msg[1], msg[2], msg[3],roleid);
+				if (b) {
+					SendMsg.send("恭喜注册成功" + "\n", ch);
+				} else {
+					SendMsg.send("两次密码不一致" + "\n", ch);
+				}
 			} else {
-				SendMsg.send("两次密码不一致" + "\n", ch);
+				SendMsg.send("指令错误", ch);
 			}
 		} else {
 			SendMsg.send("指令错误，重输：" + "\n", ch);

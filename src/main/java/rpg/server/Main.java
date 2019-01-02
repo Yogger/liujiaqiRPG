@@ -88,6 +88,8 @@ public class Main {
 		ArrayList<EmailRpg> arrayList2 = new ArrayList<EmailRpg>();
 		IOsession.alluserEmail.put("q", arrayList1);
 		IOsession.alluserEmail.put("a", arrayList2);
+		IOsession.alluserEmail.put("z", arrayList2);
+		IOsession.alluserEmail.put("b", arrayList2);
 	}
 
 	// 初始化商店

@@ -21,6 +21,8 @@ public class User {
 	private String groupId;
 	
 	private Integer ghid;
+	
+	private Integer roletype;
 
 	private int liveFlag;// 1退出，0正常
 
@@ -202,5 +204,13 @@ public class User {
 
 	public void setExp(int exp) {
 		this.exp = exp;
+	}
+
+	public Integer getRoletype() {
+		return roletype;
+	}
+
+	public void setRoletype(Integer roletype) {
+		this.roletype = roletype;
 	}
 }

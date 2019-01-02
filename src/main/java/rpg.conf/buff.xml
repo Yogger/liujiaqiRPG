@@ -19,10 +19,16 @@
 		<mp>1</mp>
 		<lastedTime>10000</lastedTime>
 	</buff>
-		<buff>
+	<buff>
 		<id>4</id>
 		<name>打晕buff</name>
 		<mp>1</mp>
 		<lastedTime>1000</lastedTime>
+	</buff>
+	<buff>
+		<id>5</id>
+		<name>小狼攻击</name>
+		<mp>10000</mp>
+		<lastedTime>3000</lastedTime>
 	</buff>
 </buffList>

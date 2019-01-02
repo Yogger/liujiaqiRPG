@@ -16,11 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
+
+import org.apache.commons.io.output.ThresholdingOutputStream;
 
 import io.netty.channel.Channel;
 import rpg.util.SendMsg;
 
-public class jm extends JFrame implements KeyListener {
+public class Jm extends JFrame implements KeyListener {
 	JPanel jPanel1, jPanel2; // 三块面板，两块是按钮，一块是输出台
 	JScrollPane jPanel4, jPanel5, jPanel6, jPanel7;
 
@@ -32,10 +36,13 @@ public class jm extends JFrame implements KeyListener {
 
 	Channel channel;
 
-	public jm(Channel channel) {
+	public Jm(Channel channel) {
 		this.channel = channel;
 
 		initComp();
+		String msg="请选择指令\nlogin、登陆 regist、注册\n格式：login username psw\n格式：regist username psw psw roletype"
+				+ "\n1-战士 2-法师 3-牧师 4-召唤师";
+		printMsg(msg, jTextArea);
 	}
 
 	public void initComp() {
@@ -74,12 +81,12 @@ public class jm extends JFrame implements KeyListener {
 
 		this.setLayout(new BorderLayout());
 		jButton1.setPreferredSize(new Dimension(119, 34));
-		jButton2.setPreferredSize(new Dimension(119, 34));
-		jButton3.setPreferredSize(new Dimension(119, 34));
-		jButton4.setPreferredSize(new Dimension(119, 34));
-		jButton5.setPreferredSize(new Dimension(119, 34));
-		jButton6.setPreferredSize(new Dimension(119, 34));
-		jButton7.setPreferredSize(new Dimension(119, 34));
+//		jButton2.setPreferredSize(new Dimension(119, 34));
+//		jButton3.setPreferredSize(new Dimension(119, 34));
+//		jButton4.setPreferredSize(new Dimension(119, 34));
+//		jButton5.setPreferredSize(new Dimension(119, 34));
+//		jButton6.setPreferredSize(new Dimension(119, 34));
+//		jButton7.setPreferredSize(new Dimension(119, 34));
 		txt.setPreferredSize(new Dimension(300, 34));
 
 		// 面板添加组件
@@ -87,12 +94,12 @@ public class jm extends JFrame implements KeyListener {
 
 		jPanel1.add(txt);
 		jPanel1.add(jButton1);
-		jPanel1.add(jButton2);
-		jPanel1.add(jButton3);
-		jPanel1.add(jButton4);
-		jPanel1.add(jButton5);
-		jPanel1.add(jButton6);
-		jPanel1.add(jButton7);
+//		jPanel1.add(jButton2);
+//		jPanel1.add(jButton3);
+//		jPanel1.add(jButton4);
+//		jPanel1.add(jButton5);
+//		jPanel1.add(jButton6);
+//		jPanel1.add(jButton7);
 		jPanel1.setSize(700, 100);
 
 		jPanel2.setLayout(new BorderLayout());
@@ -201,7 +208,7 @@ public class jm extends JFrame implements KeyListener {
 		// 手动设置光标的位置为最后一行
 		jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
 	}
-
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getSource() == txt) {

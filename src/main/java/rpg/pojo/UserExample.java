@@ -545,62 +545,122 @@ public class UserExample {
         }
 
         public Criteria andGhidIsNull() {
-            addCriterion("ghId is null");
+            addCriterion("ghid is null");
             return (Criteria) this;
         }
 
         public Criteria andGhidIsNotNull() {
-            addCriterion("ghId is not null");
+            addCriterion("ghid is not null");
             return (Criteria) this;
         }
 
         public Criteria andGhidEqualTo(Integer value) {
-            addCriterion("ghId =", value, "ghid");
+            addCriterion("ghid =", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidNotEqualTo(Integer value) {
-            addCriterion("ghId <>", value, "ghid");
+            addCriterion("ghid <>", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidGreaterThan(Integer value) {
-            addCriterion("ghId >", value, "ghid");
+            addCriterion("ghid >", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidGreaterThanOrEqualTo(Integer value) {
-            addCriterion("ghId >=", value, "ghid");
+            addCriterion("ghid >=", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidLessThan(Integer value) {
-            addCriterion("ghId <", value, "ghid");
+            addCriterion("ghid <", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidLessThanOrEqualTo(Integer value) {
-            addCriterion("ghId <=", value, "ghid");
+            addCriterion("ghid <=", value, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidIn(List<Integer> values) {
-            addCriterion("ghId in", values, "ghid");
+            addCriterion("ghid in", values, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidNotIn(List<Integer> values) {
-            addCriterion("ghId not in", values, "ghid");
+            addCriterion("ghid not in", values, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidBetween(Integer value1, Integer value2) {
-            addCriterion("ghId between", value1, value2, "ghid");
+            addCriterion("ghid between", value1, value2, "ghid");
             return (Criteria) this;
         }
 
         public Criteria andGhidNotBetween(Integer value1, Integer value2) {
-            addCriterion("ghId not between", value1, value2, "ghid");
+            addCriterion("ghid not between", value1, value2, "ghid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeIsNull() {
+            addCriterion("roletype is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeIsNotNull() {
+            addCriterion("roletype is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeEqualTo(Integer value) {
+            addCriterion("roletype =", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeNotEqualTo(Integer value) {
+            addCriterion("roletype <>", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeGreaterThan(Integer value) {
+            addCriterion("roletype >", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("roletype >=", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeLessThan(Integer value) {
+            addCriterion("roletype <", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeLessThanOrEqualTo(Integer value) {
+            addCriterion("roletype <=", value, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeIn(List<Integer> values) {
+            addCriterion("roletype in", values, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeNotIn(List<Integer> values) {
+            addCriterion("roletype not in", values, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeBetween(Integer value1, Integer value2) {
+            addCriterion("roletype between", value1, value2, "roletype");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoletypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("roletype not between", value1, value2, "roletype");
             return (Criteria) this;
         }
     }

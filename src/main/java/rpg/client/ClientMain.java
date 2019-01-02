@@ -8,7 +8,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import rpg.util.SendMsg;
@@ -17,8 +16,9 @@ public class ClientMain {
 	private String host;
 	private int port;
 	private boolean stop = false;
-	
-	/** 当前重接次数*/
+	public static Jm jm1;
+
+	/** 当前重接次数 */
 	public static int reconnectTimes = 0;
 
 	public ClientMain(String host, int port) {
@@ -28,7 +28,7 @@ public class ClientMain {
 
 	public static void main(String[] args) throws IOException {
 //		jm jm1 = new jm();
-		new ClientMain("127.0.0.1",8080).run();
+		new ClientMain("127.0.0.1", 8080).run();
 	}
 
 	public void run() throws IOException {
@@ -46,10 +46,9 @@ public class ClientMain {
 			System.out.println("login、登陆 regist、注册");
 			System.out.println("格式：login username psw");
 			System.out.println("格式：regist username psw psw");
-			jm jm1 = new jm(channel);
+			jm1 = new Jm(channel);
 			while (true) {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(System.in));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 				String input = reader.readLine();
 				if (input != null) {
 					if ("quit".equals(input)) {
@@ -62,9 +61,8 @@ public class ClientMain {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
-		}
-		finally {
-			//设置最大重连次数，防止服务端正常关闭导致的空循环
+		} finally {
+			// 设置最大重连次数，防止服务端正常关闭导致的空循环
 			if (reconnectTimes < 5) {
 				reConnectServer();
 			}
@@ -74,7 +72,7 @@ public class ClientMain {
 	/**
 	 * 断线重连
 	 */
-	public void reConnectServer(){
+	public void reConnectServer() {
 		try {
 			Thread.sleep(5000);
 			System.err.println("客户端进行断线重连");
@@ -84,7 +82,7 @@ public class ClientMain {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 重置重连次数
 	 */
@@ -94,7 +92,6 @@ public class ClientMain {
 			System.err.println("断线重连成功");
 		}
 	}
-
 
 	public boolean isStop() {
 		return stop;

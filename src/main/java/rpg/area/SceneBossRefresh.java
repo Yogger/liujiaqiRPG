@@ -1,6 +1,9 @@
 package rpg.area;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,8 +15,11 @@ import rpg.pojo.Monster;
 import rpg.pojo.Skill;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
+import rpg.service.AckBossDispatch;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
+import rpg.task.TaskManage;
+import rpg.util.RpgUtil;
 import rpg.util.SendMsg;
 import rpg.util.UserService;
 
@@ -224,22 +230,102 @@ public class SceneBossRefresh implements Runnable {
 							}
 							// 怪物死亡
 							else {
-								Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-								if (group2 != null) {
-									List<User> list2 = group2.getList();
-									for (User user2 : list2) {
-										Channel channel = IOsession.userchMp.get(user2);
-										IOsession.ackStatus.put(channel.remoteAddress(), 0);
+								if (monster.getDeadType() == 1) {
+									if (list4.size() != 1) {
+										list4.remove(monster);
+										// 更新怪物列表
+										Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+										if (group2 != null) {
+											List<User> list31 = group2.getList();
+											for (User user3 : list31) {
+												Channel channel = IOsession.userchMp.get(user3);
+												IOsession.monsterMp.put(channel.remoteAddress(), list4);
+												SendMsg.send("消灭了" + monster.getName(), channel);
+											}
+										}
+										monster = null;
+										index--;
 									}
+									// 产生新的boss
+									else {
+										ArrayList<Monster> monsterList = bossScene.getMonsterList();
+										if (bossScene.getLayer() - 1 > bossScene.getId()) {
+											bossScene.setId(bossScene.getId() + 1);
+											// Monster monster2 =
+											// monsterList.get(bossScene.getId());
+											Map<Integer, Integer> struct = bossScene.getStruct();
+											Integer csid1 = struct.get(bossScene.getId());
+											Integer csid2 = struct.get(bossScene.getId() - 1);
+											Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+											// 将怪物指定用户
+											if (group2 != null) {
+												List<User> list31 = group2.getList();
+												for (User user3 : list31) {
+													LinkedList<Monster> linkedList2 = new LinkedList<>();
+													for (int i = csid2 + 1; i <= csid1; i++) {
+														Monster monster2 = monsterList.get(i);
+														if (group2 != null) {
+															List<User> list311 = group2.getList();
+															ArrayList<User> userList1 = new ArrayList<>();
+															for (User user31 : list311) {
+																userList1.add(user31);
+															}
+															monster2.setUserList(userList1);
+														}
+														// monster = null;
+														// monster = monster2;
+														linkedList2.add(monster2);
+													}
+													list4 = null;
+													list4 = linkedList2;
+													Channel channel1 = IOsession.userchMp.get(user3);
+													IOsession.monsterMp.put(channel1.remoteAddress(), list4);
+													String word11 = "";
+													for (Monster monster21 : list4) {
+														word11 += monster21.getName() + "-血量:" + monster21.getHp()
+																+ "攻击力:" + monster21.getAck() + "\n";
+													}
+													SendMsg.send("boss已被消灭,新的Boss出现\n" + word11, channel1);
+												}
+											}
+										} else {
+											Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+											if (group2 != null) {
+												List<User> list31 = group2.getList();
+												for (User user3 : list31) {
+													Channel channel1 = IOsession.userchMp.get(user3);
+													SendMsg.send("boss已全被消灭，退出副本", channel1);
+													RpgUtil.ackEnd(user3, channel1, monster);
+													TaskManage.checkTaskComplete(user3, bossScene.getSceneid());
+													IOsession.ackStatus.put(channel1.remoteAddress(), 0);
+												}
+											}
+											monster.setAliveFlag(false);
+											IOsession.ackStatus.put(ch.remoteAddress(), 0);
+											AckBossDispatch.removeUserlist(user, bossScene);
+											bossScene = null;// 回收boss场景
+											IOsession.userBossMp.remove(user.getGroupId());
+											exitFlag = true;
+											break;
+										}
+									}
+								} else {
+									Group group2 = IOsession.userGroupMp.get(user.getGroupId());
+									if (group2 != null) {
+										List<User> list2 = group2.getList();
+										for (User user2 : list2) {
+											Channel channel = IOsession.userchMp.get(user2);
+											IOsession.ackStatus.put(channel.remoteAddress(), 0);
+										}
+									}
+									// 回收boss场景，怪物线程
+									BossScene bossScene1 = IOsession.userBossMp.get(user.getGroupId());
+									bossScene1 = null;
+									IOsession.userBossMp.remove(user.getGroupId());
+									exitFlag = true;
+									break;
 								}
-								// 回收boss场景，怪物线程
-								BossScene bossScene1 = IOsession.userBossMp.get(user.getGroupId());
-								bossScene1 = null;
-								IOsession.userBossMp.remove(user.getGroupId());
-								exitFlag = true;
-								break;
 							}
-
 						} else {
 							exitFlag = true;
 							break;

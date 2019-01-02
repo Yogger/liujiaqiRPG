@@ -206,6 +206,10 @@ public class AckDispatch {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				SendMsg.send("指令错误",ch);
 			} else {
+				if (msg[0].equals("3")) {
+					String s = RpgUtil.skillChange(msg[0], user);
+					msg[0] = s;
+				}
 				for (Userskill userskill : list) {
 					String skillId = String.valueOf(userskill.getSkill());
 					if (skillId.equals(msg[0])) {

@@ -11,28 +11,34 @@ public class RpgClientHandler extends ChannelHandlerAdapter {
 		String msg1 = (String) msg3;
 		Channel channel = ctx.channel();
 		if (msg1.equals("心跳")) {
-			SendMsg.send("心跳",channel);
+			SendMsg.send("心跳", channel);
 		} else {
 			if (msg1.length() > 3) {
 				String msg = msg1.substring(0, 3);
 				if (msg.equals("001")) {
 					String string = msg1.substring(3);
-					jm.printMsg(string, jm.jTextArea2);
+					Jm.printMsg(string, Jm.jTextArea2);
 				} else if (msg.equals("002")) {
 					String string = msg1.substring(3);
-					jm.printMsg(string, jm.jTextArea3);
-					System.out.println(msg1);
+					Jm.printMsg(string, Jm.jTextArea3);
+					System.out.println(string);
 				} else if (msg.equals("003")) {
 					String string = msg1.substring(3);
-					jm.printMsg(string, jm.jTextArea4);
-					System.out.println(msg1);
+					Jm.printMsg(string, Jm.jTextArea4);
+					System.out.println(string);
+				} else if (msg.equals("000")) {
+					String string = msg1.substring(3);
+					ClientMain.jm1.setTitle(string);
 				} else {
-					jm.printMsg(msg1, jm.jTextArea);
+					Jm.printMsg(msg1, Jm.jTextArea);
 					System.out.println(msg1);
 				}
 			} else {
-				jm.printMsg(msg1, jm.jTextArea);
-				System.out.println(msg1);
+				if (msg1 != "") {
+					Jm.printMsg(msg1, Jm.jTextArea);
+					System.out.println(msg1);
+				}
+
 			}
 		}
 	}
