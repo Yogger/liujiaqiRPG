@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import io.netty.channel.Channel;
+import rpg.pojo.BossScene;
 import rpg.pojo.Level;
 import rpg.pojo.Monster;
 import rpg.pojo.User;
@@ -178,5 +179,17 @@ public class RpgUtil {
 		else if(roletype==3) string="6";
 		else if(roletype==4) string="7";
 		return string;
+	}
+	
+	/**
+	 *boss最后一击奖励 
+	 * @param user
+	 * @param ch
+	 * @param bossScene 
+	 */
+	public static void bossEndAward(User user, Channel ch, BossScene bossScene) {
+		Zb zb = IOsession.zbMp.get(105);
+		putZb(user, zb);
+		SendMsg.send("恭喜你获得最后一击奖励----"+zb.getName(), ch);
 	}
 }

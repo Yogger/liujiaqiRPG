@@ -28,17 +28,17 @@ public class SceneBossRefresh implements Runnable {
 	private UserService userService;
 	private User initUser;
 	private BossScene bossScene;
-	private Channel ch;
+	private Channel oldch;
 	private Group firstGroup;
 	private UserAttribute attribute;
 
-	public SceneBossRefresh(UserService userService, User initUser, BossScene bossScene, Channel ch, Group firstGroup,
+	public SceneBossRefresh(UserService userService, User initUser, BossScene bossScene, Channel oldch, Group firstGroup,
 			UserAttribute attribute) {
 		super();
 		this.userService = userService;
 		this.initUser = initUser;
 		this.bossScene = bossScene;
-		this.ch = ch;
+		this.oldch = oldch;
 		this.firstGroup = firstGroup;
 		this.attribute = attribute;
 	}
@@ -65,6 +65,7 @@ public class SceneBossRefresh implements Runnable {
 					break;
 				}
 			}
+			Channel ch = IOsession.userchMp.get(user);
 			// Monster monster = IOsession.monsterMp.get(ch.remoteAddress());
 			List<Monster> list4 = IOsession.monsterMp.get(ch.remoteAddress());
 			// 达到挑战时间

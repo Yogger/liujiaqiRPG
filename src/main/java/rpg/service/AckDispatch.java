@@ -123,40 +123,42 @@ public class AckDispatch {
 											@Override
 											public void run() {
 												while (true) {
+													User user2 = IOsession.nameMap.get(user.getNickname());
+													Channel newchannel = IOsession.userchMp.get(user2);
 													boolean ackstatus = IOsession.ackStatus
-															.containsKey(ch.remoteAddress());
+															.containsKey(newchannel.remoteAddress());
 													if (ackstatus) {
-														if (IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
+														if (IOsession.ackStatus.get(newchannel.remoteAddress()) == 1) {
 															ConcurrentHashMap<Integer, Long> buffTime1 = IOsession.buffTimeMp
-																	.get(user);
+																	.get(user2);
 															// 检验怪物Buff
-															String word1 = userService.checkMonsterBuff(monster, ch);
-															SendMsg.send(word1, ch);
+															String word1 = userService.checkMonsterBuff(monster, newchannel);
+															SendMsg.send(word1, newchannel);
 															// 检测用户状态
 															if (buffTime1 != null && buffTime1.get(3) != null) {
 																SendMsg.send("002" + "-你有最强护盾护体，免疫伤害，你的血量剩余："
-																		+ user.getHp(),ch);
+																		+ user.getHp(),newchannel);
 															} else {
 																int monsterAck = monster.getAck() - attribute.getDef();
 																if (monsterAck <= 0)
 																	monsterAck = 1;
-																int hp = user.getHp() - monsterAck;
+																int hp = user2.getHp() - monsterAck;
 																// 怪物存活
 																if (monster.getHp() > 0) {
 																	if (hp > 0) {
-																		user.setHp(hp);
+																		user2.setHp(hp);
 																		SendMsg.send("002" + "-你受到伤害：" + monsterAck
-																				+ "-你的血量剩余：" + hp,ch);
+																				+ "-你的血量剩余：" + hp,newchannel);
 																	} else {
-																		SendMsg.send("你已被打死",ch);
-																		user.setHp(100);
-																		IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																		SendMsg.send("你已被打死",newchannel);
+																		user2.setHp(100);
+																		IOsession.ackStatus.put(newchannel.remoteAddress(), 0);
 																		break;
 																	}
 																}
 																// 怪物死亡
 																else {
-																	IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																	IOsession.ackStatus.put(newchannel.remoteAddress(), 0);
 																	break;
 																}
 															}

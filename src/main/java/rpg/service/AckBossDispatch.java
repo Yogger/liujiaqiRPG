@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,7 @@ public class AckBossDispatch {
 	private UserService userService;
 	@Value("${id}")
 	private int spcid;
+	private ReentrantLock lock = new ReentrantLock();
 
 	public void ack(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
@@ -256,38 +258,49 @@ public class AckBossDispatch {
 																	}
 																}
 															} else {
-																SendMsg.send("boss已全被消灭，退出副本", ch);
-																Group group2 = IOsession.userGroupMp
-																		.get(user.getGroupId());
-																RpgUtil.ackEnd(user, ch, monster);
-																TaskManage.checkTaskComplete(user,
-																		bossScene.getSceneid());
-																if (group2 != null) {
-																	List<User> list3 = group2.getList();
-																	for (User user3 : list3) {
-																		Channel channel1 = IOsession.userchMp
-																				.get(user3);
-																		if (channel1 != ch) {
-																			SendMsg.send(user.getNickname() + "消灭了"
-																					+ monster.getName() + "-你已通关，退出副本",
-																					channel1);
-																			RpgUtil.ackEnd(user3, channel1, monster);
-																			TaskManage.checkTaskComplete(user3,
-																					bossScene.getSceneid());
+																try {
+																	lock.lock();
+																	if (bossScene != null) {
+																		SendMsg.send("boss已全被消灭，退出副本", ch);
+																		Group group2 = IOsession.userGroupMp
+																				.get(user.getGroupId());
+																		RpgUtil.ackEnd(user, ch, monster);
+																		RpgUtil.bossEndAward(user, ch, bossScene);
+																		TaskManage.checkTaskComplete(user,
+																				bossScene.getSceneid());
+																		if (group2 != null) {
+																			List<User> list3 = group2.getList();
+																			for (User user3 : list3) {
+																				Channel channel1 = IOsession.userchMp
+																						.get(user3);
+																				if (channel1 != ch) {
+																					SendMsg.send(
+																							user.getNickname() + "消灭了"
+																									+ monster.getName()
+																									+ "-你已通关，退出副本",
+																							channel1);
+																					RpgUtil.ackEnd(user3, channel1,
+																							monster);
+																					TaskManage.checkTaskComplete(user3,
+																							bossScene.getSceneid());
+																				}
+																				IOsession.ackStatus.put(
+																						channel1.remoteAddress(), 0);
+																			}
 																		}
-																		IOsession.ackStatus
-																				.put(channel1.remoteAddress(), 0);
+																		monster.setAliveFlag(false);
+																		IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																		// 损耗装备耐久度
+																		for (Userzb userzb : list1) {
+																			userzb.setNjd(userzb.getNjd() - 5);
+																		}
+																		removeUserlist(user, bossScene);
+																		bossScene = null;// 回收boss场景
+																		IOsession.userBossMp.remove(user.getGroupId());
 																	}
+																} finally {
+																	lock.unlock();
 																}
-																monster.setAliveFlag(false);
-																IOsession.ackStatus.put(ch.remoteAddress(), 0);
-																// 损耗装备耐久度
-																for (Userzb userzb : list1) {
-																	userzb.setNjd(userzb.getNjd() - 5);
-																}
-																removeUserlist(user, bossScene);
-																bossScene = null;// 回收boss场景
-																IOsession.userBossMp.remove(user.getGroupId());
 															}
 														}
 													} else {
@@ -436,37 +449,49 @@ public class AckBossDispatch {
 																}
 															}
 														} else {
-															SendMsg.send("boss已全被消灭，退出副本", ch);
-															RpgUtil.ackEnd(user, ch, monster);
-															TaskManage.checkTaskComplete(user, bossScene.getSceneid());
-															Group group2 = IOsession.userGroupMp.get(user.getGroupId());
-															if (group2 != null) {
-																List<User> list3 = group2.getList();
-																for (User user3 : list3) {
-																	Channel channel1 = IOsession.userchMp.get(user3);
-																	if (channel1 != ch) {
-																		SendMsg.send(
-																				user.getNickname() + "消灭了"
-																						+ monster.getName()
-																						+ "-你已通关，退出副本" + "\n",
-																				channel1);
-																		RpgUtil.ackEnd(user3, channel1, monster);
-																		TaskManage.checkTaskComplete(user3,
-																				bossScene.getSceneid());
+															try {
+																lock.lock();
+																if (bossScene != null) {
+																	SendMsg.send("boss已全被消灭，退出副本", ch);
+																	RpgUtil.ackEnd(user, ch, monster);
+																	RpgUtil.bossEndAward(user, ch, bossScene);
+																	TaskManage.checkTaskComplete(user,
+																			bossScene.getSceneid());
+																	Group group2 = IOsession.userGroupMp
+																			.get(user.getGroupId());
+																	if (group2 != null) {
+																		List<User> list3 = group2.getList();
+																		for (User user3 : list3) {
+																			Channel channel1 = IOsession.userchMp
+																					.get(user3);
+																			if (channel1 != ch) {
+																				SendMsg.send(
+																						user.getNickname() + "消灭了"
+																								+ monster.getName()
+																								+ "-你已通关，退出副本" + "\n",
+																						channel1);
+																				RpgUtil.ackEnd(user3, channel1,
+																						monster);
+																				TaskManage.checkTaskComplete(user3,
+																						bossScene.getSceneid());
+																			}
+																			IOsession.ackStatus
+																					.put(channel1.remoteAddress(), 0);
+																		}
 																	}
-																	IOsession.ackStatus.put(channel1.remoteAddress(),
-																			0);
+																	monster.setAliveFlag(false);
+																	IOsession.ackStatus.put(ch.remoteAddress(), 0);
+																	// 损耗装备耐久度
+																	for (Userzb userzb : list1) {
+																		userzb.setNjd(userzb.getNjd() - 5);
+																	}
+																	removeUserlist(user, bossScene);
+																	bossScene = null;// 回收boss场景
+																	IOsession.userBossMp.remove(user.getGroupId());
 																}
+															} finally {
+																lock.unlock();
 															}
-															monster.setAliveFlag(false);
-															IOsession.ackStatus.put(ch.remoteAddress(), 0);
-															// 损耗装备耐久度
-															for (Userzb userzb : list1) {
-																userzb.setNjd(userzb.getNjd() - 5);
-															}
-															removeUserlist(user, bossScene);
-															bossScene = null;// 回收boss场景
-															IOsession.userBossMp.remove(user.getGroupId());
 														}
 													}
 												} else {

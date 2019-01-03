@@ -209,6 +209,9 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 							case "showzb":
 								bagDispatch.showZb(user, ch, group);
 								break;
+							case "arrbag":
+								bagDispatch.arrangebag(user, ch, group, arg1);
+								break;
 							case "tkff":
 								bagDispatch.tkffZb(user, ch, group, arg1);
 								break;

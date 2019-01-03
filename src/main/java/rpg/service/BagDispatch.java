@@ -209,4 +209,14 @@ public class BagDispatch {
 			SendMsg.send("没有此物品",ch);
 		}
 	}
+	
+	//整理装备
+	public void arrangebag(User user, Channel ch, ChannelGroup group, String msgR) {
+		IOsession.lock.lock();
+		try {
+			SendMsg.send("整理背包成功",ch);
+		} finally {
+			IOsession.lock.unlock();
+		}
+	}
 }

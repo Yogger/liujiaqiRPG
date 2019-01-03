@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
@@ -60,6 +61,8 @@ public class IOsession {
 	public static HashMap<User, List<Userbag>> userBagMp = new HashMap<User, List<Userbag>>();
 	// 用户装备
 	public static HashMap<User, List<Userzb>> userZbMp = new HashMap<User, List<Userzb>>();
+	//背包锁
+	public static ReentrantLock lock = new ReentrantLock();
 	// 存储队伍信息
 	public static HashMap<String, Group> userGroupMp = new HashMap<String, Group>();
 	// 存储用户副本关系

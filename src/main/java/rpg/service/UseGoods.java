@@ -29,33 +29,38 @@ public class UseGoods {
 	private UserbagMapper userbagMapper;
 
 	public void use(User user, Channel ch, ChannelGroup group, String msgR) {
-		String[] msg = msgR.split("\\s+");
-		String nickname = user.getNickname();
-		// UserbagExample example = new UserbagExample();
-		// Criteria criteria = example.createCriteria();
-		// criteria.andUsernameEqualTo(nickname);
-		// List<Userbag> list = userbagMapper.selectByExample(example);
-		List<Userbag> list = IOsession.userBagMp.get(user);
-		for (Userbag userbag : list) {
-			Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
-			if (yaopin != null) {
-				if (yaopin.getName().equals(msg[1])) {
-					// 找到药品所产生的Buff
-					Buff buff = IOsession.buffMp.get(yaopin.getBuff());
-					// 存储上次使用buff时间
-					long currentTimeMillis = System.currentTimeMillis();
-					if (IOsession.buffTimeMp.get(user) == null) {
-						ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
-						buffMap.put(buff.getId(), currentTimeMillis);
-						IOsession.buffTimeMp.put(user, buffMap);
-					} else {
-						ConcurrentHashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
-						buffMap.put(buff.getId(), currentTimeMillis);
+		try {
+			IOsession.lock.lock();
+			String[] msg = msgR.split("\\s+");
+			String nickname = user.getNickname();
+			// UserbagExample example = new UserbagExample();
+			// Criteria criteria = example.createCriteria();
+			// criteria.andUsernameEqualTo(nickname);
+			// List<Userbag> list = userbagMapper.selectByExample(example);
+			List<Userbag> list = IOsession.userBagMp.get(user);
+			for (Userbag userbag : list) {
+				Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
+				if (yaopin != null) {
+					if (yaopin.getName().equals(msg[1])) {
+						// 找到药品所产生的Buff
+						Buff buff = IOsession.buffMp.get(yaopin.getBuff());
+						// 存储上次使用buff时间
+						long currentTimeMillis = System.currentTimeMillis();
+						if (IOsession.buffTimeMp.get(user) == null) {
+							ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
+							buffMap.put(buff.getId(), currentTimeMillis);
+							IOsession.buffTimeMp.put(user, buffMap);
+						} else {
+							ConcurrentHashMap<Integer, Long> buffMap = IOsession.buffTimeMp.get(user);
+							buffMap.put(buff.getId(), currentTimeMillis);
+						}
+						userbag.setNumber(userbag.getNumber() - 1);
+						SendMsg.send(yaopin.getName() + "使用成功，剩余" + userbag.getNumber(), ch);
 					}
-					userbag.setNumber(userbag.getNumber() - 1);
-					SendMsg.send(yaopin.getName() + "使用成功，剩余" + userbag.getNumber(), ch);
 				}
 			}
+		} finally {
+			IOsession.lock.unlock();
 		}
 	}
 }
