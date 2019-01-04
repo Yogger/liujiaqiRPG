@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.data.dao.UserfriendMapper;
 import rpg.pojo.User;
 import rpg.pojo.Userfriend;
@@ -31,13 +33,13 @@ public class FriendDispatch {
 
 	public void friend(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3 && "add".equals(msg[1])) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.ADD.getValue().equals(msg[1])) {
 			addFriend(user, ch, group, msg);
-		} else if (msg.length == 2 && "showsq".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.SHOWSQ.getValue().equals(msg[1])) {
 			showsq(user, ch, group, msg);
-		} else if (msg.length == 2 && "show".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.SHOW.getValue().equals(msg[1])) {
 			show(user, ch, group, msg);
-		} else if (msg.length == 3 && "accept".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.ACCEPT.getValue().equals(msg[1])) {
 			accept(user, ch, group, msg);
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import io.netty.channel.Channel;
+import rpg.configure.RoleType;
 import rpg.pojo.BossScene;
 import rpg.pojo.Level;
 import rpg.pojo.Monster;
@@ -175,13 +176,13 @@ public class RpgUtil {
 
 	public static String skillChange(String string, User user) {
 		Integer roletype = user.getRoletype();
-		if(roletype==1) {
+		if(roletype==RoleType.ZHANSHI.getValue()) {
 			string="3";
-		} else if(roletype==2) {
+		} else if(roletype==RoleType.MUSHI.getValue()) {
 			string="5";
-		} else if(roletype==3) {
+		} else if(roletype==RoleType.FASHI.getValue()) {
 			string="6";
-		} else if(roletype==4) {
+		} else if(roletype==RoleType.ZHAOHUANSHI.getValue()) {
 			string="7";
 		}
 		return string;

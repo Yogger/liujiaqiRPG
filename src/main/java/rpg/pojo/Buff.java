@@ -8,7 +8,10 @@ public class Buff {
 	private int id;
 	private String name;
 	private int mp;
-	private long lastedTime;//持续时间
+	/**
+	 * 持续时间
+	 */
+	private long lastedTime;
 	/**
 	 * @return the id
 	 */

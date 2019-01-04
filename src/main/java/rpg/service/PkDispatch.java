@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.MsgSize;
 import rpg.pojo.Skill;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
@@ -31,7 +32,7 @@ public class PkDispatch {
 	public void pk(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		List<Userskill> skillList = userService.getSkillList(user);
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {

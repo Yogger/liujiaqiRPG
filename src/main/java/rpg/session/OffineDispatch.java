@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
-import rpg.area.offineFlagRefresh;
+import rpg.area.OffineFlagRefresh;
 import rpg.pojo.BossScene;
 import rpg.pojo.Group;
 import rpg.pojo.Monster;
@@ -82,7 +82,7 @@ public class OffineDispatch {
 					userList.remove(user);
 				}
 			}
-			IOsession.monsterThreadPool.execute(new offineFlagRefresh(user, ch, bossScene));
+			IOsession.monsterThreadPool.execute(new OffineFlagRefresh(user, ch, bossScene));
 			} else {
 				IOsession.mp.remove(ch.remoteAddress());
 				IOsession.userchMp.remove(user);

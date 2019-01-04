@@ -22,6 +22,7 @@ public class ClientMain {
 	private int port;
 	private boolean stop = false;
 	public static Jm jm1;
+	public final  int RECONNECT_MAX_TIMES=5;
 
 	/** 当前重接次数 */
 	public static int reconnectTimes = 0;
@@ -68,7 +69,7 @@ public class ClientMain {
 			System.exit(1);
 		} finally {
 			// 设置最大重连次数，防止服务端正常关闭导致的空循环
-			if (reconnectTimes < 5) {
+			if (reconnectTimes < RECONNECT_MAX_TIMES) {
 				reConnectServer();
 			}
 		}

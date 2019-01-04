@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.pojo.Store;
 import rpg.pojo.User;
 import rpg.pojo.Yaopin;
@@ -27,10 +29,10 @@ public class StoreDispatch {
 		Store store = IOsession.STORE_SYSTEM;
 		HashMap<Integer, Yaopin> yaopinMap = store.getYaopinMap();
 		HashMap<Integer, Zb> zbMap = store.getZbMap();
-		if (msg.length > 2) {
-			if ("buy".equals(msg[1])) {
-				if (StringUtils.isNumeric(msg[2])) {
-					if (zbMap.get(Integer.valueOf(msg[2])) != null) {
+		if (msg.length > MsgSize.MAX_MSG_SIZE_2.getValue()) {
+			if (InstructionsType.BUY.getValue().equals(msg[1])) {
+				if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_2.getValue()])) {
+					if (zbMap.get(Integer.valueOf(msg[MsgSize.MSG_INDEX_2.getValue()])) != null) {
 						Zb zb = zbMap.get(Integer.valueOf(msg[2]));
 						if (zb.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - zb.getPrice());
@@ -40,7 +42,7 @@ public class StoreDispatch {
 						} else {
 							SendMsg.send("金币不足，购买失败", ch);
 						}
-					} else if (yaopinMap.get(Integer.valueOf(msg[2])) != null) {
+					} else if (yaopinMap.get(Integer.valueOf(msg[MsgSize.MSG_INDEX_2.getValue()])) != null) {
 						Yaopin yaopin = yaopinMap.get(Integer.valueOf(msg[2]));
 						if (yaopin.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - yaopin.getPrice());
@@ -55,7 +57,7 @@ public class StoreDispatch {
 				} else {
 					SendMsg.send("指令错误", ch);
 				}
-			} else if ("sell".equals(msg[1])) {
+			} else if (InstructionsType.SELL.getValue().equals(msg[1])) {
 
 			}
 		} else {

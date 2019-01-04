@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.pojo.Jy;
 import rpg.pojo.User;
 import rpg.pojo.Userbag;
@@ -29,24 +31,26 @@ import rpg.util.SendMsg;
 @Component
 public class JyDispatch {
 
+	private static final int JY_FLAG = 2;
+	private static final String NULL_GOOD = "0";
 	private Lock lock = new ReentrantLock();
 	private Lock lock1 = new ReentrantLock();
 
 	public void jy(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		// 接受jy请求 指令：jy yes 交易号
-		if ("yes".equals(msg[1]) && msg.length > 1) {
+		if (InstructionsType.YES.getValue().equals(msg[1]) && msg.length > 1) {
 			acceptJy(user, ch, group, msg);
 		}
 		// 拒绝jy请求 指令：jy no 交易号
-		else if ("no".equals(msg[1]) && msg.length > 1) {
+		else if (InstructionsType.NO.getValue().equals(msg[1]) && msg.length > 1) {
 		}
 		// 发送jy请求 指令：jy 用户
-		else if (msg.length == 2 && !"esc".equals(msg[1])) {
+		else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && !InstructionsType.ESC.getValue().equals(msg[1])) {
 			sendJy(user, ch, group, msg);
 		}
 		// 取消交易请求
-		else if (msg.length == 2 && "esc".equals(msg[1])) {
+		else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.ESC.getValue().equals(msg[1])) {
 			lock.lock();
 			try {
 				user.getAndSetjySendFlag(user, 0);
@@ -66,7 +70,7 @@ public class JyDispatch {
 
 	public void jyProcess(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 1 && "esc".equals(msg[0])) {
+		if (msg.length == 1 && InstructionsType.ESC.getValue().equals(msg[0])) {
 			lock1.lock();
 			try {
 				user.getAndSetjyFlag(user, 0);
@@ -87,7 +91,7 @@ public class JyDispatch {
 			} finally {
 				lock1.unlock();
 			}
-		} else if (msg.length == 1 && "y".equals(msg[0]) && user.getJyFlag() == 2) {
+		} else if (msg.length == 1 && InstructionsType.Y.getValue().equals(msg[0]) && user.getJyFlag() == JY_FLAG) {
 			lock1.lock();
 			try {
 				Jy jy = IOsession.jyMap.get(user.getJyId());
@@ -122,8 +126,8 @@ public class JyDispatch {
 			}
 		}
 
-		else if (msg.length == 2 && user.getJyFlag() == 1) {
-			if (!"0".equals(msg[0])) {
+		else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && user.getJyFlag() == 1) {
+			if (!NULL_GOOD.equals(msg[0])) {
 				List<Userbag> list = IOsession.userBagMp.get(user);
 				boolean flag = false;
 				for (Userbag userbag : list) {
@@ -229,7 +233,7 @@ public class JyDispatch {
 	}
 
 	private void acceptJy(User user, Channel ch, ChannelGroup group, String[] msg) {
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			Jy jy = IOsession.jyMap.get(msg[2]);
 			if (jy != null) {
 				lock.lock();

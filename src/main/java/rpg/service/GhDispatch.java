@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.GhJob;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.data.dao.GhMapper;
 import rpg.data.dao.GhstoreMapper;
 import rpg.data.dao.GhuserMapper;
@@ -51,37 +54,45 @@ public class GhDispatch {
 	@Autowired
 	private UserMapper userMapper;
 
+	private final String MONEY = "1";
+	private final String GOODS = "2";
+
 	private ReentrantLock lock = new ReentrantLock();
 
 	public void gh(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3 && "creat".equals(msg[1])) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.CREAT.getValue().equals(msg[1])) {
 			creatGh(user, ch, msg);
-		} else if (msg.length == 2 && "show".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.SHOW.getValue().equals(msg[1])) {
 			showGh(user, ch, group, msg);
-		} else if (msg.length == 3 && "join".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.JOIN.getValue().equals(msg[1])) {
 			joinGh(user, ch, group, msg);
-		} else if (msg.length == 3 && "accept".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()
+				&& InstructionsType.ACCEPT.getValue().equals(msg[1])) {
 			acceptGh(user, ch, group, msg);
-		} else if (msg.length == 2 && "showsq".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()
+				&& InstructionsType.SHOWSQ.getValue().equals(msg[1])) {
 			showsqGh(user, ch, group, msg);
-		} else if (msg.length == 2 && "showuser".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()
+				&& InstructionsType.SHOWUSER.getValue().equals(msg[1])) {
 			showuserGh(user, ch, group, msg);
-		} else if (msg.length == 3 && "t".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.T.getValue().equals(msg[1])) {
 			tGh(user, ch, group, msg);
-		} else if (msg.length == 2 && "js".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.JS.getValue().equals(msg[1])) {
 			jsGh(user, ch, group, msg);
-		} else if (msg.length == 2 && "esc".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.ESC.getValue().equals(msg[1])) {
 			quitGh(user, ch, group, msg);
-		} else if (msg.length == 4 && "raise".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_4.getValue()
+				&& InstructionsType.RAISE.getValue().equals(msg[1])) {
 			raiseGh(user, ch, group, msg);
-		} else if (msg.length == 4 && "down".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_4.getValue() && InstructionsType.DOWN.getValue().equals(msg[1])) {
 			downGh(user, ch, group, msg);
-		} else if (msg.length > 3 && "put".equals(msg[1])) {
+		} else if (msg.length > MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.PUT.getValue().equals(msg[1])) {
 			putGh(user, ch, group, msg);
-		} else if (msg.length == 2 && "showstore".equals(msg[1])) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()
+				&& InstructionsType.SHOWSTORE.getValue().equals(msg[1])) {
 			showstoreGh(user, ch, group, msg);
-		} else if (msg.length > 3 && "take".equals(msg[1])) {
+		} else if (msg.length > MsgSize.MAX_MSG_SIZE_3.getValue() && InstructionsType.TAKE.getValue().equals(msg[1])) {
 			takeGh(user, ch, group, msg);
 		}
 	}
@@ -93,7 +104,7 @@ public class GhDispatch {
 			rpg.pojo.GhstoreExample.Criteria criteria = example.createCriteria();
 			criteria.andIdEqualTo(user.getGhId());
 			List<Ghstore> list = ghstoreMapper.selectByExample(example);
-			if (msg[2].equals("2") && msg.length == 5) {
+			if (msg[MsgSize.MSG_INDEX_2.getValue()].equals(GOODS) && msg.length == MsgSize.MAX_MSG_SIZE_5.getValue()) {
 				for (Ghstore ghstore : list) {
 					if (ghstore.getGzid().equals(msg[3])) {
 						GhstoreExample example2 = new GhstoreExample();
@@ -154,10 +165,11 @@ public class GhDispatch {
 						break;
 					}
 				}
-			} else if (msg[2].equals("1") && msg.length == 4) {
-				if (StringUtils.isNumeric(msg[3])) {
+			} else if (msg[MsgSize.MSG_INDEX_2.getValue()].equals(MONEY)
+					&& msg.length == MsgSize.MSG_INDEX_4.getValue()) {
+				if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_3.getValue()])) {
 					Gh gh = ghMapper.selectByPrimaryKey(user.getGhId());
-					if (gh.getGold() >= Integer.valueOf(msg[3])) {
+					if (gh.getGold() >= Integer.valueOf(msg[MsgSize.MSG_INDEX_3.getValue()])) {
 						gh.setGold(gh.getGold() - Integer.valueOf(msg[3]));
 						ghMapper.updateByPrimaryKey(gh);
 						user.setMoney(user.getMoney() + Integer.valueOf(msg[3]));
@@ -202,7 +214,7 @@ public class GhDispatch {
 
 	private void putGh(User user, Channel ch, ChannelGroup group, String[] msg) {
 		List<Userbag> list = IOsession.userBagMp.get(user);
-		if (msg[2].equals("2") && msg.length == 5) {
+		if (msg[MsgSize.MSG_INDEX_2.getValue()].equals(GOODS) && msg.length == MsgSize.MSG_INDEX_5.getValue()) {
 			for (Userbag userbag : list) {
 				if (userbag.getId().equals(msg[3])) {
 					if (userbag.getIsadd() == 0) {
@@ -274,9 +286,9 @@ public class GhDispatch {
 					break;
 				}
 			}
-		} else if (msg[2].equals("1") && msg.length == 4) {
-			if (StringUtils.isNumeric(msg[3])) {
-				if (user.getMoney() >= Integer.valueOf(msg[3])) {
+		} else if (msg[MsgSize.MSG_INDEX_2.getValue()].equals(MONEY) && msg.length == MsgSize.MSG_INDEX_4.getValue()) {
+			if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_3.getValue()])) {
+				if (user.getMoney() >= Integer.valueOf(msg[MsgSize.MSG_INDEX_3.getValue()])) {
 					Gh gh = ghMapper.selectByPrimaryKey(user.getGhId());
 					gh.setGold(gh.getGold() + Integer.valueOf(msg[3]));
 					ghMapper.updateByPrimaryKey(gh);
@@ -307,8 +319,8 @@ public class GhDispatch {
 			if (list != null && list.size() > 0) {
 				Ghuser ghuser2 = list.get(0);
 				if (ghuser.getPower() < ghuser2.getPower()) {
-					if (msg[3].equals("3") && ghuser2.getPower() < 3) {
-						if (ghuser.getPower() < 2) {
+					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.ELITE.getValue()) && ghuser2.getPower() < GhJob.ELITE.getValue()) {
+						if (ghuser.getPower() < GhJob.VICE_PRESIDENT.getValue()) {
 							ghuser2.setPower(3);
 							ghuser2.setJobname("精英");
 							ghuserMapper.updateByExample(ghuser2, example);
@@ -319,8 +331,8 @@ public class GhDispatch {
 						} else {
 							SendMsg.send("权限不够,不能降级该职位", ch);
 						}
-					} else if (msg[3].equals("4") && ghuser2.getPower() < 4) {
-						if (ghuser.getPower() < 3) {
+					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.MEMBER.getValue()) && ghuser2.getPower() < GhJob.MEMBER.getValue()) {
+						if (ghuser.getPower() < GhJob.ELITE.getValue()) {
 							ghuser2.setPower(4);
 							ghuser2.setJobname("成员");
 							ghuserMapper.updateByExample(ghuser2, example);
@@ -359,8 +371,8 @@ public class GhDispatch {
 			if (list != null && list.size() > 0) {
 				Ghuser ghuser2 = list.get(0);
 				if (ghuser.getPower() < ghuser2.getPower() - 1) {
-					if (msg[3].equals("3")) {
-						if (ghuser.getPower() < 3) {
+					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.ELITE.getValue())) {
+						if (ghuser.getPower() < GhJob.ELITE.getValue()) {
 							ghuser2.setPower(3);
 							ghuser2.setJobname("精英");
 							ghuserMapper.updateByExample(ghuser2, example);
@@ -371,8 +383,8 @@ public class GhDispatch {
 						} else {
 							SendMsg.send("权限不够,不能提升该职位", ch);
 						}
-					} else if (msg[3].equals("2")) {
-						if (ghuser.getPower() < 2) {
+					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.VICE_PRESIDENT.getValue())) {
+						if (ghuser.getPower() < GhJob.VICE_PRESIDENT.getValue()) {
 							ghuser2.setPower(2);
 							ghuser2.setJobname("副会长");
 							ghuserMapper.updateByExample(ghuser2, example);
@@ -476,13 +488,13 @@ public class GhDispatch {
 		int ghId = user.getGhId();
 		if (ghId != 0) {
 			HashMap<String, String> map = IOsession.ghsqMp.get(user.getGhId());
-			if (map.containsKey(msg[2])) {
+			if (map.containsKey(msg[MsgSize.MSG_INDEX_2.getValue()])) {
 				GhuserExample example = new GhuserExample();
 				Criteria criteria = example.createCriteria();
 				criteria.andUsernameEqualTo(user.getNickname());
 				List<Ghuser> list = ghuserMapper.selectByExample(example);
 				Ghuser ghuser2 = list.get(0);
-				if (ghuser2.getPower() < 4) {
+				if (ghuser2.getPower() < GhJob.MEMBER.getValue()) {
 					User user2 = IOsession.nameMap.get(msg[2]);
 					String username = user2.getNickname();
 					user2.setGhId(ghId);
@@ -520,7 +532,7 @@ public class GhDispatch {
 //		}
 		GhuserExample example = new GhuserExample();
 		Criteria criteria = example.createCriteria();
-		if (StringUtils.isNumeric(msg[2])) {
+		if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_2.getValue()])) {
 			criteria.andIdEqualTo(Integer.valueOf(msg[2]));
 			List<Ghuser> list = ghuserMapper.selectByExample(example);
 			for (Ghuser ghuser : list) {
@@ -530,7 +542,8 @@ public class GhDispatch {
 					HashMap<String, String> hashMap = new HashMap<>(500);
 					String name = user.getNickname();
 					Integer id = ghuser.getId();
-					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+					// 设置日期格式
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					hashMap.put(name, df.format(new Date()));
 					IOsession.ghsqMp.put(id, hashMap);
 					SendMsg.send(user.getNickname() + "---申请加入工会", channel);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.MsgSize;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.pojo.Userbag;
@@ -24,7 +25,12 @@ import rpg.util.SendMsg;
 @Component
 public class BagDispatch {
 
-	// 展示背包
+	/**
+	 * 展示背包
+	 * @param user
+	 * @param ch
+	 * @param group
+	 */
 	public void showBag(User user, Channel ch, ChannelGroup group) {
 //		String nickname = user.getNickname();
 //		UserbagExample example = new UserbagExample();
@@ -55,7 +61,12 @@ public class BagDispatch {
 				+ "\n" + yaopinWord + zbWord,ch);
 	}
 
-	// 展示装备
+	/**
+	 * 展示装备
+	 * @param user
+	 * @param ch
+	 * @param group
+	 */
 	public void showZb(User user, Channel ch, ChannelGroup group) {
 //		String nickname = user.getNickname();
 //		UserzbExample example = new UserzbExample();
@@ -78,7 +89,13 @@ public class BagDispatch {
 		SendMsg.send(msg,ch);
 	}
 
-	// 脱装备
+	/**
+	 * 脱装备
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void tkffZb(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		String nickname = user.getNickname();
@@ -92,7 +109,7 @@ public class BagDispatch {
 //		criteria1.andUsernameEqualTo(nickname);
 //		List<Userbag> list2 = userbagMapper.selectByExample(example3);
 		List<Userbag> list2 = IOsession.userBagMp.get(user);
-		if (msg.length == 2) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			for (Userzb userzb : list) {
 				if (userzb.getId().equals(msg[1])) {
 					// 脱下装备
@@ -131,7 +148,13 @@ public class BagDispatch {
 		}
 	}
 
-	// 穿装备
+	/**
+	 * 穿装备
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void wearzb(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		String nickname = user.getNickname();
@@ -141,7 +164,7 @@ public class BagDispatch {
 //		List<Userbag> list = userbagMapper.selectByExample(example);
 		List<Userbag> list = IOsession.userBagMp.get(user);
 		List<Userzb> list2 = IOsession.userZbMp.get(user);
-		if (msg.length == 2) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			for (Userbag userbag : list) {
 				if (userbag.getId().equals(msg[1])) {
 					if (list2.size() >= 3) {
@@ -191,12 +214,18 @@ public class BagDispatch {
 		}
 	}
 
-	// 修理装备
+	/**
+	 * 修理装备
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void fix(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		String nickname = user.getNickname();
 		List<Userzb> list = IOsession.userZbMp.get(user);
-		if (msg.length == 2) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			for (Userzb userzb : list) {
 				Zb zb = IOsession.zbMp.get(userzb.getZbid());
 				if (zb != null) {
@@ -214,7 +243,13 @@ public class BagDispatch {
 		}
 	}
 	
-	//整理装备
+	/**
+	 * 整理装备
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void arrangebag(User user, Channel ch, ChannelGroup group, String msgR) {
 		IOsession.lock.lock();
 		try {

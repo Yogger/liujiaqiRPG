@@ -58,7 +58,8 @@ public class UserService {
 	 * @return
 	 */
 	public int cdStatus(User user, String skillId, Skill skill) {
-		long millis = System.currentTimeMillis();// 获取当前时间毫秒值
+		// 获取当前时间毫秒值
+		long millis = System.currentTimeMillis();
 		HashMap<String, Long> map = SkillList.cdMp.get(user);
 		if (map != null) {
 			Long lastmillis = map.get(skillId);

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import rpg.area.SceneBossRefresh;
+import rpg.configure.InstructionsType;
 import rpg.data.dao.UserskillMapper;
 import rpg.data.dao.UserzbMapper;
 import rpg.pojo.BossScene;
@@ -44,6 +45,9 @@ import rpg.util.UserService;
 @Component("ackBossDispatch")
 public class AckBossDispatch {
 
+	private static final int YUN_BUFF = 4;
+	private static final int CHANGE_ACK_TARGET_MAX_MSG_LENGTH = 2;
+	private static final int FIRST_ACK_MAX_MSG_LENGTH = 3;
 	@Autowired
 	private UserskillMapper userskillMapper;
 	@Autowired
@@ -69,11 +73,12 @@ public class AckBossDispatch {
 		BossScene bossScene = IOsession.userBossMp.get(user.getGroupId());
 		ArrayList<Monster> monsterList = bossScene.getMonsterList();
 		// 第一次攻击
-		if (msg.length == 3) {
+		if (msg.length == FIRST_ACK_MAX_MSG_LENGTH) {
 			ackFirst(user, ch, group, msg, id, nickname, list, monsterList, bossScene);
 		}
 		// 转换攻击目标
-		else if (msg.length == 2 && "a".equals(msg[0])) {
+		else if (msg.length == CHANGE_ACK_TARGET_MAX_MSG_LENGTH
+				&& InstructionsType.CHANGE_ACK_TARGET.getValue().equals(msg[0])) {
 			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
 			int index = -1;
 			for (int i = 0; i < list2.size(); i++) {
@@ -101,17 +106,18 @@ public class AckBossDispatch {
 			// if (monster != null) {
 			ConcurrentHashMap<Integer, Long> buffTime2 = IOsession.buffTimeMp.get(user);
 			// 找到配置的技能
-			if (msg[0].equals("esc")) {
+			if (msg[0].equals(InstructionsType.ESC.getValue())) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				SendMsg.send("成功退出战斗", ch);
-			} else if (msg[0].equals("ack")) {
+			} else if (msg[0].equals(InstructionsType.ACK.getValue())) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				SendMsg.send("指令错误", ch);
-			} else if (buffTime2 != null && buffTime2.get(4) != null) {
+			} else if (buffTime2 != null && buffTime2.get(YUN_BUFF) != null) {
 				SendMsg.send("你被打晕了，无法进行攻击", ch);
 			} else {
-				if (msg[0].equals("1") || msg[0].equals("3")) {
-					if (msg[0].equals("3")) {
+				if (msg[0].equals(InstructionsType.SKILL_KEY_1.getValue())
+						|| msg[0].equals(InstructionsType.SKILL_KEY_3.getValue())) {
+					if (msg[0].equals(InstructionsType.SKILL_KEY_3.getValue())) {
 						String s = RpgUtil.skillChange(msg[0], user);
 						msg[0] = s;
 					}
@@ -119,8 +125,8 @@ public class AckBossDispatch {
 						String skillId = String.valueOf(userskill.getSkill());
 						if (skillId.equals(msg[0])) {
 							Skill skill = SkillList.mp.get(msg[0]);
-
-							long millis = System.currentTimeMillis();// 获取当前时间毫秒值
+							// 获取当前时间毫秒值
+							long millis = System.currentTimeMillis();
 							HashMap<String, Long> map = SkillList.cdMp.get(user);
 							if (map != null) {
 								Long lastmillis = map.get(skillId);
@@ -295,7 +301,8 @@ public class AckBossDispatch {
 																			userzb.setNjd(userzb.getNjd() - 5);
 																		}
 																		removeUserlist(user, bossScene);
-																		bossScene = null;// 回收boss场景
+																		// 回收boss场景
+																		bossScene = null;
 																		IOsession.userBossMp.remove(user.getGroupId());
 																	}
 																} finally {
@@ -488,7 +495,8 @@ public class AckBossDispatch {
 																		userzb.setNjd(userzb.getNjd() - 5);
 																	}
 																	removeUserlist(user, bossScene);
-																	bossScene = null;// 回收boss场景
+																	// 回收boss场景
+																	bossScene = null;
 																	IOsession.userBossMp.remove(user.getGroupId());
 																}
 															} finally {

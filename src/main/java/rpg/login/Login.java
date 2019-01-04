@@ -40,6 +40,8 @@ public class Login {
 	@Autowired
 	private UserzbMapper userzbMapper;
 
+	private static final int TASK_NUM = 12;
+
 	public User login(String username, String psw) {
 		// 验证账户和密码
 		AccountExample example = new AccountExample();
@@ -77,7 +79,7 @@ public class Login {
 		// 加载任务
 		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>(500);
 		int cout = 1;
-		for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= TASK_NUM; i++) {
 			Task task = IOsession.taskMp.get(i);
 			TaskProcess process = new TaskProcess();
 			process.setId(cout++);

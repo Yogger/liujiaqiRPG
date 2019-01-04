@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import rpg.configure.RoleType;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.session.IOsession;
@@ -25,10 +26,11 @@ public class LoginDispatch {
 	@Autowired
 	private Login login;
 	private ReentrantLock lock = new ReentrantLock();
-
+	private static final int MSG_MAX_LENGTH = 2;
+	
 	public void dispatch(Channel ch, String arg1, SocketAddress address) {
 		String[] msg = arg1.split("\\s+");
-		if (msg.length > 2) {
+		if (msg.length > MSG_MAX_LENGTH) {
 			User user = login.login(msg[1], msg[2]);
 			if (user == null) {
 				SendMsg.send("账户或密码错误，请重新登陆:", ch);
@@ -61,13 +63,13 @@ public class LoginDispatch {
 //				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 3000, TimeUnit.MILLISECONDS);
 //				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
 					String roleName = "";
-					if (user.getRoletype() == 1) {
+					if (user.getRoletype() == RoleType.ZHANSHI.getValue()) {
 						roleName = "战士";
-					} else if (user.getRoletype() == 2) {
+					} else if (user.getRoletype() == RoleType.MUSHI.getValue()) {
 						roleName = "牧师";
-					} else if (user.getRoletype() == 3) {
+					} else if (user.getRoletype() == RoleType.FASHI.getValue()) {
 						roleName = "法师";
-					} else if (user.getRoletype() == 4) {
+					} else if (user.getRoletype() == RoleType.ZHAOHUANSHI.getValue()) {
 						roleName = "召唤师";
 					}
 					SendMsg.send("000角色名-" + user.getNickname() + "-职业-" + roleName, ch);

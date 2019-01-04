@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import rpg.area.Area;
+import rpg.configure.InstructionsType;
 import rpg.data.dao.UserskillMapper;
 import rpg.data.dao.UserzbMapper;
 import rpg.pojo.Monster;
@@ -40,6 +41,7 @@ import rpg.util.UserService;
 @Component("ackDispatch")
 public class AckDispatch {
 
+	private static final int MAX_LENGTH_MSG = 3;
 	@Autowired
 	private UserskillMapper userskillMapper;
 	@Autowired
@@ -61,7 +63,7 @@ public class AckDispatch {
 		// 获取地图中的怪物
 		LinkedList<Monster> monsterList = Area.sceneList.get(id - 1).getMonsterList();
 		// 第一次攻击
-		if (msg.length == 3) {
+		if (msg.length == MAX_LENGTH_MSG) {
 			boolean find = false;
 			for (Monster monster : monsterList) {
 				// 找到场景内怪物
@@ -202,14 +204,14 @@ public class AckDispatch {
 			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
 			Monster monster = list2.get(list2.size()-1);
 			// 找到配置的技能
-			if (msg[0].equals("esc")) {
+			if (msg[0].equals(InstructionsType.ESC.getValue())) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				SendMsg.send("成功退出战斗",ch);
-			} else if (msg[0].equals("ack")) {
+			} else if (msg[0].equals(InstructionsType.ACK.getValue())) {
 				IOsession.ackStatus.put(ch.remoteAddress(), 0);
 				SendMsg.send("指令错误",ch);
 			} else {
-				if (msg[0].equals("3")) {
+				if (msg[0].equals(InstructionsType.SKILL_KEY_3.getValue())) {
 					String s = RpgUtil.skillChange(msg[0], user);
 					msg[0] = s;
 				}
@@ -217,8 +219,8 @@ public class AckDispatch {
 					String skillId = String.valueOf(userskill.getSkill());
 					if (skillId.equals(msg[0])) {
 						Skill skill = SkillList.mp.get(msg[0]);
-
-						long millis = System.currentTimeMillis();// 获取当前时间毫秒值
+						// 获取当前时间毫秒值
+						long millis = System.currentTimeMillis();
 						HashMap<String, Long> map = SkillList.cdMp.get(user);
 						Long lastmillis = map.get(skillId);
 

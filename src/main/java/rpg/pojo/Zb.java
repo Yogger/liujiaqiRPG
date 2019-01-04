@@ -10,7 +10,10 @@ public class Zb {
 	private int ack;
 	private int price;
 	private int njd;
-	private int type;//1攻击力 2防御力
+	/**
+	 * 1攻击力 2防御力
+	 */
+	private int type;
 	private int level;
 	
 	public int getNjd() {

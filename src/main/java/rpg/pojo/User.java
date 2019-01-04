@@ -27,12 +27,18 @@ public class User {
 	private Integer ghid;
 	
 	private Integer roletype;
-
-	private int liveFlag;// 1退出，0正常
-
-	private volatile int jyFlag;// 0正常 1交易状态 2交易确认状态
-	
-	private volatile int jySendFlag;//0正常 1交易发出
+	/**
+	 * 1退出，0正常
+	 */
+	private int liveFlag;
+	/**
+	 * 0正常 1交易状态 2交易确认状态
+	 */
+	private volatile int jyFlag;
+	/**
+	 * 0正常 1交易发出
+	 */
+	private volatile int jySendFlag;
 	
 	private String jyId;
 	

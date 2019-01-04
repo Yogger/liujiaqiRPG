@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.pojo.Group;
 import rpg.pojo.User;
 import rpg.session.IOsession;
@@ -21,18 +23,24 @@ import rpg.util.SendMsg;
  */
 @Component
 public class GroupDispatch {
-	// 组队邀请 指令：group 用户
+	/**
+	 * 组队邀请 指令：group 用户
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void group(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		// 接受组队请求 指令：group yes 用户
-		if ("yes".equals(msg[1])&&msg.length>1) {
+		if (InstructionsType.YES.getValue().equals(msg[1])&&msg.length>1) {
 			groupYes(user, ch, group, msgR);
 		}
 		// 拒绝组队请求 指令：group no 用户
-		else if ("no".equals(msg[1])&&msg.length>1) {
+		else if (InstructionsType.NO.getValue().equals(msg[1])&&msg.length>1) {
 			groupNo(user, ch, group, msgR);
 		} 
-		else if("div".equals(msg[1])&&msg.length>1) {
+		else if(InstructionsType.DIV.getValue().equals(msg[1])&&msg.length>1) {
 			groupDiv(user,ch,group,msgR);
 		}
 		else {
@@ -65,7 +73,7 @@ public class GroupDispatch {
 
 	private void groupDiv(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if(msg.length==2) {
+		if(msg.length==MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			if(user.getGroupId()!=null) {
 			Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 			if(group2.getUser().getNickname().equals(user.getNickname())) {
@@ -89,7 +97,13 @@ public class GroupDispatch {
 		}
 	}
 
-	// 展示队伍列表
+	/**
+	 * 展示队伍列表
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msgR
+	 */
 	public void showgroup(User user, Channel ch, ChannelGroup group, String msgR) {
 		Group group2 = IOsession.userGroupMp.get(user.getGroupId());
 		if (group2 != null) {
@@ -108,7 +122,7 @@ public class GroupDispatch {
 
 	private void groupNo(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[2].equals(user2.getNickname())) {
@@ -125,7 +139,7 @@ public class GroupDispatch {
 
 	private void groupYes(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[2].equals(user2.getNickname())) {

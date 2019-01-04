@@ -38,6 +38,7 @@ import rpg.service.UseGoods;
 import rpg.session.IOsession;
 import rpg.session.OffineDispatch;
 import rpg.task.TaskfunctionDispatch;
+import rpg.util.MsgType;
 import rpg.util.SendMsg;
 
 /**服务端业务逻辑处理
@@ -87,14 +88,23 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 	@Autowired
 	private FriendDispatch friendDispatch;
 
-	// 客户端超时次数
+	/**
+	 * 客户端超时次数
+	 */
 	private Map<ChannelHandlerContext, Integer> clientOvertimeMap = new ConcurrentHashMap<>();
-	private final int MAX_OVERTIME = 3; // 超时次数超过该值则注销连接
+	/**
+	 * 超时次数超过该值则注销连接
+	 */
+	private final int MAX_OVERTIME = 3; 
 
-	// 存储连接进来的玩家
+	/**
+	 * 存储连接进来的玩家
+	 */
 	public static final ChannelGroup USER_GROUP = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-	// 客户端和服务端建立连接，并且告诉每个客户端
+	/**
+	 * 客户端和服务端建立连接，并且告诉每个客户端
+	 */
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
@@ -106,7 +116,9 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		// System.out.println(size);
 	}
 
-	// 客户端断开连接
+	/**
+	 * 客户端断开连接
+	 */
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		Channel channel = ctx.channel();
@@ -116,14 +128,18 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		USER_GROUP.remove(channel);
 	}
 
-	// 连接处于活跃状态
+	/**
+	 * 连接处于活跃状态
+	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		// Channel channel = ctx.channel();
 		// System.out.println("[" + channel.remoteAddress() + "] " + "online");
 	}
 
-	// 客户端断开连接
+	/**
+	 * 客户端断开连接
+	 */
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		Channel ch = ctx.channel();
@@ -137,11 +153,13 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		ctx.close().sync();
 	}
 
-	// 服务端处理客户端请求消息
+	/**
+	 * 服务端处理客户端请求消息
+	 */
 	@Override
 	public void channelRead(ChannelHandlerContext arg0, Object arg) throws Exception {
 		String arg1 = (String) arg;
-		if (!"心跳".equals(arg1)) {
+		if (!MsgType.HEART_BEAT.getValue().equals(arg1)) {
 			Channel channel = arg0.channel();
 			// 遍历所有连接
 			for (Channel ch : USER_GROUP) {
@@ -279,7 +297,8 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		}
 		resetReconnectTimes();
 		// System.out.println("服务端收到心跳");
-		clientOvertimeMap.remove(arg0);// 只要接受到数据包，则清空超时次数
+		// 只要接受到数据包，则清空超时次数
+		clientOvertimeMap.remove(arg0);
 	}
 
 	@Override

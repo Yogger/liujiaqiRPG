@@ -30,14 +30,21 @@ import rpg.util.SendMsg;
  *
  */
 public class Jm extends JFrame implements KeyListener {
-	JPanel jPanel1, jPanel2; // 三块面板，两块是按钮，一块是输出台
+	/**
+	 * 三块面板，两块是按钮，一块是输出台
+	 */
+	JPanel jPanel1, jPanel2; 
 	JScrollPane jPanel4, jPanel5, jPanel6, jPanel7;
-
-	JButton jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7; // 两个按钮，一个清屏，一个展示
+	/**
+	 * 两个按钮，一个清屏，一个展示
+	 */
+	JButton jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7; 
 
 	JTextField txt;
-
-	static JTextArea jTextArea, jTextArea2, jTextArea3, jTextArea4; // 输出台
+	/**
+	 * 输出台
+	 */
+	static JTextArea jTextArea, jTextArea2, jTextArea3, jTextArea4; 
 
 	Channel channel;
 
@@ -224,7 +231,8 @@ public class Jm extends JFrame implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getSource() == txt) {
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) // 判断按下的键是否是回车键
+			// 判断按下的键是否是回车键
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) 
 			{
 				String req = txt.getText();
 				txt.setText("");

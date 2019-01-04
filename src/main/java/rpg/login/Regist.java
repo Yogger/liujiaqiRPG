@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import rpg.configure.RoleType;
 import rpg.data.dao.AccountMapper;
 import rpg.data.dao.UserMapper;
 import rpg.data.dao.UserbuffMapper;
@@ -53,7 +54,8 @@ public class Regist {
 			user.setMoney(8000);
 			user.setGhId(0);
 			user.setRoletype(roleid);
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+			// 设置日期格式
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			user.setUpdatetime(df.format(new Date()));
 			userMapper.insert(user);
 			Userbuff userbuff = new Userbuff();
@@ -69,13 +71,13 @@ public class Regist {
 			Userskill userskill2 = new Userskill();
 			userskill2.setSkill(1);
 			userskill2.setUsername(username);
-			if (roleid == 1) {
+			if (roleid == RoleType.ZHANSHI.getValue()) {
 				userskill.setSkill(3);
-			} else if (roleid == 2) {
+			} else if (roleid == RoleType.MUSHI.getValue()) {
 				userskill.setSkill(5);
-			} else if (roleid == 3) {
+			} else if (roleid == RoleType.FASHI.getValue()) {
 				userskill.setSkill(6);
-			} else if (roleid == 4) {
+			} else if (roleid == RoleType.ZHAOHUANSHI.getValue()) {
 				userskill.setSkill(7);
 			}
 			userskillMapper.insert(userskill);

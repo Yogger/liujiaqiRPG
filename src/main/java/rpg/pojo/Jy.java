@@ -8,10 +8,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Jy {
 	private String id;
-	private long startTime;//开始时间
+	/**
+	 * 开始时间
+	 */
+	private long startTime;
 	private User sendUser;
 	private User acceptUser;
-	private int acceptFlag;//0正常 1已有人确认
+	/**
+	 * 0正常 1已有人确认
+	 */
+	private int acceptFlag;
 	private ConcurrentHashMap<User,Integer> jyMoney;
 	private ConcurrentHashMap<User,Userbag> jycontentMap;
 	/**

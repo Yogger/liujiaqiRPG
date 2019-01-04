@@ -312,7 +312,8 @@ public class SceneBossRefresh implements Runnable {
 											monster.setAliveFlag(false);
 											IOsession.ackStatus.put(ch.remoteAddress(), 0);
 											AckBossDispatch.removeUserlist(user, bossScene);
-											bossScene = null;// 回收boss场景
+											// 回收boss场景
+											bossScene = null;
 											IOsession.userBossMp.remove(user.getGroupId());
 											exitFlag = true;
 											break;

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import rpg.area.Area;
+import rpg.configure.SceneType;
 import rpg.data.dao.UserMapper;
 import rpg.pojo.User;
 import rpg.util.SendMsg;
@@ -23,7 +24,7 @@ public class Move {
 
 	public void move(Channel ch, String msg, User user) {
 		Area area = new Area();
-		if ("起始之地".equals(msg)) {
+		if (SceneType.QI_SHI_ZHI_DI.getValue().equals(msg)) {
 			if (Area.checkArea(msg, user.getAreaid()) > 0) {
 				SendMsg.send("您已经进入起始之地", ch);
 				user.setAreaid(1);
@@ -31,7 +32,7 @@ public class Move {
 			} else {
 				SendMsg.send("你不能跨场景，请重新输入指令", ch);
 			}
-		} else if ("森林".equals(msg)) {
+		} else if (SceneType.SEN_LIN.getValue().equals(msg)) {
 			if (Area.checkArea(msg, user.getAreaid()) > 0) {
 				SendMsg.send("您已经进入森林", ch);
 				user.setAreaid(3);
@@ -39,7 +40,7 @@ public class Move {
 			} else {
 				SendMsg.send("你不能跨场景，请重新输入指令", ch);
 			}
-		} else if ("城堡".equals(msg)) {
+		} else if (SceneType.CHEN_BAO.getValue().equals(msg)) {
 			if (Area.checkArea(msg, user.getAreaid()) > 0) {
 				SendMsg.send("您已经进入城堡", ch);
 				user.setAreaid(4);
@@ -47,7 +48,7 @@ public class Move {
 			} else {
 				SendMsg.send("你不能跨场景，请重新输入指令", ch);
 			}
-		} else if ("村子".equals(msg)) {
+		} else if (SceneType.CUN_ZI.getValue().equals(msg)) {
 			if (Area.checkArea(msg, user.getAreaid()) > 0) {
 				SendMsg.send("您已经进入村子", ch);
 				user.setAreaid(2);

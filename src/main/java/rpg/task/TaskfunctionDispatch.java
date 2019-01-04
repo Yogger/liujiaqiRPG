@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.InstructionsType;
+import rpg.configure.MsgSize;
 import rpg.pojo.Task;
 import rpg.pojo.TaskProcess;
 import rpg.pojo.User;
@@ -20,9 +22,9 @@ import rpg.util.SendMsg;
 public class TaskfunctionDispatch {
 	public void task(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 2 && "showd".equals(msg[1])) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.SHOWD.getValue().equals(msg[1])) {
 			showTask(user, ch);
-		} else if (msg.length == 2 && "showf".equals(msg[1])){
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && InstructionsType.SHOWF.getValue().equals(msg[1])){
 			showFinishTask(user,ch);
 		} else {
 			SendMsg.send("指令错误",ch);

@@ -10,6 +10,7 @@ import com.mysql.jdbc.EscapeTokenizer;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import rpg.configure.MsgSize;
 import rpg.pojo.EmailRpg;
 import rpg.pojo.User;
 import rpg.pojo.Userbag;
@@ -28,10 +29,16 @@ import rpg.util.SendMsg;
 @Component
 public class ChatDispatch {
 
-	// 全服聊天
+	/**
+	 * 全服聊天
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msg1
+	 */
 	public void chatAll(User user, Channel ch, ChannelGroup group, String msg1) {
 		String[] msg = msg1.split("\\s+");
-		if (msg.length == 2) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			for (Channel channel : group) {
 				SendMsg.send("全服喇叭----" + user.getNickname() + ":" + msg[1],channel);
 			}
@@ -40,10 +47,16 @@ public class ChatDispatch {
 		}
 	}
 
-	// 私聊
+	/**
+	 * 私聊
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msg1
+	 */
 	public void chat(User user, Channel ch, ChannelGroup group, String msg1) {
 		String[] msg = msg1.split("\\s+");
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
@@ -58,10 +71,16 @@ public class ChatDispatch {
 		}
 	}
 
-	// 发送和提取邮件
+	/**
+	 * 发送和提取邮件
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msg1
+	 */
 	public void email(User user, Channel ch, ChannelGroup group, String msg1) {
 		String[] msg = msg1.split("\\s+");
-		if (msg.length == 3) {
+		if (msg.length == MsgSize.MAX_MSG_SIZE_3.getValue()) {
 			if (IOsession.alluserEmail.get(msg[1]) != null) {
 				List<Userbag> userbagList = IOsession.userBagMp.get(user);
 				for (Userbag wp : userbagList) {
@@ -98,7 +117,7 @@ public class ChatDispatch {
 			} else {
 				SendMsg.send("用户不存在",ch);
 			}
-		} else if (msg.length == 2) {
+		} else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue()) {
 			ArrayList<EmailRpg> list = IOsession.alluserEmail.get(user.getNickname());
 			EmailRpg emailRpg = list.get(Integer.valueOf(msg[1]));
 			Zb zb = IOsession.zbMp.get(emailRpg.getFujian().getGid());
@@ -119,7 +138,13 @@ public class ChatDispatch {
 		}
 	}
 
-	// 展示邮件
+	/**
+	 * 展示邮件
+	 * @param user
+	 * @param ch
+	 * @param group
+	 * @param msg1
+	 */
 	public void showEmail(User user, Channel ch, ChannelGroup group, String msg1) {
 		String[] msg = msg1.split("\\s+");
 		if (msg.length == 1) {
