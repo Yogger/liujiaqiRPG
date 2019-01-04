@@ -10,8 +10,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
+/**服务端运行
+ * @author ljq
+ *
+ */
 @Service("serverMain")
+@Slf4j
 public class ServerMain {
 
 	@Autowired
@@ -31,7 +37,8 @@ public class ServerMain {
 		bootstrap.childHandler(serverIniterHandler);
 		try {
 			Channel channel = bootstrap.bind(port).sync().channel();
-			System.out.println("server strart running in port:" + port);
+//			System.out.println("server strart running in port:" + port);
+			log.info("server strart running in 8080:");
 			channel.closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 副本场景类
+ * @author ljq
+ *
+ */
 public class BossScene {
 	private int id;
 	private int sceneid;

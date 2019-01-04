@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**用户好友类
+ * @author ljq
+ *
+ */
 public class Userfriend {
     private Integer id;
 

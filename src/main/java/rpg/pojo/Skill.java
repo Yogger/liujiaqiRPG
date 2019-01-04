@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**技能类
+ * @author ljq
+ *
+ */
 public class Skill {
 	private int id;
 	private String name;

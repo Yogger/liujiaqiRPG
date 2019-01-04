@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Userbuff;
 import rpg.pojo.UserbuffExample;
-
+/**
+ * Mybatis的用户Buff表配置接口
+ * @author ljq
+ *
+ */
 public interface UserbuffMapper {
     int countByExample(UserbuffExample example);
 

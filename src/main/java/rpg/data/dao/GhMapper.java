@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Gh;
 import rpg.pojo.GhExample;
-
+/**
+ * Mybatis的工会表配置接口
+ * @author ljq
+ *
+ */
 public interface GhMapper {
     int countByExample(GhExample example);
 

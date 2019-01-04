@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**账户类
+ * @author ljq
+ *
+ */
 public class Account {
     private Integer id;
 

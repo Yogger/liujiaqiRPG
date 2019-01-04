@@ -12,13 +12,17 @@ import rpg.pojo.User;
 import rpg.session.IOsession;
 import rpg.util.SendMsg;
 
+/**任务功能处理逻辑
+ * @author ljq
+ *
+ */
 @Component
 public class TaskfunctionDispatch {
 	public void task(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 2 && msg[1].equals("showd")) {
+		if (msg.length == 2 && "showd".equals(msg[1])) {
 			showTask(user, ch);
-		} else if (msg.length == 2 && msg[1].equals("showf")){
+		} else if (msg.length == 2 && "showf".equals(msg[1])){
 			showFinishTask(user,ch);
 		} else {
 			SendMsg.send("指令错误",ch);

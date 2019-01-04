@@ -59,7 +59,7 @@ public class ChatDispatch {
 	}
 
 	// 发送和提取邮件
-	public void Email(User user, Channel ch, ChannelGroup group, String msg1) {
+	public void email(User user, Channel ch, ChannelGroup group, String msg1) {
 		String[] msg = msg1.split("\\s+");
 		if (msg.length == 3) {
 			if (IOsession.alluserEmail.get(msg[1]) != null) {

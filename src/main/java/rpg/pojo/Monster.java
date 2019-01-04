@@ -120,7 +120,8 @@ public class Monster implements Cloneable{
 		return "Monster [" + name + "-存活状态=" + aliveFlag + "-血量=" + hp + "-攻击力=" + ack + "]";
 	}
 	
-    public Object clone() { 
+    @Override
+	public Object clone() { 
         Monster monster = null; 
         try{ 
         	monster = (Monster)super.clone(); 

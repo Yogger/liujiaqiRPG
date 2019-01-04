@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**npc类
+ * @author ljq
+ *
+ */
 public class Npc {
 	private int id;
 	private String name;

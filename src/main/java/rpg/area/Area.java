@@ -3,17 +3,14 @@ package rpg.area;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import rpg.pojo.Monster;
-import rpg.pojo.Npc;
-
 /**
  * 地图类
  * 
- * @return
+ * @author ljq
+ *
  */
 public class Area {
-	//public static LinkedList<Npc> npcList =new LinkedList<Npc>();
-	public static LinkedList<Scene> sceneList =new LinkedList<Scene>();
+	public static LinkedList<Scene> sceneList = new LinkedList<Scene>();
 	public static HashMap<String, Integer> mp1 = new HashMap<String, Integer>();
 	public static int[][] mp2 = new int[30][30];
 //	static {
@@ -31,7 +28,7 @@ public class Area {
 
 	public static int checkArea(String msg, int idfrom) {
 		Integer id = mp1.get(msg);
-		if(mp2[idfrom][id]==1) {
+		if (mp2[idfrom][id] == 1) {
 			return id;
 		} else {
 			return 0;

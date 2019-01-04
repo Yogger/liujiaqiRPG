@@ -2,6 +2,10 @@ package rpg.pojo;
 
 import java.util.HashMap;
 
+/**商店类
+ * @author ljq
+ *
+ */
 public class Store {
 	private String name;
 	private HashMap<Integer,Yaopin> yaopinMap;

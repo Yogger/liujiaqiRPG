@@ -143,8 +143,9 @@ public class RpgUtil {
 		String s = "" + string;
 		SendMsg.send(s, ch);
 		TaskManage.checkMoneyTaskCompleteBytaskid(user, 11);
-		if (checkLevel == 1)
+		if (checkLevel == 1) {
 			TaskManage.checkTaskCompleteBytaskid(user, 2);
+		}
 	}
 
 	/**
@@ -174,10 +175,15 @@ public class RpgUtil {
 
 	public static String skillChange(String string, User user) {
 		Integer roletype = user.getRoletype();
-		if(roletype==1) string="3";
-		else if(roletype==2) string="5";
-		else if(roletype==3) string="6";
-		else if(roletype==4) string="7";
+		if(roletype==1) {
+			string="3";
+		} else if(roletype==2) {
+			string="5";
+		} else if(roletype==3) {
+			string="6";
+		} else if(roletype==4) {
+			string="7";
+		}
 		return string;
 	}
 	

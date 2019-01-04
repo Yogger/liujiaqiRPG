@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**工会用户类
+ * @author ljq
+ *
+ */
 public class Ghuser {
     private Integer id;
 

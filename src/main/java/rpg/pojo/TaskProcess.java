@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**任务进度类
+ * @author ljq
+ *
+ */
 public class TaskProcess {
 	private int id;
 	private int taskid;

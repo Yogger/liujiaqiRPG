@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**工会类
+ * @author ljq
+ *
+ */
 public class Gh {
     private Integer id;
 

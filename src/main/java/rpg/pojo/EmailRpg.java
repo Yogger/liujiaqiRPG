@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**邮件类
+ * @author ljq
+ *
+ */
 public class EmailRpg {
 	private String id;
 	private String msg;

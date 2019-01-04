@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**用户技能类
+ * @author ljq
+ *
+ */
 public class Userskill {
     private Integer id;
 

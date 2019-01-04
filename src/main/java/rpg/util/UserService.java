@@ -23,6 +23,10 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
+/**用户服务
+ * @author ljq
+ *
+ */
 @Component
 public class UserService {
 
@@ -79,7 +83,7 @@ public class UserService {
 	 */
 	public void saveLastCdTime(User user, String skillId) {
 		long currentTimeMillis = System.currentTimeMillis();
-		HashMap<String, Long> curSkill = new HashMap<String, Long>();
+		HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 		curSkill.put(skillId, currentTimeMillis);
 		SkillList.cdMp.put(user, curSkill);
 	}
@@ -116,7 +120,7 @@ public class UserService {
 		if (buff != null) {
 			long currentTimeMillis = System.currentTimeMillis();
 			if (IOsession.buffTimeMp.get(user) == null) {
-				ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
+				ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>(500);
 				buffMap.put(buff.getId(), currentTimeMillis);
 				IOsession.buffTimeMp.put(user, buffMap);
 			} else {
@@ -140,7 +144,7 @@ public class UserService {
 		if (buff != null) {
 			long currentTimeMillis = System.currentTimeMillis();
 			if (IOsession.monsterBuffTimeMp.get(monster) == null) {
-				HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>();
+				HashMap<Integer, Long> buffMap = new HashMap<Integer, Long>(500);
 				buffMap.put(buff.getId(), currentTimeMillis);
 				IOsession.monsterBuffTimeMp.put(monster, buffMap);
 			} else {
@@ -176,8 +180,9 @@ public class UserService {
 							monster.setDeadType(1);
 						}
 						monster.setHp(monHp);
-						if (msg == "")
+						if (msg == "") {
 							msg += "003";
+						}
 						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
 								+ monster.getHp();
 						break;
@@ -188,8 +193,9 @@ public class UserService {
 							monster.setDeadType(1);
 						}
 						monster.setHp(monHp1);
-						if (msg == "")
+						if (msg == "") {
 							msg += "003";
+						}
 						msg += monster.getName() + "受到" + buff.getName() + "伤害:" + buff.getMp() + "怪物血量剩余"
 								+ monster.getHp();
 						break;

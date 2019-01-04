@@ -5,6 +5,12 @@ import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Userzb;
 import rpg.pojo.UserzbExample;
 
+
+/**
+ * Mybatis的用户装备表配置接口
+ * @author ljq
+ *
+ */
 public interface UserzbMapper {
     int countByExample(UserzbExample example);
 

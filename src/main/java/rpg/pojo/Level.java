@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**等级类
+ * @author ljq
+ *
+ */
 public class Level {
 	private int id;
 	private int expl;

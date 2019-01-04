@@ -3,6 +3,10 @@ package rpg.pojo;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
+/**用户类
+ * @author ljq
+ *
+ */
 public class User {
 	private Integer id;
 

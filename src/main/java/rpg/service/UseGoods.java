@@ -47,7 +47,7 @@ public class UseGoods {
 						// 存储上次使用buff时间
 						long currentTimeMillis = System.currentTimeMillis();
 						if (IOsession.buffTimeMp.get(user) == null) {
-							ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>();
+							ConcurrentHashMap<Integer, Long> buffMap = new ConcurrentHashMap<Integer, Long>(500);
 							buffMap.put(buff.getId(), currentTimeMillis);
 							IOsession.buffTimeMp.put(user, buffMap);
 						} else {

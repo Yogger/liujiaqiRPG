@@ -2,6 +2,10 @@ package rpg.pojo;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**交易类
+ * @author ljq
+ *
+ */
 public class Jy {
 	private String id;
 	private long startTime;//开始时间

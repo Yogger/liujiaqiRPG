@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**用户buff类
+ * @author ljq
+ *
+ */
 public class Userbuff {
     private Integer id;
 

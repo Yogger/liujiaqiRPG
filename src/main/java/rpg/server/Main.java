@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.dom4j.Document;
@@ -13,6 +14,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import rpg.area.Area;
 import rpg.area.Refresh;
@@ -29,6 +31,11 @@ import rpg.pojo.Zb;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
+/**
+ * 启动类
+ * @author ljq
+ *
+ */
 public class Main {
 
 	public static void main(String[] args) throws Exception {
@@ -45,7 +52,11 @@ public class Main {
 		initEmail();
 		initTask();
 		initLevel();
-		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
+		ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+		        .setNameFormat("buff线程").build();
+		ScheduledThreadPoolExecutor  scheduled = new ScheduledThreadPoolExecutor(1,namedThreadFactory);
+		scheduled.scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
+//		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:server.xml");
 		ServerMain serverMain = (ServerMain) context.getBean("serverMain");
@@ -92,16 +103,19 @@ public class Main {
 		IOsession.alluserEmail.put("b", arrayList2);
 	}
 
-	// 初始化商店
+	/**
+	 * 初始化商店
+	 * @throws Exception
+	 */
 	private static void initStore() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\store.xml"));
 		Element root = document.getRootElement();
 		List<Element> elementList = root.elements();
 		for (Element e : elementList) {
-			IOsession.store.setName(e.elementText("name"));
-			HashMap<Integer,Yaopin> yaopinMap = new HashMap<>();
-			HashMap<Integer,Zb> zbMap = new HashMap<>();
+			IOsession.STORE_SYSTEM.setName(e.elementText("name"));
+			HashMap<Integer,Yaopin> yaopinMap = new HashMap<>(500);
+			HashMap<Integer,Zb> zbMap = new HashMap<>(500);
 			String[] yaopinId = e.elementText("yaopin").split(",");
 			for (String yaopin : yaopinId) {
 				Yaopin yaopin2 = IOsession.yaopinMp.get(Integer.valueOf(yaopin));
@@ -112,12 +126,15 @@ public class Main {
 				Zb zb2 = IOsession.zbMp.get(Integer.valueOf(zb));
 				zbMap.put(zb2.getId(), zb2);
 			}
-			IOsession.store.setYaopinMap(yaopinMap);
-			IOsession.store.setZbMap(zbMap);
+			IOsession.STORE_SYSTEM.setYaopinMap(yaopinMap);
+			IOsession.STORE_SYSTEM.setZbMap(zbMap);
 		}
 	}
 
-	// 装备资源初始化
+	/**
+	 * 装备资源初始化
+	 * @throws Exception
+	 */
 	private static void initZb() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\zb.xml"));
@@ -136,7 +153,10 @@ public class Main {
 		}
 	}
 
-	// 初始化buff
+	/**
+	 * 初始化buff
+	 * @throws Exception
+	 */
 	private static void initBuff() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\buff.xml"));
@@ -152,7 +172,10 @@ public class Main {
 		}
 	}
 
-	// 初始化药品
+	/**
+	 * 初始化药品
+	 * @throws Exception
+	 */
 	private static void initYaopin() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\yaopin.xml"));
@@ -168,7 +191,10 @@ public class Main {
 		}
 	}
 
-	// 初始化技能
+	/**
+	 * 初始化技能
+	 * @throws Exception
+	 */
 	private static void initSkill() throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\skill.xml"));
@@ -186,7 +212,11 @@ public class Main {
 		}
 	}
 
-	// 初始化怪物
+	/**
+	 * 初始化怪物
+	 * @param monsterList
+	 * @throws Exception
+	 */
 	private static void initMonster(ArrayList<Monster> monsterList) throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\monster.xml"));
@@ -214,7 +244,11 @@ public class Main {
 		}
 	}
 
-	// 初始化npc
+	/**
+	 * 初始化npc
+	 * @param npcList
+	 * @throws Exception
+	 */
 	public static void initNpc(ArrayList<Npc> npcList) throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\npc.xml"));
@@ -229,7 +263,12 @@ public class Main {
 		}
 	}
 
-	// 初始化场景
+	/**
+	 * 初始化场景
+	 * @param monsterList
+	 * @param npcList
+	 * @throws Exception
+	 */
 	public static void initScene(ArrayList<Monster> monsterList, ArrayList<Npc> npcList) throws Exception {
 		SAXReader sr = new SAXReader();
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\Scene.xml"));
@@ -259,9 +298,9 @@ public class Main {
 			}
 			scene.setMonsterList(list2);
 			// 设置地图的连通
-			String[] Near = e.elementText("near").split(",");
-			for (String near : Near) {
-				Area.mp2[Integer.valueOf(e.elementText("id"))][Integer.valueOf(near)] = 1;
+			String[] near = e.elementText("near").split(",");
+			for (String near1 : near) {
+				Area.mp2[Integer.valueOf(e.elementText("id"))][Integer.valueOf(near1)] = 1;
 			}
 			//
 			Area.mp1.put(e.elementText("name"), Integer.valueOf(e.elementText("id")));

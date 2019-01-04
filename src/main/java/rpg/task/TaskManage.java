@@ -14,6 +14,10 @@ import rpg.session.IOsession;
 import rpg.util.RpgUtil;
 import rpg.util.SendMsg;
 
+/**任务管理
+ * @author ljq
+ *
+ */
 public class TaskManage {
 
 	/**

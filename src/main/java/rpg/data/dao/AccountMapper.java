@@ -5,6 +5,12 @@ import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Account;
 import rpg.pojo.AccountExample;
 
+
+/**
+ * Mybatis的账户表配置接口
+ * @author ljq
+ *
+ */
 public interface AccountMapper {
     int countByExample(AccountExample example);
 

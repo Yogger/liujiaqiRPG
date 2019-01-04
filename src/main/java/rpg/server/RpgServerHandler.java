@@ -40,6 +40,10 @@ import rpg.session.OffineDispatch;
 import rpg.task.TaskfunctionDispatch;
 import rpg.util.SendMsg;
 
+/**服务端业务逻辑处理
+ * @author ljq
+ *
+ */
 @Sharable
 @Component("rpgServerHandler")
 public class RpgServerHandler extends ChannelHandlerAdapter {
@@ -88,7 +92,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 	private final int MAX_OVERTIME = 3; // 超时次数超过该值则注销连接
 
 	// 存储连接进来的玩家
-	public static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+	public static final ChannelGroup USER_GROUP = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 	// 客户端和服务端建立连接，并且告诉每个客户端
 	@Override
@@ -97,7 +101,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		// for (Channel ch : group) {
 		// ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is comming");
 		// }
-		group.add(channel);
+		USER_GROUP.add(channel);
 		// int size = group.size();
 		// System.out.println(size);
 	}
@@ -109,7 +113,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		// for (Channel ch : group) {
 		// ch.writeAndFlush("[" + channel.remoteAddress() + "] " + "is exit");
 		// }
-		group.remove(channel);
+		USER_GROUP.remove(channel);
 	}
 
 	// 连接处于活跃状态
@@ -134,12 +138,13 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 	}
 
 	// 服务端处理客户端请求消息
+	@Override
 	public void channelRead(ChannelHandlerContext arg0, Object arg) throws Exception {
 		String arg1 = (String) arg;
-		if (!arg1.equals("心跳")) {
+		if (!"心跳".equals(arg1)) {
 			Channel channel = arg0.channel();
 			// 遍历所有连接
-			for (Channel ch : group) {
+			for (Channel ch : USER_GROUP) {
 				// 当前连接客户
 				if (ch == channel) {
 					// 获取session
@@ -168,93 +173,93 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 						if (msg.length > 0) {
 							switch (msg[0]) {
 							case "f":
-								friendDispatch.friend(user, ch, group, arg1);
+								friendDispatch.friend(user, ch, USER_GROUP, arg1);
 								break;
 							case "pk":
-								pkDispatch.pk(user, ch, group, arg1);
+								pkDispatch.pk(user, ch, USER_GROUP, arg1);
 								break;
 							case "task":
-								taskfunctionDispatch.task(user, ch, group, arg1);
+								taskfunctionDispatch.task(user, ch, USER_GROUP, arg1);
 								break;
 							case "email":
-								chatDispatch.Email(user, ch, group, arg1);
+								chatDispatch.email(user, ch, USER_GROUP, arg1);
 								break;
 							case "showemail":
-								chatDispatch.showEmail(user, ch, group, arg1);
+								chatDispatch.showEmail(user, ch, USER_GROUP, arg1);
 								break;
 							case "chatall":
-								chatDispatch.chatAll(user, ch, group, arg1);
+								chatDispatch.chatAll(user, ch, USER_GROUP, arg1);
 								break;
 							case "chat":
-								chatDispatch.chat(user, ch, group, arg1);
+								chatDispatch.chat(user, ch, USER_GROUP, arg1);
 								break;
 							case "store":
-								storeDispatch.store(user, ch, group, arg1);
+								storeDispatch.store(user, ch, USER_GROUP, arg1);
 								break;
 							case "group":
-								groupDispatch.group(user, ch, group, arg1);
+								groupDispatch.group(user, ch, USER_GROUP, arg1);
 								break;
 							case "copy":
-								copyDispatch.copy(user, ch, group, arg1);
+								copyDispatch.copy(user, ch, USER_GROUP, arg1);
 								break;
 							case "showgroup":
-								groupDispatch.showgroup(user, ch, group, arg1);
+								groupDispatch.showgroup(user, ch, USER_GROUP, arg1);
 								break;
 							case "showbag":
-								bagDispatch.showBag(user, ch, group);
+								bagDispatch.showBag(user, ch, USER_GROUP);
 								break;
 							case "use":
-								useGoods.use(user, ch, group, arg1);
+								useGoods.use(user, ch, USER_GROUP, arg1);
 								break;
 							case "showzb":
-								bagDispatch.showZb(user, ch, group);
+								bagDispatch.showZb(user, ch, USER_GROUP);
 								break;
 							case "arrbag":
-								bagDispatch.arrangebag(user, ch, group, arg1);
+								bagDispatch.arrangebag(user, ch, USER_GROUP, arg1);
 								break;
 							case "tkff":
-								bagDispatch.tkffZb(user, ch, group, arg1);
+								bagDispatch.tkffZb(user, ch, USER_GROUP, arg1);
 								break;
 							case "wear":
-								bagDispatch.wearzb(user, ch, group, arg1);
+								bagDispatch.wearzb(user, ch, USER_GROUP, arg1);
 								break;
 							case "fix":
-								bagDispatch.fix(user, ch, group, arg1);
+								bagDispatch.fix(user, ch, USER_GROUP, arg1);
 								break;
 							default:
 								// 普通战斗状态
 								if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
-									ackDispatch.ack(user, ch, group, arg1);
+									ackDispatch.ack(user, ch, USER_GROUP, arg1);
 								}
 								// 副本战斗状态
 								else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
-									ackBossDispatch.ack(user, ch, group, arg1);
+									ackBossDispatch.ack(user, ch, USER_GROUP, arg1);
 								}
 								// 交易状态
 								else if (user.getJyFlag() == 1 || user.getJyFlag() == 2) {
-									jyDispatch.jyProcess(user, ch, group, arg1);
+									jyDispatch.jyProcess(user, ch, USER_GROUP, arg1);
 								}
 								// 普通状态
 								else {
 									switch (msg[0]) {
 									case "jy":
-										jyDispatch.jy(user, ch, group, arg1);
+										jyDispatch.jy(user, ch, USER_GROUP, arg1);
 										break;
 									case "gh":
-										ghDIspatch.gh(user, ch, group, arg1);
+										ghDIspatch.gh(user, ch, USER_GROUP, arg1);
 										break;
 									case "move":
 										moveDispatch.dispatch(ch, msg, user);
 										break;
 									case "aoi":
-										aoiDispatch.aoi(user, ch, group);
+										aoiDispatch.aoi(user, ch, USER_GROUP);
 										break;
 									case "talk":
-										talkDispatch.talk(user, ch, group, arg1);
+										talkDispatch.talk(user, ch, USER_GROUP, arg1);
 										break;
 									case "ack":
 										IOsession.ackStatus.put(address, 1);
-										ackDispatch.ack(user, ch, group, arg1);
+										ackDispatch.ack(user, ch, USER_GROUP, arg1);
 										break;
 									default:
 										SendMsg.send("无效指令",ch);
@@ -277,6 +282,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		clientOvertimeMap.remove(arg0);// 只要接受到数据包，则清空超时次数
 	}
 
+	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		// 心跳包检测读超时
 		if (evt instanceof IdleStateEvent) {

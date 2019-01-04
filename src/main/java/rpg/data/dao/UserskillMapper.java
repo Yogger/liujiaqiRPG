@@ -5,6 +5,12 @@ import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Userskill;
 import rpg.pojo.UserskillExample;
 
+
+/**
+ * Mybatis的用户技能表配置接口
+ * @author ljq
+ *
+ */
 public interface UserskillMapper {
     int countByExample(UserskillExample example);
 

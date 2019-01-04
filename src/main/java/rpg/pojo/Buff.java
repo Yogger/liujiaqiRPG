@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**场景类
+ * @author ljq
+ *
+ */
 public class Buff {
 	private int id;
 	private String name;

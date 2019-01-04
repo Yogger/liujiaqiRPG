@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Ghstore;
 import rpg.pojo.GhstoreExample;
-
+/**
+ * Mybatis的工会仓库表配置接口
+ * @author ljq
+ *
+ */
 public interface GhstoreMapper {
     int countByExample(GhstoreExample example);
 

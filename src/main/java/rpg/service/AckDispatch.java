@@ -81,7 +81,7 @@ public class AckDispatch {
 								if (skill.getMp() <= user.getMp()) {
 									// 存储上次使用技能时间
 									long currentTimeMillis = System.currentTimeMillis();
-									HashMap<String, Long> curSkill = new HashMap<String, Long>();
+									HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 									curSkill.put(skillId, currentTimeMillis);
 									SkillList.cdMp.put(user, curSkill);
 
@@ -140,8 +140,9 @@ public class AckDispatch {
 																		+ user.getHp(),newchannel);
 															} else {
 																int monsterAck = monster.getAck() - attribute.getDef();
-																if (monsterAck <= 0)
+																if (monsterAck <= 0) {
 																	monsterAck = 1;
+																}
 																int hp = user2.getHp() - monsterAck;
 																// 怪物存活
 																if (monster.getHp() > 0) {
@@ -228,7 +229,7 @@ public class AckDispatch {
 								if (millis - lastmillis >= skill.getCd()) {
 									// 存储上次使用技能时间
 									long currentTimeMillis = System.currentTimeMillis();
-									HashMap<String, Long> curSkill = new HashMap<String, Long>();
+									HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 									curSkill.put(skillId, currentTimeMillis);
 									SkillList.cdMp.put(user, curSkill);
 
@@ -309,7 +310,7 @@ public class AckDispatch {
 							else {
 								// 存储上次使用技能时间
 								long currentTimeMillis = System.currentTimeMillis();
-								HashMap<String, Long> curSkill = new HashMap<String, Long>();
+								HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 								curSkill.put(skillId, currentTimeMillis);
 								SkillList.cdMp.put(user, curSkill);
 //						SendMsg.send("使用了" + skill.getName());

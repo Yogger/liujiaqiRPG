@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**用户背包类
+ * @author ljq
+ *
+ */
 public class Userbag {
     private String id;
 

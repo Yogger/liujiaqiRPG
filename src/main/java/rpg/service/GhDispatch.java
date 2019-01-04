@@ -50,38 +50,38 @@ public class GhDispatch {
 	private GhstoreMapper ghstoreMapper;
 	@Autowired
 	private UserMapper userMapper;
-	
-	private ReentrantLock lock=new ReentrantLock();
+
+	private ReentrantLock lock = new ReentrantLock();
 
 	public void gh(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3 && msg[1].equals("creat")) {
+		if (msg.length == 3 && "creat".equals(msg[1])) {
 			creatGh(user, ch, msg);
-		} else if (msg.length == 2 && msg[1].equals("show")) {
+		} else if (msg.length == 2 && "show".equals(msg[1])) {
 			showGh(user, ch, group, msg);
-		} else if (msg.length == 3 && msg[1].equals("join")) {
+		} else if (msg.length == 3 && "join".equals(msg[1])) {
 			joinGh(user, ch, group, msg);
-		} else if (msg.length == 3 && msg[1].equals("accept")) {
+		} else if (msg.length == 3 && "accept".equals(msg[1])) {
 			acceptGh(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("showsq")) {
+		} else if (msg.length == 2 && "showsq".equals(msg[1])) {
 			showsqGh(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("showuser")) {
+		} else if (msg.length == 2 && "showuser".equals(msg[1])) {
 			showuserGh(user, ch, group, msg);
-		} else if (msg.length == 3 && msg[1].equals("t")) {
+		} else if (msg.length == 3 && "t".equals(msg[1])) {
 			tGh(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("js")) {
+		} else if (msg.length == 2 && "js".equals(msg[1])) {
 			jsGh(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("esc")) {
+		} else if (msg.length == 2 && "esc".equals(msg[1])) {
 			quitGh(user, ch, group, msg);
-		} else if (msg.length == 4 && msg[1].equals("raise")) {
+		} else if (msg.length == 4 && "raise".equals(msg[1])) {
 			raiseGh(user, ch, group, msg);
-		} else if (msg.length == 4 && msg[1].equals("down")) {
+		} else if (msg.length == 4 && "down".equals(msg[1])) {
 			downGh(user, ch, group, msg);
-		} else if (msg.length > 3 && msg[1].equals("put")) {
+		} else if (msg.length > 3 && "put".equals(msg[1])) {
 			putGh(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("showstore")) {
+		} else if (msg.length == 2 && "showstore".equals(msg[1])) {
 			showstoreGh(user, ch, group, msg);
-		} else if (msg.length > 3 && msg[1].equals("take")) {
+		} else if (msg.length > 3 && "take".equals(msg[1])) {
 			takeGh(user, ch, group, msg);
 		}
 	}
@@ -112,12 +112,12 @@ public class GhDispatch {
 									List<Userbag> list2 = IOsession.userBagMp.get(user);
 									list2.add(userbag);
 									ghstoreMapper.deleteByExample(example2);
-									SendMsg.send("物品拿取成功",ch);
+									SendMsg.send("物品拿取成功", ch);
 								} else {
-									SendMsg.send("数量错误",ch);
+									SendMsg.send("数量错误", ch);
 								}
 							} else {
-								SendMsg.send("指令错误",ch);
+								SendMsg.send("指令错误", ch);
 							}
 						} else {
 							if (StringUtils.isNumeric(msg[4])) {
@@ -125,30 +125,30 @@ public class GhDispatch {
 								if (num > 0) {
 									Yaopin yaopin = IOsession.yaopinMp.get(ghstore.getWpid());
 									RpgUtil.putYaopin(user, yaopin, num);
-									//								Userbag userbag = new Userbag();
-									//								userbag.setId(ghstore.getGzid());
-									//								userbag.setUsername(user.getNickname());
-									//								userbag.setGid(ghstore.getWpid());
-									//								userbag.setNumber(Integer.valueOf(msg[4]));
-									//								userbag.setNjd(ghstore.getNjd());
-									//								userbag.setIsadd(1);
-									//								List<Userbag> list2 = IOsession.userBagMp.get(user);
-									//								list2.add(userbag);
+									// Userbag userbag = new Userbag();
+									// userbag.setId(ghstore.getGzid());
+									// userbag.setUsername(user.getNickname());
+									// userbag.setGid(ghstore.getWpid());
+									// userbag.setNumber(Integer.valueOf(msg[4]));
+									// userbag.setNjd(ghstore.getNjd());
+									// userbag.setIsadd(1);
+									// List<Userbag> list2 = IOsession.userBagMp.get(user);
+									// list2.add(userbag);
 									if (ghstore.getNumber() > num) {
 										ghstore.setNumber(ghstore.getNumber() - num);
 										ghstoreMapper.updateByExample(ghstore, example2);
-										SendMsg.send("物品拿取成功",ch);
+										SendMsg.send("物品拿取成功", ch);
 									} else if (ghstore.getNumber() == num) {
 										ghstoreMapper.deleteByExample(example2);
-										SendMsg.send("物品拿取成功",ch);
+										SendMsg.send("物品拿取成功", ch);
 									} else {
-										SendMsg.send("指令错误",ch);
+										SendMsg.send("指令错误", ch);
 									}
 								} else {
-									SendMsg.send("请放入正确的数量",ch);
+									SendMsg.send("请放入正确的数量", ch);
 								}
 							} else {
-								SendMsg.send("指令错误",ch);
+								SendMsg.send("指令错误", ch);
 							}
 						}
 						break;
@@ -161,16 +161,16 @@ public class GhDispatch {
 						gh.setGold(gh.getGold() - Integer.valueOf(msg[3]));
 						ghMapper.updateByPrimaryKey(gh);
 						user.setMoney(user.getMoney() + Integer.valueOf(msg[3]));
-						SendMsg.send("金币取出成功",ch);
+						SendMsg.send("金币取出成功", ch);
 					} else {
-						SendMsg.send("金币不足",ch);
+						SendMsg.send("金币不足", ch);
 					}
 				} else {
-					SendMsg.send("指令错误",ch);
+					SendMsg.send("指令错误", ch);
 				}
 			} else {
-				SendMsg.send("指令错误",ch);
-			} 
+				SendMsg.send("指令错误", ch);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -197,7 +197,7 @@ public class GhDispatch {
 			}
 		}
 		Gh gh = ghMapper.selectByPrimaryKey(user.getGhId());
-		SendMsg.send("金币：" + gh.getGold() + "\n" + yaopinWord + zbWord,ch);
+		SendMsg.send("金币：" + gh.getGold() + "\n" + yaopinWord + zbWord, ch);
 	}
 
 	private void putGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -217,12 +217,12 @@ public class GhDispatch {
 								ghstore.setIsadd(0);
 								ghstoreMapper.insert(ghstore);
 								list.remove(userbag);
-								SendMsg.send("物品放入成功",ch);
+								SendMsg.send("物品放入成功", ch);
 							} else {
-								SendMsg.send("数量不足",ch);
+								SendMsg.send("数量不足", ch);
 							}
 						} else {
-							SendMsg.send("指令错误",ch);
+							SendMsg.send("指令错误", ch);
 						}
 					} else {
 						if (StringUtils.isNumeric(msg[4])) {
@@ -243,12 +243,12 @@ public class GhDispatch {
 									ghstoreMapper.insert(ghstore);
 									if (userbag.getNumber() > num) {
 										userbag.setNumber(userbag.getNumber() - num);
-										SendMsg.send("物品放入成功",ch);
+										SendMsg.send("物品放入成功", ch);
 									} else if (userbag.getNumber() == num) {
 										list.remove(userbag);
-										SendMsg.send("物品放入成功",ch);
+										SendMsg.send("物品放入成功", ch);
 									} else {
-										SendMsg.send("数量不足",ch);
+										SendMsg.send("数量不足", ch);
 									}
 								} else {
 									Ghstore ghstore = list2.get(0);
@@ -256,19 +256,19 @@ public class GhDispatch {
 									ghstoreMapper.updateByExample(ghstore, example);
 									if (userbag.getNumber() > num) {
 										userbag.setNumber(userbag.getNumber() - num);
-										SendMsg.send("物品放入成功",ch);
+										SendMsg.send("物品放入成功", ch);
 									} else if (userbag.getNumber() == num) {
 										list.remove(userbag);
-										SendMsg.send("物品放入成功",ch);
+										SendMsg.send("物品放入成功", ch);
 									} else {
-										SendMsg.send("数量不足",ch);
+										SendMsg.send("数量不足", ch);
 									}
 								}
 							} else {
-								SendMsg.send("请放入正确的数量",ch);
+								SendMsg.send("请放入正确的数量", ch);
 							}
 						} else {
-							SendMsg.send("指令错误",ch);
+							SendMsg.send("指令错误", ch);
 						}
 					}
 					break;
@@ -281,15 +281,15 @@ public class GhDispatch {
 					gh.setGold(gh.getGold() + Integer.valueOf(msg[3]));
 					ghMapper.updateByPrimaryKey(gh);
 					user.setMoney(user.getMoney() - Integer.valueOf(msg[3]));
-					SendMsg.send("金币放入成功",ch);
+					SendMsg.send("金币放入成功", ch);
 				} else {
-					SendMsg.send("金币不足",ch);
+					SendMsg.send("金币不足", ch);
 				}
 			} else {
-				SendMsg.send("指令错误",ch);
+				SendMsg.send("指令错误", ch);
 			}
 		} else {
-			SendMsg.send("指令错误",ch);
+			SendMsg.send("指令错误", ch);
 		}
 	}
 
@@ -314,10 +314,10 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							SendMsg.send("降低职位成功",ch);
-							SendMsg.send("你被降级为精英",channel);
+							SendMsg.send("降低职位成功", ch);
+							SendMsg.send("你被降级为精英", channel);
 						} else {
-							SendMsg.send("权限不够,不能降级该职位",ch);
+							SendMsg.send("权限不够,不能降级该职位", ch);
 						}
 					} else if (msg[3].equals("4") && ghuser2.getPower() < 4) {
 						if (ghuser.getPower() < 3) {
@@ -326,22 +326,22 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							SendMsg.send("降低职位成功",ch);
-							SendMsg.send("你被降级为成员",channel);
+							SendMsg.send("降低职位成功", ch);
+							SendMsg.send("你被降级为成员", channel);
 						} else {
-							SendMsg.send("权限不够,不能降级该职位",ch);
+							SendMsg.send("权限不够,不能降级该职位", ch);
 						}
 					} else {
-						SendMsg.send("指令错误",ch);
+						SendMsg.send("指令错误", ch);
 					}
 				} else {
-					SendMsg.send("权限不够,不能降级该玩家头衔",ch);
+					SendMsg.send("权限不够,不能降级该玩家头衔", ch);
 				}
 			} else {
-				SendMsg.send("不存在该玩家",ch);
+				SendMsg.send("不存在该玩家", ch);
 			}
 		} else {
-			SendMsg.send("你不在工会",ch);
+			SendMsg.send("你不在工会", ch);
 		}
 	}
 
@@ -366,10 +366,10 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							SendMsg.send("提升职位成功",ch);
-							SendMsg.send("你被提升为精英",channel);
+							SendMsg.send("提升职位成功", ch);
+							SendMsg.send("你被提升为精英", channel);
 						} else {
-							SendMsg.send("权限不够,不能提升该职位",ch);
+							SendMsg.send("权限不够,不能提升该职位", ch);
 						}
 					} else if (msg[3].equals("2")) {
 						if (ghuser.getPower() < 2) {
@@ -378,22 +378,22 @@ public class GhDispatch {
 							ghuserMapper.updateByExample(ghuser2, example);
 							User user2 = IOsession.nameMap.get(msg[2]);
 							Channel channel = IOsession.userchMp.get(user2);
-							SendMsg.send("提升职位成功",ch);
-							SendMsg.send("你被提升为副会长",channel);
+							SendMsg.send("提升职位成功", ch);
+							SendMsg.send("你被提升为副会长", channel);
 						} else {
-							SendMsg.send("权限不够,不能提升该职位",ch);
+							SendMsg.send("权限不够,不能提升该职位", ch);
 						}
 					} else {
-						SendMsg.send("指令错误",ch);
+						SendMsg.send("指令错误", ch);
 					}
 				} else {
-					SendMsg.send("权限不够,不能提升该玩家头衔",ch);
+					SendMsg.send("权限不够,不能提升该玩家头衔", ch);
 				}
 			} else {
-				SendMsg.send("不存在该玩家",ch);
+				SendMsg.send("不存在该玩家", ch);
 			}
 		} else {
-			SendMsg.send("你不在工会",ch);
+			SendMsg.send("你不在工会", ch);
 		}
 	}
 
@@ -404,7 +404,7 @@ public class GhDispatch {
 		ghuserMapper.deleteByExample(example);
 		user.setGhId(0);
 		userMapper.updateByPrimaryKey(user);
-		SendMsg.send("退出工会成功",ch);
+		SendMsg.send("退出工会成功", ch);
 	}
 
 	private void jsGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -430,17 +430,17 @@ public class GhDispatch {
 					user2.setGhId(0);
 					userMapper.updateByPrimaryKey(user2);
 					Channel channel = IOsession.userchMp.get(user2);
-					SendMsg.send("已将该玩家踢出",ch);
-					SendMsg.send("你被踢出工会",channel);
+					SendMsg.send("已将该玩家踢出", ch);
+					SendMsg.send("你被踢出工会", channel);
 				} else {
-					SendMsg.send("权限不够,不能移除该玩家",ch);
+					SendMsg.send("权限不够,不能移除该玩家", ch);
 				}
 			} else {
-				SendMsg.send("不存在该玩家",ch);
+				SendMsg.send("不存在该玩家", ch);
 				return;
 			}
 		} else {
-			SendMsg.send("你不在工会",ch);
+			SendMsg.send("你不在工会", ch);
 			return;
 		}
 	}
@@ -454,7 +454,7 @@ public class GhDispatch {
 		for (Ghuser ghuser : list) {
 			string += "用户名:" + ghuser.getUsername() + "---职位:" + ghuser.getJobname() + "\n";
 		}
-		SendMsg.send(string,ch);
+		SendMsg.send(string, ch);
 	}
 
 	private void showsqGh(User user, Channel ch, ChannelGroup group, String[] msg) {
@@ -465,10 +465,10 @@ public class GhDispatch {
 				for (Entry<String, String> entry : map.entrySet()) {
 					string += "申请人：" + entry.getKey() + "---申请时间:" + entry.getValue();
 				}
-				SendMsg.send(string,ch);
+				SendMsg.send(string, ch);
 			}
 		} else {
-			SendMsg.send("你没有工会",ch);
+			SendMsg.send("你没有工会", ch);
 		}
 	}
 
@@ -493,18 +493,18 @@ public class GhDispatch {
 					ghuser.setPower(4);
 					ghuser.setJobname("成员");
 					ghuserMapper.insert(ghuser);
-					SendMsg.send(user2.getNickname() + "加入工会",ch);
+					SendMsg.send(user2.getNickname() + "加入工会", ch);
 					Channel channel = IOsession.userchMp.get(user2);
-					SendMsg.send("你成功加入工会",channel);
+					SendMsg.send("你成功加入工会", channel);
 					TaskManage.checkTaskCompleteBytaskid(user2, 8);
 				} else {
-					SendMsg.send("你没有权限",ch);
+					SendMsg.send("你没有权限", ch);
 				}
 			} else {
-				SendMsg.send("指令错误",ch);
+				SendMsg.send("指令错误", ch);
 			}
 		} else {
-			SendMsg.send("你没有工会",ch);
+			SendMsg.send("你没有工会", ch);
 		}
 	}
 
@@ -527,18 +527,18 @@ public class GhDispatch {
 				if (ghuser.getPower() < 4) {
 					User user2 = IOsession.nameMap.get(ghuser.getUsername());
 					Channel channel = IOsession.userchMp.get(user2);
-					HashMap<String, String> hashMap = new HashMap<>();
+					HashMap<String, String> hashMap = new HashMap<>(500);
 					String name = user.getNickname();
 					Integer id = ghuser.getId();
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 					hashMap.put(name, df.format(new Date()));
 					IOsession.ghsqMp.put(id, hashMap);
-					SendMsg.send(user.getNickname() + "---申请加入工会",channel);
+					SendMsg.send(user.getNickname() + "---申请加入工会", channel);
 				}
 			}
-			SendMsg.send("申请已发送",ch);
+			SendMsg.send("申请已发送", ch);
 		} else {
-			SendMsg.send("指令错误",ch);
+			SendMsg.send("指令错误", ch);
 		}
 	}
 
@@ -564,7 +564,7 @@ public class GhDispatch {
 //		HashMap<String, Ghuser> map = new HashMap<>();
 //		map.put(name, ghuser);
 //		IOsession.ghUserMp.put(id, map);
-		SendMsg.send("创建工会成功",ch);
+		SendMsg.send("创建工会成功", ch);
 		TaskManage.checkTaskCompleteBytaskid(user, 8);
 	}
 
@@ -582,6 +582,6 @@ public class GhDispatch {
 //						+ gh.getLevel() + "\n";
 //			}
 //		}
-		SendMsg.send(req,ch);
+		SendMsg.send(req, ch);
 	}
 }

@@ -24,6 +24,11 @@ import org.apache.commons.io.output.ThresholdingOutputStream;
 import io.netty.channel.Channel;
 import rpg.util.SendMsg;
 
+/**
+ * 界面
+ * @author ljq
+ *
+ */
 public class Jm extends JFrame implements KeyListener {
 	JPanel jPanel1, jPanel2; // 三块面板，两块是按钮，一块是输出台
 	JScrollPane jPanel4, jPanel5, jPanel6, jPanel7;
@@ -153,6 +158,7 @@ public class Jm extends JFrame implements KeyListener {
 
 		jButton1.addActionListener(new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jTextArea.setText("");
 				jTextArea2.setText("");
@@ -164,6 +170,7 @@ public class Jm extends JFrame implements KeyListener {
 
 		jButton2.addActionListener(new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("showbag", channel);
 			}
@@ -172,30 +179,35 @@ public class Jm extends JFrame implements KeyListener {
 
 		jButton3.addActionListener(new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("store", channel);
 			}
 		});
 
 		jButton4.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("use 蓝药", channel);
 			}
 		});
 
 		jButton5.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("ack 史莱姆 1", channel);
 			}
 		});
 
 		jButton6.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("1", channel);
 			}
 		});
 
 		jButton7.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				SendMsg.send("3", channel);
 			}

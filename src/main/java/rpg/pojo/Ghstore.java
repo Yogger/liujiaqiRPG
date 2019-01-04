@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**工会仓库类
+ * @author ljq
+ *
+ */
 public class Ghstore {
     private Integer id;
 

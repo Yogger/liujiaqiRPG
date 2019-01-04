@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.User;
 import rpg.pojo.UserExample;
-
+/**
+ * Mybatis的用户表配置接口
+ * @author ljq
+ *
+ */
 public interface UserMapper {
     int countByExample(UserExample example);
 

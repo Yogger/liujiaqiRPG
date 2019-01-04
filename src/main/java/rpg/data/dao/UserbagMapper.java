@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Userbag;
 import rpg.pojo.UserbagExample;
-
+/**
+ * Mybatis的用户背包表配置接口
+ * @author ljq
+ *
+ */
 public interface UserbagMapper {
     int countByExample(UserbagExample example);
 

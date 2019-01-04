@@ -31,13 +31,13 @@ public class FriendDispatch {
 
 	public void friend(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 3 && msg[1].equals("add")) {
+		if (msg.length == 3 && "add".equals(msg[1])) {
 			addFriend(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("showsq")) {
+		} else if (msg.length == 2 && "showsq".equals(msg[1])) {
 			showsq(user, ch, group, msg);
-		} else if (msg.length == 2 && msg[1].equals("show")) {
+		} else if (msg.length == 2 && "show".equals(msg[1])) {
 			show(user, ch, group, msg);
-		} else if (msg.length == 3 && msg[1].equals("accept")) {
+		} else if (msg.length == 3 && "accept".equals(msg[1])) {
 			accept(user, ch, group, msg);
 		}
 	}

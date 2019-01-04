@@ -47,7 +47,7 @@ public class CopyDispatch {
 				bossidList.add(Integer.valueOf(bossid));
 			}
 			scene.setBossid(bossidList);
-			HashMap<Integer, Integer> hashMap = new HashMap<>();
+			HashMap<Integer, Integer> hashMap = new HashMap<>(500);
 			String[] split2 = e.elementText("struct").split(",");
 			for (String string : split2) {
 				String[] split3 = string.split(":");

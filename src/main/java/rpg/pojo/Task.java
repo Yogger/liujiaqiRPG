@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**任务类
+ * @author ljq
+ *
+ */
 public class Task {
 	private int id;
 	private String name;

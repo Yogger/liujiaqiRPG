@@ -18,6 +18,10 @@ import rpg.task.TaskManage;
 import rpg.util.SendMsg;
 import rpg.util.UserService;
 
+/**pk处理逻辑
+ * @author ljq
+ *
+ */
 @Component
 public class PkDispatch {
 

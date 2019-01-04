@@ -35,18 +35,18 @@ public class JyDispatch {
 	public void jy(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		// 接受jy请求 指令：jy yes 交易号
-		if (msg[1].equals("yes") && msg.length > 1) {
+		if ("yes".equals(msg[1]) && msg.length > 1) {
 			acceptJy(user, ch, group, msg);
 		}
 		// 拒绝jy请求 指令：jy no 交易号
-		else if (msg[1].equals("no") && msg.length > 1) {
+		else if ("no".equals(msg[1]) && msg.length > 1) {
 		}
 		// 发送jy请求 指令：jy 用户
-		else if (msg.length == 2 && !msg[1].equals("esc")) {
+		else if (msg.length == 2 && !"esc".equals(msg[1])) {
 			sendJy(user, ch, group, msg);
 		}
 		// 取消交易请求
-		else if (msg.length == 2 && msg[1].equals("esc")) {
+		else if (msg.length == 2 && "esc".equals(msg[1])) {
 			lock.lock();
 			try {
 				user.getAndSetjySendFlag(user, 0);
@@ -66,7 +66,7 @@ public class JyDispatch {
 
 	public void jyProcess(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		if (msg.length == 1 && msg[0].equals("esc")) {
+		if (msg.length == 1 && "esc".equals(msg[0])) {
 			lock1.lock();
 			try {
 				user.getAndSetjyFlag(user, 0);
@@ -87,7 +87,7 @@ public class JyDispatch {
 			} finally {
 				lock1.unlock();
 			}
-		} else if (msg.length == 1 && msg[0].equals("y") && user.getJyFlag() == 2) {
+		} else if (msg.length == 1 && "y".equals(msg[0]) && user.getJyFlag() == 2) {
 			lock1.lock();
 			try {
 				Jy jy = IOsession.jyMap.get(user.getJyId());
@@ -123,7 +123,7 @@ public class JyDispatch {
 		}
 
 		else if (msg.length == 2 && user.getJyFlag() == 1) {
-			if (!msg[0].equals("0")) {
+			if (!"0".equals(msg[0])) {
 				List<Userbag> list = IOsession.userBagMp.get(user);
 				boolean flag = false;
 				for (Userbag userbag : list) {
@@ -138,14 +138,14 @@ public class JyDispatch {
 							ConcurrentHashMap<User, Userbag> map = jy.getJycontentMap();
 							ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
 							if (map == null) {
-								ConcurrentHashMap<User, Userbag> jycontentMap = new ConcurrentHashMap<>();
+								ConcurrentHashMap<User, Userbag> jycontentMap = new ConcurrentHashMap<>(500);
 								jycontentMap.put(user, userbag);
 								jy.setJycontentMap(jycontentMap);
 							} else {
 								map.put(user, userbag);
 							}
 							if (jyMoney == null) {
-								ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>();
+								ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
 								concurrentHashMap.put(user, Integer.valueOf(msg[1]));
 								jy.setJyMoney(concurrentHashMap);
 							} else {
@@ -180,7 +180,7 @@ public class JyDispatch {
 					// 存储交易内容
 					ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
 					if (jyMoney == null) {
-						ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>();
+						ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
 						concurrentHashMap.put(user, Integer.valueOf(msg[1]));
 						jy.setJyMoney(concurrentHashMap);
 					} else {

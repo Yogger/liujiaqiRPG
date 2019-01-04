@@ -6,6 +6,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 
+/**
+ * 配置netty客户端
+ * @author ljq
+ *
+ */
 public class ClientIniter extends ChannelInitializer<SocketChannel> {
 
 	@Override

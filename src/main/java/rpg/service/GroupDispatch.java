@@ -25,14 +25,14 @@ public class GroupDispatch {
 	public void group(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
 		// 接受组队请求 指令：group yes 用户
-		if (msg[1].equals("yes")&&msg.length>1) {
+		if ("yes".equals(msg[1])&&msg.length>1) {
 			groupYes(user, ch, group, msgR);
 		}
 		// 拒绝组队请求 指令：group no 用户
-		else if (msg[1].equals("no")&&msg.length>1) {
+		else if ("no".equals(msg[1])&&msg.length>1) {
 			groupNo(user, ch, group, msgR);
 		} 
-		else if(msg[1].equals("div")&&msg.length>1) {
+		else if("div".equals(msg[1])&&msg.length>1) {
 			groupDiv(user,ch,group,msgR);
 		}
 		else {
@@ -97,8 +97,9 @@ public class GroupDispatch {
 			SendMsg.send("队长" + group2.getUser().getNickname(),ch);
 			SendMsg.send("队员：",ch);
 			for (User user2 : list) {
-				if(group2.getUser()!=user2)
-				SendMsg.send(user2.getNickname() + " ",ch);
+				if(group2.getUser()!=user2) {
+					SendMsg.send(user2.getNickname() + " ",ch);
+				}
 			}
 		} else {
 			SendMsg.send("不存在队伍",ch);

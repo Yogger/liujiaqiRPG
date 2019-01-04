@@ -9,6 +9,11 @@ import rpg.pojo.User;
 import rpg.session.IOsession;
 import rpg.skill.SkillList;
 
+/**
+ * 离线处理线程
+ * @author ljq
+ *
+ */
 public class offineFlagRefresh implements Runnable {
 	
 	private User user;

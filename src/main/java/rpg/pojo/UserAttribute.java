@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**用户属性类
+ * @author ljq
+ *
+ */
 public class UserAttribute {
 	private int ack;
 	private int def;

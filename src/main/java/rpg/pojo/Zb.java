@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**装备类
+ * @author ljq
+ *
+ */
 public class Zb {
 	private int id;
 	private String name;

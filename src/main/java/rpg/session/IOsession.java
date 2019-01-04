@@ -6,8 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import io.netty.channel.Channel;
 import rpg.pojo.BossScene;
@@ -44,7 +49,10 @@ public class IOsession {
 	// 攻击的怪物
 	public static HashMap<SocketAddress, List<Monster>> monsterMp = new HashMap<SocketAddress, List<Monster>>();
 	// 怪物线程池
-	public static ExecutorService monsterThreadPool = Executors.newCachedThreadPool();
+//	public static ExecutorService monsterThreadPool = Executors.newCachedThreadPool();
+	static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("怪物线程").build();
+	public static ExecutorService monsterThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L,
+			TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), namedThreadFactory);
 	// 药品关系
 	public static HashMap<Integer, Yaopin> yaopinMp = new HashMap<Integer, Yaopin>();
 	// buff关系
@@ -61,14 +69,14 @@ public class IOsession {
 	public static HashMap<User, List<Userbag>> userBagMp = new HashMap<User, List<Userbag>>();
 	// 用户装备
 	public static HashMap<User, List<Userzb>> userZbMp = new HashMap<User, List<Userzb>>();
-	//背包锁
+	// 背包锁
 	public static ReentrantLock lock = new ReentrantLock();
 	// 存储队伍信息
 	public static HashMap<String, Group> userGroupMp = new HashMap<String, Group>();
 	// 存储用户副本关系
 	public static HashMap<String, BossScene> userBossMp = new HashMap<String, BossScene>();
 	// 商店
-	public static final Store store = new Store();
+	public static final Store STORE_SYSTEM = new Store();
 	// 用户邮件
 	public static HashMap<String, ArrayList<EmailRpg>> alluserEmail = new HashMap<String, ArrayList<EmailRpg>>();
 	// 交易ID映射交易类
@@ -83,8 +91,8 @@ public class IOsession {
 	public static HashMap<Integer, HashMap<String, String>> ghsqMp = new HashMap<Integer, HashMap<String, String>>();
 	// 存储任务表
 	public static HashMap<Integer, Task> taskMp = new HashMap<Integer, Task>();
-	//存儲等級表
+	// 存儲等級表
 	public static HashMap<Integer, Level> levelMp = new HashMap<Integer, Level>();
-	//存储好友申请信息
+	// 存储好友申请信息
 	public static HashMap<String, List<String>> friendMp = new HashMap<String, List<String>>();
 }

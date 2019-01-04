@@ -69,14 +69,15 @@ public class Regist {
 			Userskill userskill2 = new Userskill();
 			userskill2.setSkill(1);
 			userskill2.setUsername(username);
-			if (roleid == 1)
+			if (roleid == 1) {
 				userskill.setSkill(3);
-			else if (roleid == 2)
+			} else if (roleid == 2) {
 				userskill.setSkill(5);
-			else if (roleid == 3)
+			} else if (roleid == 3) {
 				userskill.setSkill(6);
-			else if (roleid == 4)
+			} else if (roleid == 4) {
 				userskill.setSkill(7);
+			}
 			userskillMapper.insert(userskill);
 			userskillMapper.insert(userskill2);
 			Userzb userzb = new Userzb();

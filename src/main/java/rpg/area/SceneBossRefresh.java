@@ -23,6 +23,11 @@ import rpg.util.RpgUtil;
 import rpg.util.SendMsg;
 import rpg.util.UserService;
 
+/**
+ *场景Boss线程 
+ * @author ljq
+ *
+ */
 public class SceneBossRefresh implements Runnable {
 
 	private UserService userService;
@@ -169,9 +174,10 @@ public class SceneBossRefresh implements Runnable {
 												List<User> list = group2.getList();
 												for (User user2 : list) {
 													Channel channel = IOsession.userchMp.get(user2);
-													if (channel != ch1)
+													if (channel != ch1) {
 														SendMsg.send(user3.getNickname() + "已被打死，副本挑战失败，你已被传送出副本",
 																channel);
+													}
 													IOsession.ackStatus.put(channel.remoteAddress(), 0);
 												}
 											}
@@ -193,8 +199,9 @@ public class SceneBossRefresh implements Runnable {
 											for (User user2 : list2) {
 												Channel channel = IOsession.userchMp.get(user2);
 												int monsterAck = monster.getAck() - attribute.getDef();
-												if (monsterAck <= 0)
+												if (monsterAck <= 0) {
 													monsterAck = 1;
+												}
 												int hp = user2.getHp() - monsterAck;
 												// 血量满足
 												if (hp > 0) {
@@ -208,10 +215,11 @@ public class SceneBossRefresh implements Runnable {
 														List<User> list = group2.getList();
 														for (User user3 : list) {
 															Channel channel1 = IOsession.userchMp.get(user3);
-															if (channel1 != ch1)
+															if (channel1 != ch1) {
 																SendMsg.send(
 																		user2.getNickname() + "已被打死，副本挑战失败，你已被传送出副本",
 																		channel1);
+															}
 															IOsession.ackStatus.put(channel1.remoteAddress(), 0);
 														}
 													}
@@ -333,8 +341,9 @@ public class SceneBossRefresh implements Runnable {
 						}
 					}
 				}
-				if (exitFlag)
+				if (exitFlag) {
 					break;
+				}
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {

@@ -9,6 +9,11 @@ import rpg.pojo.User;
 import rpg.session.IOsession;
 import rpg.util.SendMsg;
 
+/**
+ * 玩家的各种Buff线程
+ * @author ljq
+ *
+ */
 public class Refresh implements Runnable {
 
 	@Override

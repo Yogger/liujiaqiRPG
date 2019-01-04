@@ -73,7 +73,7 @@ public class AckBossDispatch {
 			ackFirst(user, ch, group, msg, id, nickname, list, monsterList, bossScene);
 		}
 		// 转换攻击目标
-		else if (msg.length == 2 && msg[0].equals("a")) {
+		else if (msg.length == 2 && "a".equals(msg[0])) {
 			List<Monster> list2 = IOsession.monsterMp.get(ch.remoteAddress());
 			int index = -1;
 			for (int i = 0; i < list2.size(); i++) {
@@ -132,7 +132,7 @@ public class AckBossDispatch {
 										if (millis - lastmillis >= skill.getCd()) {
 											// 存储上次使用技能时间
 											long currentTimeMillis = System.currentTimeMillis();
-											HashMap<String, Long> curSkill = new HashMap<String, Long>();
+											HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 											curSkill.put(skillId, currentTimeMillis);
 											SkillList.cdMp.put(user, curSkill);
 
@@ -304,9 +304,10 @@ public class AckBossDispatch {
 															}
 														}
 													} else {
-														if (index == 0)
+														if (index == 0) {
 															SendMsg.send("使用了" + skill.getName() + "-蓝量消耗"
 																	+ skill.getMp() + "-剩余" + user.getMp(), ch);
+														}
 														SendMsg.send("攻击了" + monster.getName() + "-造成" + hurt
 																+ "点伤害-怪物血量" + monster.getHp(), ch);
 														// 损耗装备耐久度
@@ -315,8 +316,9 @@ public class AckBossDispatch {
 														}
 													}
 													// break;
-													if (skill.getId() != 6)
+													if (skill.getId() != 6) {
 														break;
+													}
 												}
 											}
 											break;
@@ -330,7 +332,7 @@ public class AckBossDispatch {
 									else {
 										// 存储上次使用技能时间
 										long currentTimeMillis = System.currentTimeMillis();
-										HashMap<String, Long> curSkill = new HashMap<String, Long>();
+										HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 										curSkill.put(skillId, currentTimeMillis);
 										SkillList.cdMp.put(user, curSkill);
 										// SendMsg.send("使用了" + skill.getName());
@@ -495,9 +497,10 @@ public class AckBossDispatch {
 														}
 													}
 												} else {
-													if (index == 0)
+													if (index == 0) {
 														SendMsg.send("使用了" + skill.getName() + "-蓝量消耗" + skill.getMp()
 																+ "-剩余" + user.getMp(), ch);
+													}
 													SendMsg.send("攻击了" + monster.getName() + "-造成" + hurt + "点伤害-怪物血量"
 															+ monster.getHp(), ch);
 													// 损耗装备耐久度
@@ -506,8 +509,9 @@ public class AckBossDispatch {
 													}
 												}
 												// break;
-												if (skill.getId() != 6)
+												if (skill.getId() != 6) {
 													break;
+												}
 											}
 										}
 									}
@@ -582,7 +586,7 @@ public class AckBossDispatch {
 						if (skill.getMp() <= user.getMp()) {
 							// 存储上次使用技能时间
 							long currentTimeMillis = System.currentTimeMillis();
-							HashMap<String, Long> curSkill = new HashMap<String, Long>();
+							HashMap<String, Long> curSkill = new HashMap<String, Long>(500);
 							curSkill.put(skillId, currentTimeMillis);
 							SkillList.cdMp.put(user, curSkill);
 

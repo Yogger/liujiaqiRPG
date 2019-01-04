@@ -1,5 +1,9 @@
 package rpg.pojo;
 
+/**药品类
+ * @author ljq
+ *
+ */
 public class Yaopin {
 	private int id;
 	private String name;

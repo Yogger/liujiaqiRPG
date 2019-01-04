@@ -16,42 +16,46 @@ import rpg.task.TaskManage;
 import rpg.util.RpgUtil;
 import rpg.util.SendMsg;
 
+/**商店处理逻辑
+ * @author ljq
+ *
+ */
 @Component
 public class StoreDispatch {
 	public void store(User user, Channel ch, ChannelGroup group, String msgR) {
 		String[] msg = msgR.split("\\s+");
-		Store store = IOsession.store;
+		Store store = IOsession.STORE_SYSTEM;
 		HashMap<Integer, Yaopin> yaopinMap = store.getYaopinMap();
 		HashMap<Integer, Zb> zbMap = store.getZbMap();
 		if (msg.length > 2) {
-			if (msg[1].equals("buy")) {
+			if ("buy".equals(msg[1])) {
 				if (StringUtils.isNumeric(msg[2])) {
 					if (zbMap.get(Integer.valueOf(msg[2])) != null) {
 						Zb zb = zbMap.get(Integer.valueOf(msg[2]));
 						if (zb.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - zb.getPrice());
 							RpgUtil.putZb(user, zb);
-							SendMsg.send("购买" + zb.getName() + "成功",ch);
+							SendMsg.send("购买" + zb.getName() + "成功", ch);
 							TaskManage.checkTaskCompleteBytaskidWithzb(user, 4, zb);
 						} else {
-							SendMsg.send("金币不足，购买失败",ch);
+							SendMsg.send("金币不足，购买失败", ch);
 						}
 					} else if (yaopinMap.get(Integer.valueOf(msg[2])) != null) {
 						Yaopin yaopin = yaopinMap.get(Integer.valueOf(msg[2]));
 						if (yaopin.getPrice() < user.getMoney()) {
 							user.setMoney(user.getMoney() - yaopin.getPrice());
 							RpgUtil.putYaopin(user, yaopin);
-							SendMsg.send("购买" + yaopin.getName() + "成功",ch);
+							SendMsg.send("购买" + yaopin.getName() + "成功", ch);
 						} else {
-							SendMsg.send("金币不足，购买失败",ch);
+							SendMsg.send("金币不足，购买失败", ch);
 						}
 					} else {
-						SendMsg.send("物品不存在",ch);
+						SendMsg.send("物品不存在", ch);
 					}
 				} else {
-					SendMsg.send("指令错误",ch);
+					SendMsg.send("指令错误", ch);
 				}
-			} else if (msg[1].equals("sell")) {
+			} else if ("sell".equals(msg[1])) {
 
 			}
 		} else {
@@ -75,9 +79,9 @@ public class StoreDispatch {
 				for (Yaopin yaopin : yaopinMap.values()) {
 					word += "编号:" + yaopin.getId() + "-名字:" + yaopin.getName() + "-价钱:" + yaopin.getPrice();
 				}
-				SendMsg.send(word,ch);
+				SendMsg.send(word, ch);
 			} else {
-				SendMsg.send("指令错误",ch);
+				SendMsg.send("指令错误", ch);
 			}
 		}
 	}

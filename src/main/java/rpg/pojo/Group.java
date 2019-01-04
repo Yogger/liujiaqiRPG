@@ -2,6 +2,10 @@ package rpg.pojo;
 
 import java.util.List;
 
+/**队伍类
+ * @author ljq
+ *
+ */
 public class Group {
 	private String id;
 	private User user;

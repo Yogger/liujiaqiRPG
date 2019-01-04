@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
 import rpg.pojo.User;
 import rpg.pojo.UserAttribute;
 import rpg.session.IOsession;
@@ -19,6 +20,7 @@ import rpg.util.SendMsg;
  *
  */
 @Component("loginDispatch")
+@Slf4j
 public class LoginDispatch {
 	@Autowired
 	private Login login;
@@ -59,16 +61,18 @@ public class LoginDispatch {
 //				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 3000, TimeUnit.MILLISECONDS);
 //				ch.writeAndFlush("登陆成功，欢迎" + user.getNickname() + "进入游戏" + "\n");
 					String roleName = "";
-					if (user.getRoletype() == 1)
+					if (user.getRoletype() == 1) {
 						roleName = "战士";
-					else if (user.getRoletype() == 2)
+					} else if (user.getRoletype() == 2) {
 						roleName = "牧师";
-					else if (user.getRoletype() == 3)
+					} else if (user.getRoletype() == 3) {
 						roleName = "法师";
-					else if (user.getRoletype() == 4)
+					} else if (user.getRoletype() == 4) {
 						roleName = "召唤师";
+					}
 					SendMsg.send("000角色名-" + user.getNickname() + "-职业-" + roleName, ch);
 					SendMsg.send("登陆成功，欢迎" + user.getNickname() + "进入游戏", ch);
+					log.info("登陆游戏");
 				} finally {
 					lock.unlock();
 				}

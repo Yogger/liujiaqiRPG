@@ -46,11 +46,13 @@ public class Login {
 		Criteria criteria = example.createCriteria();
 		criteria.andUsernameEqualTo(username);
 		List<Account> list = accountMapper.selectByExample(example);
-		if (list == null || list.size() == 0)
+		if (list == null || list.size() == 0) {
 			return null;
+		}
 		Account account = list.get(0);
-		if (!account.getPsw().equals(psw))
+		if (!account.getPsw().equals(psw)) {
 			return null;
+		}
 		Integer id = account.getId();
 		User user = userMapper.selectByPrimaryKey(id);
 		user.setLevel(1);
@@ -73,21 +75,23 @@ public class Login {
 		List<Userzb> userZbList = userzbMapper.selectByExample(example1);
 		IOsession.userZbMp.put(user, userZbList);
 		// 加载任务
-		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>();
-		int cout =1;
-		for(int i=1;i<=12;i++) {
+		Map<Integer, TaskProcess> doingTask = new ConcurrentHashMap<Integer, TaskProcess>(500);
+		int cout = 1;
+		for (int i = 1; i <= 12; i++) {
 			Task task = IOsession.taskMp.get(i);
 			TaskProcess process = new TaskProcess();
 			process.setId(cout++);
 			process.setName(task.getName());
 			process.setNum(0);
-			if(i==2) process.setNum(1);
+			if (i == 2) {
+				process.setNum(1);
+			}
 			process.setReqid(task.getReqid());
 			process.setTaskid(i);
 			doingTask.put(i, process);
 		}
 		user.setDoingTask(doingTask);
-		Map<Integer, TaskProcess> finishTask=new ConcurrentHashMap<Integer, TaskProcess>();
+		Map<Integer, TaskProcess> finishTask = new ConcurrentHashMap<Integer, TaskProcess>(500);
 		user.setFinishTask(finishTask);
 	}
 }

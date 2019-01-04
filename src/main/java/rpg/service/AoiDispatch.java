@@ -47,8 +47,9 @@ public class AoiDispatch {
 			if (channel != ch) {
 				if (IOsession.mp.get(channel.remoteAddress()) != null) {
 					User user2 = IOsession.mp.get(channel.remoteAddress());
-					if (user2.getAreaid() == user.getAreaid())// 判断是否在一个场景
+					if (user2.getAreaid() == user.getAreaid()) {
 						SendMsg.send("其他角色:" + user2.getNickname(), ch);
+					}
 				}
 			}
 		}

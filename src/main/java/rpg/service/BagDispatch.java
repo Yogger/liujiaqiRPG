@@ -17,6 +17,10 @@ import rpg.session.IOsession;
 import rpg.task.TaskManage;
 import rpg.util.SendMsg;
 
+/**背包处理逻辑
+ * @author ljq
+ *
+ */
 @Component
 public class BagDispatch {
 

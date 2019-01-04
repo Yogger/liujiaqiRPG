@@ -14,6 +14,10 @@ import rpg.pojo.User;
 import rpg.skill.SkillList;
 import rpg.util.SendMsg;
 
+/**离线处理逻辑
+ * @author ljq
+ *
+ */
 @Component("offineDispatch")
 public class OffineDispatch {
 	

@@ -10,6 +10,10 @@ import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
+/**服务端配置
+ * @author ljq
+ *
+ */
 @Component("serverIniterHandler")
 public class ServerIniterHandler extends ChannelInitializer<SocketChannel> {
 
@@ -23,7 +27,7 @@ public class ServerIniterHandler extends ChannelInitializer<SocketChannel> {
 		pipeline.addLast(new StringDecoder());
 		// pipeline.addLast("docode",new StringDecoder(Charset.forName("GBK")));
 		// pipeline.addLast("encode",new StringEncoder(Charset.forName("GBK")));
-		pipeline.addLast("idleStateHandler", new IdleStateHandler(600, 0, 0));
+		pipeline.addLast("idleStateHandler", new IdleStateHandler(6000, 0, 0));
 		pipeline.addLast("chat", rpgServerHandler);
 
 	}

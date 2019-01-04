@@ -4,7 +4,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import rpg.pojo.Userfriend;
 import rpg.pojo.UserfriendExample;
-
+/**
+ * Mybatis的用户好友表配置接口
+ * @author ljq
+ *
+ */
 public interface UserfriendMapper {
     int countByExample(UserfriendExample example);
 

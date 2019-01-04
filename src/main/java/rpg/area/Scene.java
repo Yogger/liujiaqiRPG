@@ -5,6 +5,11 @@ import java.util.LinkedList;
 import rpg.pojo.Monster;
 import rpg.pojo.Npc;
 
+/**
+ *场景类 
+ * @author ljq
+ *
+ */
 public class Scene {
 	public int id;
 	public String name;

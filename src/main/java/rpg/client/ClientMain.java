@@ -12,6 +12,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import rpg.util.SendMsg;
 
+/**
+ * 客户端处理类
+ * @author ljq
+ *
+ */
 public class ClientMain {
 	private String host;
 	private int port;
