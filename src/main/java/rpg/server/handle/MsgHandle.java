@@ -40,6 +40,9 @@ import rpg.util.SendMsg;
  */
 @Component
 public class MsgHandle {
+	private static final int JY_FLAG = 2;
+	private static final int ACK_BOSS_FLAG = 2;
+	private static final int ACK_MONSTER_FLAG = 1;
 	@Autowired
 	private GhDispatch ghDIspatch;
 	@Autowired
@@ -202,15 +205,15 @@ public class MsgHandle {
 			break;
 		default:
 			// 普通战斗状态
-			if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
+			if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == ACK_MONSTER_FLAG) {
 				ackDispatch.ack(user, ch, userGroup, arg1);
 			}
 			// 副本战斗状态
-			else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
+			else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == ACK_BOSS_FLAG) {
 				ackBossDispatch.ack(user, ch, userGroup, arg1);
 			}
 			// 交易状态
-			else if (user.getJyFlag() == 1 || user.getJyFlag() == 2) {
+			else if (user.getJyFlag() == 1 || user.getJyFlag() == JY_FLAG) {
 				jyDispatch.jyProcess(user, ch, userGroup, arg1);
 			}
 			// 普通状态

@@ -147,7 +147,7 @@ public class GhDispatch {
 	}
 
 	public void putZb(User user, Channel ch, String[] msg, Ghstore ghstore, GhstoreExample example2) {
-		if (StringUtils.isNumeric(msg[4])) {
+		if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_4.getValue()])) {
 			Integer num = Integer.valueOf(msg[4]);
 			if (num > 0) {
 				Yaopin yaopin = IOsession.yaopinMp.get(ghstore.getWpid());
@@ -171,8 +171,8 @@ public class GhDispatch {
 	}
 
 	public void putYaoPin(User user, Channel ch, String[] msg, Ghstore ghstore, GhstoreExample example2) {
-		if (StringUtils.isNumeric(msg[4])) {
-			if (Integer.valueOf(msg[4]) == 1) {
+		if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_4.getValue()])) {
+			if (Integer.valueOf(msg[MsgSize.MSG_INDEX_4.getValue()]) == 1) {
 				Userbag userbag = new Userbag();
 				userbag.setId(ghstore.getGzid());
 				userbag.setUsername(user.getNickname());
@@ -250,7 +250,7 @@ public class GhDispatch {
 	}
 
 	public void zbPut(User user, Channel ch, String[] msg, List<Userbag> list, Userbag userbag) {
-		if (StringUtils.isNumeric(msg[4])) {
+		if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_4.getValue()])) {
 			Integer num = Integer.valueOf(msg[4]);
 			if (num > 0) {
 				GhstoreExample example = new GhstoreExample();
@@ -302,8 +302,8 @@ public class GhDispatch {
 	}
 
 	public void yaopinPut(User user, Channel ch, String[] msg, List<Userbag> list, Userbag userbag) {
-		if (StringUtils.isNumeric(msg[4])) {
-			if (Integer.valueOf(msg[4]) == 1) {
+		if (StringUtils.isNumeric(msg[MsgSize.MSG_INDEX_4.getValue()])) {
+			if (Integer.valueOf(msg[MsgSize.MSG_INDEX_4.getValue()]) == 1) {
 				Ghstore ghstore = new Ghstore();
 				ghstore.setId(user.getGhId());
 				ghstore.setGzid(userbag.getId());
