@@ -47,7 +47,7 @@ public class AoiDispatch {
 			if (channel != ch) {
 				if (IOsession.mp.get(channel.remoteAddress()) != null) {
 					User user2 = IOsession.mp.get(channel.remoteAddress());
-					if (user2.getAreaid() == user.getAreaid()) {
+					if (user2.getAreaid() .equals(user.getAreaid()) ) {
 						SendMsg.send("其他角色:" + user2.getNickname(), ch);
 					}
 				}

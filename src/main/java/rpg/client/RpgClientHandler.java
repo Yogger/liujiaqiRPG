@@ -8,11 +8,13 @@ import rpg.util.SendMsg;
 
 /**
  * 客户端处理业务逻辑
+ * 
  * @author ljq
  *
  */
 public class RpgClientHandler extends ChannelHandlerAdapter {
-	
+
+	private static final String NULL = "";
 	private static final int MSG_MAX_LENGTH = 3;
 
 	@Override
@@ -26,25 +28,25 @@ public class RpgClientHandler extends ChannelHandlerAdapter {
 				String msg = msg1.substring(0, 3);
 				if (MsgType.USER_BUFF_MSG.getValue().equals(msg)) {
 					String string = msg1.substring(3);
-					Jm.printMsg(string, Jm.jTextArea2);
+					Jm.printMsg(string, ClientMain.jm1.jTextArea2);
 				} else if (MsgType.MONSTER_ACK_MSG.getValue().equals(msg)) {
 					String string = msg1.substring(3);
-					Jm.printMsg(string, Jm.jTextArea3);
+					Jm.printMsg(string, ClientMain.jm1.jTextArea3);
 					System.out.println(string);
 				} else if (MsgType.MONSTER_BUFF_MSG.getValue().equals(msg)) {
 					String string = msg1.substring(3);
-					Jm.printMsg(string, Jm.jTextArea4);
+					Jm.printMsg(string, ClientMain.jm1.jTextArea4);
 					System.out.println(string);
 				} else if (MsgType.LOGIN_SUCCES_MSG.getValue().equals(msg)) {
 					String string = msg1.substring(3);
 					ClientMain.jm1.setTitle(string);
 				} else {
-					Jm.printMsg(msg1, Jm.jTextArea);
+					Jm.printMsg(msg1, ClientMain.jm1.jTextArea);
 					System.out.println(msg1);
 				}
 			} else {
-				if (msg1 != "") {
-					Jm.printMsg(msg1, Jm.jTextArea);
+				if (!NULL.equals(msg1)) {
+					Jm.printMsg(msg1, ClientMain.jm1.jTextArea);
 					System.out.println(msg1);
 				}
 

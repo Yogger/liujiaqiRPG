@@ -5,9 +5,21 @@ package rpg.configure;
  *
  */
 public enum RoleType {
+	/**
+	 * 展示
+	 */
 	ZHANSHI(1),
+	/**
+	 * 牧师
+	 */
 	MUSHI(2),
+	/**
+	 * 法师
+	 */
 	FASHI(3),
+	/**
+	 * 召唤师
+	 */
 	ZHAOHUANSHI(4);
 	private final int value;
 

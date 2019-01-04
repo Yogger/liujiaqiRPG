@@ -92,112 +92,129 @@ public class JyDispatch {
 				lock1.unlock();
 			}
 		} else if (msg.length == 1 && InstructionsType.Y.getValue().equals(msg[0]) && user.getJyFlag() == JY_FLAG) {
-			lock1.lock();
-			try {
-				Jy jy = IOsession.jyMap.get(user.getJyId());
-				int acceptFlag = jy.getAcceptFlag();
-				if (acceptFlag == 0) {
-					jy.setAcceptFlag(1);
-					User sendUser = jy.getSendUser();
-					if (sendUser.equals(user)) {
-						sendUser = jy.getAcceptUser();
-					}
-					SendMsg.send("你已确认了",ch);
-					Channel channel = IOsession.userchMp.get(sendUser);
-					SendMsg.send("对方已确认",channel);
-				} else {
-					User acceptUser = jy.getAcceptUser();
-					User sendUser = jy.getSendUser();
-					exchange(jy, acceptUser, sendUser);
-					exchange(jy, sendUser, acceptUser);
-					acceptUser.getAndSetjyFlag(acceptUser, 0);
-					sendUser.getAndSetjyFlag(sendUser, 0);
-					jy=null;
-					IOsession.jyMap.remove(user.getJyId());
-					Channel channel = IOsession.userchMp.get(sendUser);
-					SendMsg.send("交易成功",channel);
-					Channel channel2 = IOsession.userchMp.get(acceptUser);
-					SendMsg.send("交易成功",channel2);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				lock1.unlock();
-			}
+			//确认交易
+			confirmJy(user, ch);
 		}
-
 		else if (msg.length == MsgSize.MAX_MSG_SIZE_2.getValue() && user.getJyFlag() == 1) {
-			if (!NULL_GOOD.equals(msg[0])) {
-				List<Userbag> list = IOsession.userBagMp.get(user);
-				boolean flag = false;
-				for (Userbag userbag : list) {
-					if (userbag.getId().equals(msg[0])) {
-						Jy jy = IOsession.jyMap.get(user.getJyId());
-						if (jy != null) {
-							User sendUser = jy.getSendUser();
-							if (sendUser.equals(user)) {
-								sendUser = jy.getAcceptUser();
-							}
-							// 存储交易内容
-							ConcurrentHashMap<User, Userbag> map = jy.getJycontentMap();
-							ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
-							if (map == null) {
-								ConcurrentHashMap<User, Userbag> jycontentMap = new ConcurrentHashMap<>(500);
-								jycontentMap.put(user, userbag);
-								jy.setJycontentMap(jycontentMap);
-							} else {
-								map.put(user, userbag);
-							}
-							if (jyMoney == null) {
-								ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
-								concurrentHashMap.put(user, Integer.valueOf(msg[1]));
-								jy.setJyMoney(concurrentHashMap);
-							} else {
-								jyMoney.put(user, Integer.valueOf(msg[1]));
-							}
-							// 改变状态
-							user.getAndSetjyFlag(user, 2);
-							Channel channel = IOsession.userchMp.get(sendUser);
-							if (userbag.getIsadd() == 0) {
-								Zb zb = IOsession.zbMp.get(userbag.getGid());
-								SendMsg.send(user.getNickname() + "---装备:" + zb.getName() + "---金币:" + msg[1],channel);
-							} else {
-								Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
-								SendMsg.send(
-										user.getNickname() + "---药品:" + yaopin.getName() + "---金币:" + msg[1],channel);
-							}
-						}
-						flag = true;
-						break;
-					}
-				}
-				if (flag == false) {
-					SendMsg.send("物品不存在，请重新放入",ch);
-				}
-			} else {
-				Jy jy = IOsession.jyMap.get(user.getJyId());
-				if (jy != null) {
-					User sendUser = jy.getSendUser();
-					if (sendUser.equals(user)) {
-						sendUser = jy.getAcceptUser();
-					}
-					// 存储交易内容
-					ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
-					if (jyMoney == null) {
-						ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
-						concurrentHashMap.put(user, Integer.valueOf(msg[1]));
-						jy.setJyMoney(concurrentHashMap);
-					} else {
-						jyMoney.put(user, Integer.valueOf(msg[1]));
-					}
-					// 改变状态
-					user.getAndSetjyFlag(user, 2);
-					Channel channel = IOsession.userchMp.get(sendUser);
-					SendMsg.send(user.getNickname() + "---金币:" + msg[1],channel);
-				}
-			}
+			jyPutGood(user, ch, msg);
 		} else {
 			SendMsg.send("指令错误",ch);
+		}
+	}
+	/**
+	 * 交易中放入物品
+	 * @param user
+	 * @param ch
+	 * @param msg
+	 */
+	public void jyPutGood(User user, Channel ch, String[] msg) {
+		if (!NULL_GOOD.equals(msg[0])) {
+			List<Userbag> list = IOsession.userBagMp.get(user);
+			boolean flag = false;
+			for (Userbag userbag : list) {
+				if (userbag.getId().equals(msg[0])) {
+					Jy jy = IOsession.jyMap.get(user.getJyId());
+					if (jy != null) {
+						User sendUser = jy.getSendUser();
+						if (sendUser.equals(user)) {
+							sendUser = jy.getAcceptUser();
+						}
+						// 存储交易内容
+						ConcurrentHashMap<User, Userbag> map = jy.getJycontentMap();
+						ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
+						if (map == null) {
+							ConcurrentHashMap<User, Userbag> jycontentMap = new ConcurrentHashMap<>(500);
+							jycontentMap.put(user, userbag);
+							jy.setJycontentMap(jycontentMap);
+						} else {
+							map.put(user, userbag);
+						}
+						if (jyMoney == null) {
+							ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
+							concurrentHashMap.put(user, Integer.valueOf(msg[1]));
+							jy.setJyMoney(concurrentHashMap);
+						} else {
+							jyMoney.put(user, Integer.valueOf(msg[1]));
+						}
+						// 改变状态
+						user.getAndSetjyFlag(user, 2);
+						Channel channel = IOsession.userchMp.get(sendUser);
+						if (userbag.getIsadd() == 0) {
+							Zb zb = IOsession.zbMp.get(userbag.getGid());
+							SendMsg.send(user.getNickname() + "---装备:" + zb.getName() + "---金币:" + msg[1],channel);
+						} else {
+							Yaopin yaopin = IOsession.yaopinMp.get(userbag.getGid());
+							SendMsg.send(
+									user.getNickname() + "---药品:" + yaopin.getName() + "---金币:" + msg[1],channel);
+						}
+					}
+					flag = true;
+					break;
+				}
+			}
+			if (flag == false) {
+				SendMsg.send("物品不存在，请重新放入",ch);
+			}
+		} else {
+			Jy jy = IOsession.jyMap.get(user.getJyId());
+			if (jy != null) {
+				User sendUser = jy.getSendUser();
+				if (sendUser.equals(user)) {
+					sendUser = jy.getAcceptUser();
+				}
+				// 存储交易内容
+				ConcurrentHashMap<User, Integer> jyMoney = jy.getJyMoney();
+				if (jyMoney == null) {
+					ConcurrentHashMap<User, Integer> concurrentHashMap = new ConcurrentHashMap<>(500);
+					concurrentHashMap.put(user, Integer.valueOf(msg[1]));
+					jy.setJyMoney(concurrentHashMap);
+				} else {
+					jyMoney.put(user, Integer.valueOf(msg[1]));
+				}
+				// 改变状态
+				user.getAndSetjyFlag(user, 2);
+				Channel channel = IOsession.userchMp.get(sendUser);
+				SendMsg.send(user.getNickname() + "---金币:" + msg[1],channel);
+			}
+		}
+	}
+	/**
+	 * 确认交易
+	 * @param user
+	 * @param ch
+	 */
+	public void confirmJy(User user, Channel ch) {
+		lock1.lock();
+		try {
+			Jy jy = IOsession.jyMap.get(user.getJyId());
+			int acceptFlag = jy.getAcceptFlag();
+			if (acceptFlag == 0) {
+				jy.setAcceptFlag(1);
+				User sendUser = jy.getSendUser();
+				if (sendUser.equals(user)) {
+					sendUser = jy.getAcceptUser();
+				}
+				SendMsg.send("你已确认了",ch);
+				Channel channel = IOsession.userchMp.get(sendUser);
+				SendMsg.send("对方已确认",channel);
+			} else {
+				User acceptUser = jy.getAcceptUser();
+				User sendUser = jy.getSendUser();
+				exchange(jy, acceptUser, sendUser);
+				exchange(jy, sendUser, acceptUser);
+				acceptUser.getAndSetjyFlag(acceptUser, 0);
+				sendUser.getAndSetjyFlag(sendUser, 0);
+				jy=null;
+				IOsession.jyMap.remove(user.getJyId());
+				Channel channel = IOsession.userchMp.get(sendUser);
+				SendMsg.send("交易成功",channel);
+				Channel channel2 = IOsession.userchMp.get(acceptUser);
+				SendMsg.send("交易成功",channel2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			lock1.unlock();
 		}
 	}
 

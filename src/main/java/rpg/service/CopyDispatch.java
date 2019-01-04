@@ -36,25 +36,8 @@ public class CopyDispatch {
 		Document document1 = sr1.read(new File("src\\main\\java\\rpg.conf\\bossScene.xml"));
 		Element root1 = document1.getRootElement();
 		List<Element> elementList1 = root1.elements();
-		for (Element e : elementList1) {
-			scene.setSceneid(Integer.valueOf(e.elementText("sceneid")));
-			scene.setName(e.elementText("name"));
-			scene.setLastedTime(Integer.valueOf(e.elementText("lastedTime")));
-			scene.setLayer(Integer.valueOf(e.elementText("layer")));
-			String[] split = e.elementText("bossid").split(",");
-			ArrayList<Integer> bossidList = new ArrayList<>();
-			for (String bossid : split) {
-				bossidList.add(Integer.valueOf(bossid));
-			}
-			scene.setBossid(bossidList);
-			HashMap<Integer, Integer> hashMap = new HashMap<>(500);
-			String[] split2 = e.elementText("struct").split(",");
-			for (String string : split2) {
-				String[] split3 = string.split(":");
-				hashMap.put(Integer.valueOf(split3[0]), Integer.valueOf(split3[1]));
-			}
-			scene.setStruct(hashMap);
-		}
+		//解析并赋值
+		analysisBossScene(scene, elementList1);
 		// scene.setSceneid(5001);
 		// scene.setName("噩梦之地");
 		scene.setGroupId(user.getGroupId());
@@ -109,6 +92,28 @@ public class CopyDispatch {
 							+ monsterList.get(0).getHp() + "-攻击力:" + monsterList.get(0).getAck(), channel);
 				}
 			}
+		}
+	}
+
+	public void analysisBossScene(BossScene scene, List<Element> elementList1) {
+		for (Element e : elementList1) {
+			scene.setSceneid(Integer.valueOf(e.elementText("sceneid")));
+			scene.setName(e.elementText("name"));
+			scene.setLastedTime(Integer.valueOf(e.elementText("lastedTime")));
+			scene.setLayer(Integer.valueOf(e.elementText("layer")));
+			String[] split = e.elementText("bossid").split(",");
+			ArrayList<Integer> bossidList = new ArrayList<>();
+			for (String bossid : split) {
+				bossidList.add(Integer.valueOf(bossid));
+			}
+			scene.setBossid(bossidList);
+			HashMap<Integer, Integer> hashMap = new HashMap<>(500);
+			String[] split2 = e.elementText("struct").split(",");
+			for (String string : split2) {
+				String[] split3 = string.split(":");
+				hashMap.put(Integer.valueOf(split3[0]), Integer.valueOf(split3[1]));
+			}
+			scene.setStruct(hashMap);
 		}
 	}
 }

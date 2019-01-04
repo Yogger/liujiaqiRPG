@@ -4,6 +4,7 @@ import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -185,108 +186,7 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 					}
 					// 用户已登陆
 					else {
-						boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
-						String[] msg = arg1.split("\\s+");
-						User user = IOsession.mp.get(address);
-						if (msg.length > 0) {
-							switch (msg[0]) {
-							case "f":
-								friendDispatch.friend(user, ch, USER_GROUP, arg1);
-								break;
-							case "pk":
-								pkDispatch.pk(user, ch, USER_GROUP, arg1);
-								break;
-							case "task":
-								taskfunctionDispatch.task(user, ch, USER_GROUP, arg1);
-								break;
-							case "email":
-								chatDispatch.email(user, ch, USER_GROUP, arg1);
-								break;
-							case "showemail":
-								chatDispatch.showEmail(user, ch, USER_GROUP, arg1);
-								break;
-							case "chatall":
-								chatDispatch.chatAll(user, ch, USER_GROUP, arg1);
-								break;
-							case "chat":
-								chatDispatch.chat(user, ch, USER_GROUP, arg1);
-								break;
-							case "store":
-								storeDispatch.store(user, ch, USER_GROUP, arg1);
-								break;
-							case "group":
-								groupDispatch.group(user, ch, USER_GROUP, arg1);
-								break;
-							case "copy":
-								copyDispatch.copy(user, ch, USER_GROUP, arg1);
-								break;
-							case "showgroup":
-								groupDispatch.showgroup(user, ch, USER_GROUP, arg1);
-								break;
-							case "showbag":
-								bagDispatch.showBag(user, ch, USER_GROUP);
-								break;
-							case "use":
-								useGoods.use(user, ch, USER_GROUP, arg1);
-								break;
-							case "showzb":
-								bagDispatch.showZb(user, ch, USER_GROUP);
-								break;
-							case "arrbag":
-								bagDispatch.arrangebag(user, ch, USER_GROUP, arg1);
-								break;
-							case "tkff":
-								bagDispatch.tkffZb(user, ch, USER_GROUP, arg1);
-								break;
-							case "wear":
-								bagDispatch.wearzb(user, ch, USER_GROUP, arg1);
-								break;
-							case "fix":
-								bagDispatch.fix(user, ch, USER_GROUP, arg1);
-								break;
-							default:
-								// 普通战斗状态
-								if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
-									ackDispatch.ack(user, ch, USER_GROUP, arg1);
-								}
-								// 副本战斗状态
-								else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
-									ackBossDispatch.ack(user, ch, USER_GROUP, arg1);
-								}
-								// 交易状态
-								else if (user.getJyFlag() == 1 || user.getJyFlag() == 2) {
-									jyDispatch.jyProcess(user, ch, USER_GROUP, arg1);
-								}
-								// 普通状态
-								else {
-									switch (msg[0]) {
-									case "jy":
-										jyDispatch.jy(user, ch, USER_GROUP, arg1);
-										break;
-									case "gh":
-										ghDIspatch.gh(user, ch, USER_GROUP, arg1);
-										break;
-									case "move":
-										moveDispatch.dispatch(ch, msg, user);
-										break;
-									case "aoi":
-										aoiDispatch.aoi(user, ch, USER_GROUP);
-										break;
-									case "talk":
-										talkDispatch.talk(user, ch, USER_GROUP, arg1);
-										break;
-									case "ack":
-										IOsession.ackStatus.put(address, 1);
-										ackDispatch.ack(user, ch, USER_GROUP, arg1);
-										break;
-									default:
-										SendMsg.send("无效指令",ch);
-										break;
-									}
-								}
-								break;
-							}
-						}
+						loginYesHandle(arg1, ch, address);
 					}
 				}
 				// 其他连接客户
@@ -299,6 +199,111 @@ public class RpgServerHandler extends ChannelHandlerAdapter {
 		// System.out.println("服务端收到心跳");
 		// 只要接受到数据包，则清空超时次数
 		clientOvertimeMap.remove(arg0);
+	}
+
+	public void loginYesHandle(String arg1, Channel ch, SocketAddress address) throws DocumentException {
+		boolean ackstatus = IOsession.ackStatus.containsKey(ch.remoteAddress());
+		String[] msg = arg1.split("\\s+");
+		User user = IOsession.mp.get(address);
+		if (msg.length > 0) {
+			switch (msg[0]) {
+			case "f":
+				friendDispatch.friend(user, ch, USER_GROUP, arg1);
+				break;
+			case "pk":
+				pkDispatch.pk(user, ch, USER_GROUP, arg1);
+				break;
+			case "task":
+				taskfunctionDispatch.task(user, ch, USER_GROUP, arg1);
+				break;
+			case "email":
+				chatDispatch.email(user, ch, USER_GROUP, arg1);
+				break;
+			case "showemail":
+				chatDispatch.showEmail(user, ch, USER_GROUP, arg1);
+				break;
+			case "chatall":
+				chatDispatch.chatAll(user, ch, USER_GROUP, arg1);
+				break;
+			case "chat":
+				chatDispatch.chat(user, ch, USER_GROUP, arg1);
+				break;
+			case "store":
+				storeDispatch.store(user, ch, USER_GROUP, arg1);
+				break;
+			case "group":
+				groupDispatch.group(user, ch, USER_GROUP, arg1);
+				break;
+			case "copy":
+				copyDispatch.copy(user, ch, USER_GROUP, arg1);
+				break;
+			case "showgroup":
+				groupDispatch.showgroup(user, ch, USER_GROUP, arg1);
+				break;
+			case "showbag":
+				bagDispatch.showBag(user, ch, USER_GROUP);
+				break;
+			case "use":
+				useGoods.use(user, ch, USER_GROUP, arg1);
+				break;
+			case "showzb":
+				bagDispatch.showZb(user, ch, USER_GROUP);
+				break;
+			case "arrbag":
+				bagDispatch.arrangebag(user, ch, USER_GROUP, arg1);
+				break;
+			case "tkff":
+				bagDispatch.tkffZb(user, ch, USER_GROUP, arg1);
+				break;
+			case "wear":
+				bagDispatch.wearzb(user, ch, USER_GROUP, arg1);
+				break;
+			case "fix":
+				bagDispatch.fix(user, ch, USER_GROUP, arg1);
+				break;
+			default:
+				// 普通战斗状态
+				if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 1) {
+					ackDispatch.ack(user, ch, USER_GROUP, arg1);
+				}
+				// 副本战斗状态
+				else if (ackstatus && IOsession.ackStatus.get(ch.remoteAddress()) == 2) {
+					ackBossDispatch.ack(user, ch, USER_GROUP, arg1);
+				}
+				// 交易状态
+				else if (user.getJyFlag() == 1 || user.getJyFlag() == 2) {
+					jyDispatch.jyProcess(user, ch, USER_GROUP, arg1);
+				}
+				// 普通状态
+				else {
+					switch (msg[0]) {
+					case "jy":
+						jyDispatch.jy(user, ch, USER_GROUP, arg1);
+						break;
+					case "gh":
+						ghDIspatch.gh(user, ch, USER_GROUP, arg1);
+						break;
+					case "move":
+						moveDispatch.dispatch(ch, msg, user);
+						break;
+					case "aoi":
+						aoiDispatch.aoi(user, ch, USER_GROUP);
+						break;
+					case "talk":
+						talkDispatch.talk(user, ch, USER_GROUP, arg1);
+						break;
+					case "ack":
+						IOsession.ackStatus.put(address, 1);
+						ackDispatch.ack(user, ch, USER_GROUP, arg1);
+						break;
+					default:
+						SendMsg.send("无效指令",ch);
+						break;
+					}
+				}
+				break;
+			}
+		}
 	}
 
 	@Override

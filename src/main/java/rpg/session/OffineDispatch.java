@@ -14,103 +14,104 @@ import rpg.pojo.User;
 import rpg.skill.SkillList;
 import rpg.util.SendMsg;
 
-/**离线处理逻辑
+/**
+ * 离线处理逻辑
+ * 
  * @author ljq
  *
  */
 @Component("offineDispatch")
 public class OffineDispatch {
-	
+
 	public void groupOffine(Channel ch) {
 		User user = IOsession.mp.get(ch.remoteAddress());
-		if(user!=null) {
-		user.setLiveFlag(1);
-		Group group = IOsession.userGroupMp.get(user.getGroupId());
-		if(group!=null) {
-			//回收战斗状态
+		if (user != null) {
+			user.setLiveFlag(1);
+			Group group = IOsession.userGroupMp.get(user.getGroupId());
+			if (group != null) {
+				// 回收战斗状态
 //			Integer integer = IOsession.ackStatus.get(ch.remoteAddress());
 //			if(integer!=null) {
 //				integer=null;
 //				IOsession.ackStatus.remove(ch.remoteAddress());
 //			}
-			//如果是队长
-			if(group.getUser().getNickname().equals(user.getNickname())) {
-				List<User> list = group.getList();
-				if(list.size()==1) {
-					System.out.println("移除前"+list.size());
-					group.setUser(null);
-					list.remove(user);
-					System.out.println("移除后"+list.size());
-				} else {
-				for (User user2 : list) {
-					if(user2!=user) {
-						group.setUser(user2);
+				// 如果是队长
+				if (group.getUser().getNickname().equals(user.getNickname())) {
+					List<User> list = group.getList();
+					if (list.size() == 1) {
+						System.out.println("移除前" + list.size());
+						group.setUser(null);
 						list.remove(user);
+						System.out.println("移除后" + list.size());
+					} else {
+						for (User user2 : list) {
+							if (user2 != user) {
+								group.setUser(user2);
+								list.remove(user);
 //						user.setGroupId(null);
-						for (User user3 : list) {
-							Channel channel = IOsession.userchMp.get(user3);
-							SendMsg.send(user2.getNickname()+"成为队长",channel);
+								for (User user3 : list) {
+									Channel channel = IOsession.userchMp.get(user3);
+									SendMsg.send(user2.getNickname() + "成为队长", channel);
+								}
+								System.out.println("执行");
+								break;
+							}
 						}
-						System.out.println("执行");
-						break;
 					}
 				}
-			}
-			}
-			//不是队长
-			else {
-				List<User> list = group.getList();
-				list.remove(user);
+				// 不是队长
+				else {
+					List<User> list = group.getList();
+					list.remove(user);
 //				user.setGroupId(null);
-				for (User user3 : list) {
-					if(user3!=user) {
-					Channel channel = IOsession.userchMp.get(user3);
-					SendMsg.send(user.getNickname()+"离开队伍",channel);
+					for (User user3 : list) {
+						if (user3 != user) {
+							Channel channel = IOsession.userchMp.get(user3);
+							SendMsg.send(user.getNickname() + "离开队伍", channel);
+						}
 					}
 				}
-			}
-			//移除怪物攻击目标
-			// 获取地图中的怪物
-			BossScene bossScene = IOsession.userBossMp.get(user.getGroupId());
-			if(bossScene!=null) {
-			ArrayList<Monster> monsterList = bossScene.getMonsterList();
-			// 找到场景内怪物
-			for (int i=0;i<monsterList.size();i++) {
-				Monster monster = monsterList.get(i);
-				if(monster!=null) {
-					List<User> userList = monster.getUserList();
-					userList.remove(user);
+				// 移除怪物攻击目标
+				// 获取地图中的怪物
+				BossScene bossScene = IOsession.userBossMp.get(user.getGroupId());
+				if (bossScene != null) {
+					ArrayList<Monster> monsterList = bossScene.getMonsterList();
+					// 找到场景内怪物
+					for (int i = 0; i < monsterList.size(); i++) {
+						Monster monster = monsterList.get(i);
+						if (monster != null) {
+							List<User> userList = monster.getUserList();
+							userList.remove(user);
+						}
+					}
+					IOsession.monsterThreadPool.execute(new OffineFlagRefresh(user, ch, bossScene));
+				} else {
+					recoveryMp(ch, user);
 				}
-			}
-			IOsession.monsterThreadPool.execute(new OffineFlagRefresh(user, ch, bossScene));
 			} else {
-				IOsession.mp.remove(ch.remoteAddress());
-				IOsession.userchMp.remove(user);
-				IOsession.userZbMp.remove(user);
-				SkillList.cdMp.remove(user);
-				IOsession.buffTimeMp.remove(user);
-				IOsession.attMp.remove(user);
-				IOsession.userBagMp.remove(user);
-				IOsession.nameMap.remove(user.getNickname());
-//				HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
-//				map.remove(user.getNickname());
-				user=null;
+				recoveryMp(ch, user);
 			}
-		} else {
-			IOsession.mp.remove(ch.remoteAddress());
-			IOsession.userchMp.remove(user);
-			IOsession.userZbMp.remove(user);
-			SkillList.cdMp.remove(user);
-			IOsession.buffTimeMp.remove(user);
-			IOsession.attMp.remove(user);
-			IOsession.userBagMp.remove(user);
-			IOsession.nameMap.remove(user.getNickname());
-//			HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
-//			map.remove(user.getNickname());
-			user=null;
-		}
 //		user=null;
 //		IOsession.mp.remove(ch.remoteAddress());
 		}
-		}
+	}
+	
+	/**
+	 * 回收所有的map
+	 * @param ch
+	 * @param user
+	 */
+	public void recoveryMp(Channel ch, User user) {
+		IOsession.mp.remove(ch.remoteAddress());
+		IOsession.userchMp.remove(user);
+		IOsession.userZbMp.remove(user);
+		SkillList.cdMp.remove(user);
+		IOsession.buffTimeMp.remove(user);
+		IOsession.attMp.remove(user);
+		IOsession.userBagMp.remove(user);
+		IOsession.nameMap.remove(user.getNickname());
+//			HashMap<String,Ghuser> map = IOsession.ghUserMp.get(user.getGhId());
+//			map.remove(user.getNickname());
+		user = null;
+	}
 }

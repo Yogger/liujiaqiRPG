@@ -33,6 +33,7 @@ import rpg.skill.SkillList;
 
 /**
  * 启动类
+ * 
  * @author ljq
  *
  */
@@ -52,9 +53,8 @@ public class Main {
 		initEmail();
 		initTask();
 		initLevel();
-		ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
-		        .setNameFormat("buff线程").build();
-		ScheduledThreadPoolExecutor  scheduled = new ScheduledThreadPoolExecutor(1,namedThreadFactory);
+		ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("buff线程").build();
+		ScheduledThreadPoolExecutor scheduled = new ScheduledThreadPoolExecutor(1, namedThreadFactory);
 		scheduled.scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Refresh(), 0, 2000, TimeUnit.MILLISECONDS);
 //		init();
@@ -73,7 +73,7 @@ public class Main {
 			level.setId(Integer.valueOf(e.elementText("id")));
 			level.setExpl(Integer.valueOf(e.elementText("expL")));
 			level.setExpr(Integer.valueOf(e.elementText("expR")));
-			IOsession.levelMp.put(Integer.valueOf(e.elementText("id")),level);
+			IOsession.levelMp.put(Integer.valueOf(e.elementText("id")), level);
 		}
 	}
 
@@ -105,6 +105,7 @@ public class Main {
 
 	/**
 	 * 初始化商店
+	 * 
 	 * @throws Exception
 	 */
 	private static void initStore() throws Exception {
@@ -114,8 +115,8 @@ public class Main {
 		List<Element> elementList = root.elements();
 		for (Element e : elementList) {
 			IOsession.STORE_SYSTEM.setName(e.elementText("name"));
-			HashMap<Integer,Yaopin> yaopinMap = new HashMap<>(500);
-			HashMap<Integer,Zb> zbMap = new HashMap<>(500);
+			HashMap<Integer, Yaopin> yaopinMap = new HashMap<>(500);
+			HashMap<Integer, Zb> zbMap = new HashMap<>(500);
 			String[] yaopinId = e.elementText("yaopin").split(",");
 			for (String yaopin : yaopinId) {
 				Yaopin yaopin2 = IOsession.yaopinMp.get(Integer.valueOf(yaopin));
@@ -133,6 +134,7 @@ public class Main {
 
 	/**
 	 * 装备资源初始化
+	 * 
 	 * @throws Exception
 	 */
 	private static void initZb() throws Exception {
@@ -155,6 +157,7 @@ public class Main {
 
 	/**
 	 * 初始化buff
+	 * 
 	 * @throws Exception
 	 */
 	private static void initBuff() throws Exception {
@@ -174,6 +177,7 @@ public class Main {
 
 	/**
 	 * 初始化药品
+	 * 
 	 * @throws Exception
 	 */
 	private static void initYaopin() throws Exception {
@@ -193,6 +197,7 @@ public class Main {
 
 	/**
 	 * 初始化技能
+	 * 
 	 * @throws Exception
 	 */
 	private static void initSkill() throws Exception {
@@ -214,6 +219,7 @@ public class Main {
 
 	/**
 	 * 初始化怪物
+	 * 
 	 * @param monsterList
 	 * @throws Exception
 	 */
@@ -246,6 +252,7 @@ public class Main {
 
 	/**
 	 * 初始化npc
+	 * 
 	 * @param npcList
 	 * @throws Exception
 	 */
@@ -265,6 +272,7 @@ public class Main {
 
 	/**
 	 * 初始化场景
+	 * 
 	 * @param monsterList
 	 * @param npcList
 	 * @throws Exception
@@ -274,7 +282,7 @@ public class Main {
 		Document document = sr.read(new File("src\\main\\java\\rpg.conf\\Scene.xml"));
 		Element root = document.getRootElement();
 		List<Element> elementList = root.elements();
-		List<Scene> sceneList = new ArrayList();
+//		List<Scene> sceneList = new ArrayList();
 		for (Element e : elementList) {
 			Scene scene = new Scene();
 			scene.setName(e.elementText("name"));

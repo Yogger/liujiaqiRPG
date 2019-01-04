@@ -19,7 +19,9 @@ import rpg.task.TaskManage;
 import rpg.util.SendMsg;
 import rpg.util.UserService;
 
-/**pk处理逻辑
+/**
+ * pk处理逻辑
+ * 
  * @author ljq
  *
  */
@@ -36,7 +38,7 @@ public class PkDispatch {
 			if (IOsession.mp != null) {
 				for (User user2 : IOsession.mp.values()) {
 					if (msg[1].equals(user2.getNickname())) {
-						if (user2.getAreaid() == user.getAreaid()) {
+						if (user2.getAreaid().equals(user.getAreaid())) {
 							if (user2.getAreaid() != 1) {
 								for (Userskill userskill : skillList) {
 									String skillId = String.valueOf(userskill.getSkill());

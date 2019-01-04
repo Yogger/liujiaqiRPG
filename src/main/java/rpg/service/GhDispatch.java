@@ -110,57 +110,13 @@ public class GhDispatch {
 						GhstoreExample example2 = new GhstoreExample();
 						rpg.pojo.GhstoreExample.Criteria criteria2 = example2.createCriteria();
 						criteria2.andGzidEqualTo(ghstore.getGzid());
+						//放入的物品为药品
 						if (ghstore.getIsadd() == 0) {
-							if (StringUtils.isNumeric(msg[4])) {
-								if (Integer.valueOf(msg[4]) == 1) {
-									Userbag userbag = new Userbag();
-									userbag.setId(ghstore.getGzid());
-									userbag.setUsername(user.getNickname());
-									userbag.setGid(ghstore.getWpid());
-									userbag.setNumber(1);
-									userbag.setNjd(ghstore.getNjd());
-									userbag.setIsadd(0);
-									List<Userbag> list2 = IOsession.userBagMp.get(user);
-									list2.add(userbag);
-									ghstoreMapper.deleteByExample(example2);
-									SendMsg.send("物品拿取成功", ch);
-								} else {
-									SendMsg.send("数量错误", ch);
-								}
-							} else {
-								SendMsg.send("指令错误", ch);
-							}
-						} else {
-							if (StringUtils.isNumeric(msg[4])) {
-								Integer num = Integer.valueOf(msg[4]);
-								if (num > 0) {
-									Yaopin yaopin = IOsession.yaopinMp.get(ghstore.getWpid());
-									RpgUtil.putYaopin(user, yaopin, num);
-									// Userbag userbag = new Userbag();
-									// userbag.setId(ghstore.getGzid());
-									// userbag.setUsername(user.getNickname());
-									// userbag.setGid(ghstore.getWpid());
-									// userbag.setNumber(Integer.valueOf(msg[4]));
-									// userbag.setNjd(ghstore.getNjd());
-									// userbag.setIsadd(1);
-									// List<Userbag> list2 = IOsession.userBagMp.get(user);
-									// list2.add(userbag);
-									if (ghstore.getNumber() > num) {
-										ghstore.setNumber(ghstore.getNumber() - num);
-										ghstoreMapper.updateByExample(ghstore, example2);
-										SendMsg.send("物品拿取成功", ch);
-									} else if (ghstore.getNumber() == num) {
-										ghstoreMapper.deleteByExample(example2);
-										SendMsg.send("物品拿取成功", ch);
-									} else {
-										SendMsg.send("指令错误", ch);
-									}
-								} else {
-									SendMsg.send("请放入正确的数量", ch);
-								}
-							} else {
-								SendMsg.send("指令错误", ch);
-							}
+							putYaoPin(user, ch, msg, ghstore, example2);
+						} 
+						//放入的物品是装备
+						else {
+							putZb(user, ch, msg, ghstore, example2);
 						}
 						break;
 					}
@@ -187,6 +143,52 @@ public class GhDispatch {
 			e.printStackTrace();
 		} finally {
 			lock.unlock();
+		}
+	}
+
+	public void putZb(User user, Channel ch, String[] msg, Ghstore ghstore, GhstoreExample example2) {
+		if (StringUtils.isNumeric(msg[4])) {
+			Integer num = Integer.valueOf(msg[4]);
+			if (num > 0) {
+				Yaopin yaopin = IOsession.yaopinMp.get(ghstore.getWpid());
+				RpgUtil.putYaopin(user, yaopin, num);
+				if (ghstore.getNumber() > num) {
+					ghstore.setNumber(ghstore.getNumber() - num);
+					ghstoreMapper.updateByExample(ghstore, example2);
+					SendMsg.send("物品拿取成功", ch);
+				} else if (ghstore.getNumber().equals(num)) {
+					ghstoreMapper.deleteByExample(example2);
+					SendMsg.send("物品拿取成功", ch);
+				} else {
+					SendMsg.send("指令错误", ch);
+				}
+			} else {
+				SendMsg.send("请放入正确的数量", ch);
+			}
+		} else {
+			SendMsg.send("指令错误", ch);
+		}
+	}
+
+	public void putYaoPin(User user, Channel ch, String[] msg, Ghstore ghstore, GhstoreExample example2) {
+		if (StringUtils.isNumeric(msg[4])) {
+			if (Integer.valueOf(msg[4]) == 1) {
+				Userbag userbag = new Userbag();
+				userbag.setId(ghstore.getGzid());
+				userbag.setUsername(user.getNickname());
+				userbag.setGid(ghstore.getWpid());
+				userbag.setNumber(1);
+				userbag.setNjd(ghstore.getNjd());
+				userbag.setIsadd(0);
+				List<Userbag> list2 = IOsession.userBagMp.get(user);
+				list2.add(userbag);
+				ghstoreMapper.deleteByExample(example2);
+				SendMsg.send("物品拿取成功", ch);
+			} else {
+				SendMsg.send("数量错误", ch);
+			}
+		} else {
+			SendMsg.send("指令错误", ch);
 		}
 	}
 
@@ -217,71 +219,13 @@ public class GhDispatch {
 		if (msg[MsgSize.MSG_INDEX_2.getValue()].equals(GOODS) && msg.length == MsgSize.MSG_INDEX_5.getValue()) {
 			for (Userbag userbag : list) {
 				if (userbag.getId().equals(msg[3])) {
+					//放入药品时
 					if (userbag.getIsadd() == 0) {
-						if (StringUtils.isNumeric(msg[4])) {
-							if (Integer.valueOf(msg[4]) == 1) {
-								Ghstore ghstore = new Ghstore();
-								ghstore.setId(user.getGhId());
-								ghstore.setGzid(userbag.getId());
-								ghstore.setWpid(userbag.getGid());
-								ghstore.setNumber(1);
-								ghstore.setNjd(userbag.getNjd());
-								ghstore.setIsadd(0);
-								ghstoreMapper.insert(ghstore);
-								list.remove(userbag);
-								SendMsg.send("物品放入成功", ch);
-							} else {
-								SendMsg.send("数量不足", ch);
-							}
-						} else {
-							SendMsg.send("指令错误", ch);
-						}
-					} else {
-						if (StringUtils.isNumeric(msg[4])) {
-							Integer num = Integer.valueOf(msg[4]);
-							if (num > 0) {
-								GhstoreExample example = new GhstoreExample();
-								rpg.pojo.GhstoreExample.Criteria criteria = example.createCriteria();
-								criteria.andWpidEqualTo(userbag.getGid());
-								List<Ghstore> list2 = ghstoreMapper.selectByExample(example);
-								if (list2 != null && list2.size() == 0) {
-									Ghstore ghstore = new Ghstore();
-									ghstore.setId(user.getGhId());
-									ghstore.setGzid(userbag.getId());
-									ghstore.setWpid(userbag.getGid());
-									ghstore.setNumber(num);
-									ghstore.setNjd(userbag.getNjd());
-									ghstore.setIsadd(1);
-									ghstoreMapper.insert(ghstore);
-									if (userbag.getNumber() > num) {
-										userbag.setNumber(userbag.getNumber() - num);
-										SendMsg.send("物品放入成功", ch);
-									} else if (userbag.getNumber() == num) {
-										list.remove(userbag);
-										SendMsg.send("物品放入成功", ch);
-									} else {
-										SendMsg.send("数量不足", ch);
-									}
-								} else {
-									Ghstore ghstore = list2.get(0);
-									ghstore.setNumber(ghstore.getNumber() + num);
-									ghstoreMapper.updateByExample(ghstore, example);
-									if (userbag.getNumber() > num) {
-										userbag.setNumber(userbag.getNumber() - num);
-										SendMsg.send("物品放入成功", ch);
-									} else if (userbag.getNumber() == num) {
-										list.remove(userbag);
-										SendMsg.send("物品放入成功", ch);
-									} else {
-										SendMsg.send("数量不足", ch);
-									}
-								}
-							} else {
-								SendMsg.send("请放入正确的数量", ch);
-							}
-						} else {
-							SendMsg.send("指令错误", ch);
-						}
+						yaopinPut(user, ch, msg, list, userbag);
+					} 
+					//放入装备时
+					else {
+						zbPut(user, ch, msg, list, userbag);
 					}
 					break;
 				}
@@ -305,6 +249,79 @@ public class GhDispatch {
 		}
 	}
 
+	public void zbPut(User user, Channel ch, String[] msg, List<Userbag> list, Userbag userbag) {
+		if (StringUtils.isNumeric(msg[4])) {
+			Integer num = Integer.valueOf(msg[4]);
+			if (num > 0) {
+				GhstoreExample example = new GhstoreExample();
+				rpg.pojo.GhstoreExample.Criteria criteria = example.createCriteria();
+				criteria.andWpidEqualTo(userbag.getGid());
+				List<Ghstore> list2 = ghstoreMapper.selectByExample(example);
+				if (list2 != null && list2.size() == 0) {
+					Ghstore ghstore = new Ghstore();
+					ghstore.setId(user.getGhId());
+					ghstore.setGzid(userbag.getId());
+					ghstore.setWpid(userbag.getGid());
+					ghstore.setNumber(num);
+					ghstore.setNjd(userbag.getNjd());
+					ghstore.setIsadd(1);
+					ghstoreMapper.insert(ghstore);
+					if (userbag.getNumber() > num) {
+						userbag.setNumber(userbag.getNumber() - num);
+						SendMsg.send("物品放入成功", ch);
+					} else if (userbag.getNumber() == num) {
+						list.remove(userbag);
+						SendMsg.send("物品放入成功", ch);
+					} else {
+						SendMsg.send("数量不足", ch);
+					}
+				} else {
+					if (list2 != null) {
+						Ghstore ghstore = list2.get(0);
+						if (ghstore != null) {
+							ghstore.setNumber(ghstore.getNumber() + num);
+							ghstoreMapper.updateByExample(ghstore, example);
+							if (userbag.getNumber() > num) {
+								userbag.setNumber(userbag.getNumber() - num);
+								SendMsg.send("物品放入成功", ch);
+							} else if (userbag.getNumber().equals(num)) {
+								list.remove(userbag);
+								SendMsg.send("物品放入成功", ch);
+							} else {
+								SendMsg.send("数量不足", ch);
+							}
+						}
+					}
+				}
+			} else {
+				SendMsg.send("请放入正确的数量", ch);
+			}
+		} else {
+			SendMsg.send("指令错误", ch);
+		}
+	}
+
+	public void yaopinPut(User user, Channel ch, String[] msg, List<Userbag> list, Userbag userbag) {
+		if (StringUtils.isNumeric(msg[4])) {
+			if (Integer.valueOf(msg[4]) == 1) {
+				Ghstore ghstore = new Ghstore();
+				ghstore.setId(user.getGhId());
+				ghstore.setGzid(userbag.getId());
+				ghstore.setWpid(userbag.getGid());
+				ghstore.setNumber(1);
+				ghstore.setNjd(userbag.getNjd());
+				ghstore.setIsadd(0);
+				ghstoreMapper.insert(ghstore);
+				list.remove(userbag);
+				SendMsg.send("物品放入成功", ch);
+			} else {
+				SendMsg.send("数量不足", ch);
+			}
+		} else {
+			SendMsg.send("指令错误", ch);
+		}
+	}
+
 	private void downGh(User user, Channel ch, ChannelGroup group, String[] msg) {
 		GhuserExample example = new GhuserExample();
 		Criteria criteria = example.createCriteria();
@@ -319,7 +336,8 @@ public class GhDispatch {
 			if (list != null && list.size() > 0) {
 				Ghuser ghuser2 = list.get(0);
 				if (ghuser.getPower() < ghuser2.getPower()) {
-					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.ELITE.getValue()) && ghuser2.getPower() < GhJob.ELITE.getValue()) {
+					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals("" + GhJob.ELITE.getValue())
+							&& ghuser2.getPower() < GhJob.ELITE.getValue()) {
 						if (ghuser.getPower() < GhJob.VICE_PRESIDENT.getValue()) {
 							ghuser2.setPower(3);
 							ghuser2.setJobname("精英");
@@ -331,7 +349,8 @@ public class GhDispatch {
 						} else {
 							SendMsg.send("权限不够,不能降级该职位", ch);
 						}
-					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.MEMBER.getValue()) && ghuser2.getPower() < GhJob.MEMBER.getValue()) {
+					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals("" + GhJob.MEMBER.getValue())
+							&& ghuser2.getPower() < GhJob.MEMBER.getValue()) {
 						if (ghuser.getPower() < GhJob.ELITE.getValue()) {
 							ghuser2.setPower(4);
 							ghuser2.setJobname("成员");
@@ -371,7 +390,7 @@ public class GhDispatch {
 			if (list != null && list.size() > 0) {
 				Ghuser ghuser2 = list.get(0);
 				if (ghuser.getPower() < ghuser2.getPower() - 1) {
-					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.ELITE.getValue())) {
+					if (msg[MsgSize.MSG_INDEX_3.getValue()].equals("" + GhJob.ELITE.getValue())) {
 						if (ghuser.getPower() < GhJob.ELITE.getValue()) {
 							ghuser2.setPower(3);
 							ghuser2.setJobname("精英");
@@ -383,7 +402,7 @@ public class GhDispatch {
 						} else {
 							SendMsg.send("权限不够,不能提升该职位", ch);
 						}
-					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals(""+GhJob.VICE_PRESIDENT.getValue())) {
+					} else if (msg[MsgSize.MSG_INDEX_3.getValue()].equals("" + GhJob.VICE_PRESIDENT.getValue())) {
 						if (ghuser.getPower() < GhJob.VICE_PRESIDENT.getValue()) {
 							ghuser2.setPower(2);
 							ghuser2.setJobname("副会长");

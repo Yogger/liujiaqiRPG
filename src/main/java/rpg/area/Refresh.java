@@ -18,27 +18,16 @@ public class Refresh implements Runnable {
 
 	@Override
 	public synchronized void run() {
-		// System.out.println("开始执行了：");
 		try {
 			if (IOsession.mp != null) {
 				for (User user : IOsession.mp.values()) {
 					Channel channel = IOsession.userchMp.get(user);
-					// if(user.getJySendFlag()==1) {
-					// Jy jy = IOsession.jyMap.get(user.getJyId());
-					// if(jy!=null) {
-					// if(System.currentTimeMillis()-jy.getStartTime()>10000) {
-					// user.getAndSetjySendFlag(user, 0);
-					// IOsession.jyMap.remove(user.getJyId());
-					// }
-					// }
-					// }
 					if (user.getLiveFlag() != 1) {
 						ConcurrentHashMap<Integer, Long> buffTime = IOsession.buffTimeMp.get(user);
 						int addMp = 5;
 						int subHp = 0;
 						if (buffTime != null) {
 							for (Entry<Integer, Long> entry : buffTime.entrySet()) {
-								// System.out.println("id"+entry.getKey()+"时间"+entry.getValue());
 								// 通过buffID找到具体的buff
 								Integer buffId = entry.getKey();
 								if (buffId != null) {
@@ -64,7 +53,6 @@ public class Refresh implements Runnable {
 												default:
 													break;
 												}
-												// addMp += buff.getMp();
 											} else {
 												switch (buffId) {
 												case 3:

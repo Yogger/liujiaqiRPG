@@ -23,7 +23,7 @@ public class Move {
 	private UserMapper userMapper;
 
 	public void move(Channel ch, String msg, User user) {
-		Area area = new Area();
+//		Area area = new Area();
 		if (SceneType.QI_SHI_ZHI_DI.getValue().equals(msg)) {
 			if (Area.checkArea(msg, user.getAreaid()) > 0) {
 				SendMsg.send("您已经进入起始之地", ch);
